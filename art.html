@@ -1,0 +1,462 @@
+<!--https://www.youtube.com/watch?v=oU3IhuZscPo -------  Teaches how to add background image   -->
+<!--ZigZag Layout Tutorial --  https://www.w3schools.com/howto/howto_css_zig_zag_layout.asp  -->
+<!-- Simple Lightbox  https://simplelightbox.com/------------>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- custom css file link  -->
+    <link rel="stylesheet" href="../dist/simple-lightbox.css?v2.14.0" />
+    <link rel="stylesheet" href="css/styles_Thermae_Projecty.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Alata&family=Josefin+Sans:wght@600;700&family=Sen:wght@700&family=Montserrat:wght@800&family=Poppins:wght@400;500&display=swap&family=Alice&display=swap" rel="stylesheet"> 
+    <style>
+      body {
+          font-family: 'Raleway', sans-serif;
+          font-size: 20px;
+          line-height: 34px;
+      }
+
+      * {
+          box-sizing: border-box;
+      }
+
+      .container .gallery1 a img {
+          float: left;
+          width: 25%;
+          height: auto;
+          border: 4px solid #ffffff00;
+          -webkit-transition: -webkit-transform .15s ease;
+          -moz-transition: -moz-transform .15s ease;
+          -o-transition: -o-transform .15s ease;
+          -ms-transition: -ms-transform .15s ease;
+          transition: transform .15s ease;
+          position: relative;
+      }
+      .gallery-margin{
+        margin: 40px 20px 40px 20px;
+      }
+      .container .gallery2 a img {
+          float: left;
+          width: 25%;
+          height: auto;
+          border: 4px solid #ffffff00;
+          -webkit-transition: -webkit-transform .15s ease;
+          -moz-transition: -moz-transform .15s ease;
+          -o-transition: -o-transform .15s ease;
+          -ms-transition: -ms-transform .15s ease;
+          transition: transform .15s ease;
+          position: relative;
+      }
+      .container .gallery3 a img {
+          float: left;
+          width: 25%;
+          height: auto;
+          border: 4px solid #ffffff00;
+          -webkit-transition: -webkit-transform .15s ease;
+          -moz-transition: -moz-transform .15s ease;
+          -o-transition: -o-transform .15s ease;
+          -ms-transition: -ms-transform .15s ease;
+          transition: transform .15s ease;
+          position: relative;
+      }
+      .container .gallery4 a img {
+          float: left;
+          width: 25%;
+          height: auto;
+          border: 4px solid #ffffff00;
+          -webkit-transition: -webkit-transform .15s ease;
+          -moz-transition: -moz-transform .15s ease;
+          -o-transition: -o-transform .15s ease;
+          -ms-transition: -ms-transform .15s ease;
+          transition: transform .15s ease;
+          position: relative;
+      }
+      .container .gallery5 a img {
+          float: left;
+          width: 25%;
+          height: auto;
+          border: 4px solid #ffffff00;
+          -webkit-transition: -webkit-transform .15s ease;
+          -moz-transition: -moz-transform .15s ease;
+          -o-transition: -o-transform .15s ease;
+          -ms-transition: -ms-transform .15s ease;
+          transition: transform .15s ease;
+          position: relative;
+      }
+      .container .gallery6 a img {
+          float: left;
+          width: 25%;
+          height: auto;
+          border: 4px solid #ffffff00;
+          -webkit-transition: -webkit-transform .15s ease;
+          -moz-transition: -moz-transform .15s ease;
+          -o-transition: -o-transform .15s ease;
+          -ms-transition: -ms-transform .15s ease;
+          transition: transform .15s ease;
+          position: relative;
+      }
+
+      .clear {
+          clear: both;
+      }
+
+      a {
+          color: #009688;
+          text-decoration: none;
+      }
+
+      a:hover {
+          color: #01695f;
+          text-decoration: none;
+      }
+      @media only screen and (max-width: 578px) {
+        .container .gallery1 a img {
+          width: 100%;
+      }
+      .container .gallery2 a img {
+          width: 100%;
+      }
+      .gallery-margin{
+        margin: 10px 10px 10px 10px;
+      }
+      }
+  </style>
+   
+ <title>Art</title>
+</head>
+<body>
+<!-- -------------------Navigation -------------------------- -->
+<nav>
+    <!-- -------Small Nav Menu start--------------->
+    <div class="menu-small">
+    <div class="navContainer">
+    <div class="navbar">
+        <div class="logo"><a href="#home"><img src="img/logo.png"></a></div>
+        <div class="dropdown">
+            <button class="dropbtn">Portfolio
+              <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+             <!-- <a href="Animation.html">Art</a>-->
+            <a href="interaction.html">Interaction Design</a>
+            <a href="storyboard.html">Storyboards</a>
+            <a href="animation.html">Animation</a>
+            <a href="art.html">Art</a>
+            <!--<a href="index.html">UI/UX</a>-->
+            <!--<a href="index.html">Interactive Media</a>-->
+            </div>
+          </div> 
+        <a href="home.html#about">About</a>
+        <a href="https://interactivedesigndevelopment.blogspot.com/">Blog</a>
+
+      </div>
+    </div>
+</div>
+<!-- -------Small Nav Menu End--------------->
+<!-- -------Large Nav Menu Start--------------->
+<div class="menu-large">
+    <div class="navContainer">
+    <div class="navbar">
+        <div class="logo"><a href="home.html"><img src="img/logo.png"></a></div>
+        <a href="home.html">Home</a>
+          <a href="interaction.html">Interaction Design</a>
+          <a href="storyboard.html">Storyboards</a>
+          <a href="animation.html">Animation</a>
+          <a href="art.html">  Art  </a>
+          <a href="home.html#about">About</a>
+        <a href="https://interactivedesigndevelopment.blogspot.com/">Blog</a>
+
+      </div>
+    </div>
+</div>
+<!-- -------Large Nav Menu End--------------->
+      </nav>
+
+</div>
+
+<div class="logo_container">
+        
+</div>
+</nav>
+<!-- -------------------Banner Area -------------------------- -->
+
+<!-- -------------------Banner Area -------------------------- -->
+<div id="home"></div>
+<!--<div class="banner-image">--> 
+     <div class="banner-text">Art</div>
+  
+ </div>
+ </div>
+
+ </header>
+
+ <!-- -------------------Main Body -------------------------- -->
+<body>
+
+
+    <div class="wrapper_projects">    <!-- This is BG image of paper, goes to top of page--> 
+    <div class="container_projects"> <!-- This is linear gradient over bg, goes to top of page-->
+        <!--<div class= "section_projects"> <!-- This is main area for content, padding on all corners, max width 1000px-->
+        <!--<div class="projects_inner_shield"> <!-- Used to keep video and embedded content within specified width of 720px max-->
+            <div class="inner_shield">
+                <br>
+<!-- -------------------Top Video -------------------------- -->
+<!--<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/824589005?h=a3f5bf4265&title=0&byline=0" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+<br>-->
+
+<!-- -------------------About the Project -------------------------- -->
+<h1><center>Art</center></h1>
+
+ <!-- -------------------My Role (no image on right) -------------------------- 
+ <h3><b>My Role</b> <div class= "role"><div class = "padding_role">Interaction Design | VR Development | Spatial Audio Design | Animation | Deployment</div></div>
+ <h3><b>Collaborators</b></h3><div class= "role"><div class = "padding_role">Clay Ewing | Capstone Professor</div></div>
+ <h3><b>Timeline</b></h3><div class= "role"><div class = "padding_role">August 2023 - May 2024</div></div>
+ <h3><b>Technology</b></h3><div class= "role"><div class = "padding_role">Unity | Maya | Adobe Premiere | Photoshop | Meta Quest Pro | C#</div></div> -->
+
+
+ 
+    <!-- -------------Divider---------------------------------- -->
+  
+    <hr class="divider_rounded">
+
+      <!-- -------------------KEY GOALS -------------------------- -->
+       <h2><center>- Book Illustrations -</center></h1>
+          
+       <h3> <center></center></h3>
+
+       <br>
+      </div> <!--This cuts off the "inner shield to allow the gallery to run full width"-->
+  <!-- -------------------Gallery Blue Sky -------------------------- -->
+
+  <div class="container">
+      <div class="gallery1">
+        <div class="gallery-margin">
+      <div class="centerd-gallery">
+        <a href="img/Art/Moe/Moe_1.jpg"><img src="img/Art/Moe/Moe_1.jpg" alt="" title="Magnificent Moe"/></a>  
+        <a href="img/Art/Moe/Moe_2.jpg"><img src="img/Art/Moe/Moe_2.jpg" alt="" title="Hear the stories of passengers from the Cuban Freedom Flights"/></a>  
+        <a href="img/Art/Moe/Moe_3.jpg"><img src="img/Art/Moe/Moe_3.jpg" alt="" title="Drive the narrative forward"/></a>
+        <a href="img/Art/Moe/Moe_4.jpg"><img src="img/Art/Moe/Moe_4.jpg" alt="" title="Custom Animation"/></a>
+        <a href="img/Art/Puffy/Puffy_1.jpg"><img src="img/Art/Puffy/Puffy_1.jpg" alt="" title="Custom Animation"/></a>
+        <a href="img/Art/Puffy/Puffy_2.jpg"><img src="img/Art/Puffy/Puffy_2.jpg" alt="" title="Custom Animation"/></a>
+        <a href="img/Art/Puffy/Puffy_3.jpg"><img src="img/Art/Puffy/Puffy_3.jpg" alt="" title="Custom Animation"/></a>
+        <a href="img/Art/Puffy/Puffy_4.jpg"><img src="img/Art/Puffy/Puffy_4.jpg" alt="" title="Custom Animation"/></a>
+        <div class="clear">
+        </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+  <!-- --------------------Interactions Section--------------------------  --> 
+
+  <div class="inner_shield">
+
+    <h2><center>- Illustrations - </center></h2>
+    <h3> <center>What can you do?</center></h3>
+
+   </div> <!--This cuts off the "inner shield to allow the gallery to run full width"-->
+    <div class="container">
+      <div class="gallery2">
+        <div class="gallery-margin">
+      <div class="centerd-gallery">
+      
+        <a href="img/Art/illustration/Illustration_1.jpg"><img src="img/Art/illustration/Illustration_1.jpg" alt="" title="Hear the stories of passengers from the Cuban Freedom Flights"/></a>  
+        <a href="img/Art/illustration/Illustration_2.jpg"><img src="img/Art/illustration/Illustration_2.jpg" alt="" title="Drive the narrative forward"/></a>
+        <a href="img/Art/illustration/Illustration_3.jpg"><img src="img/Art/illustration/Illustration_3.jpg" alt="" title="Custom Animation"/></a>
+        <a href="img/Art/illustration/Illustration_4.jpg"><img src="img/Art/illustration/Illustration_4.jpg" alt="" title="Custom Animation"/></a>
+        <a href="img/Art/illustration/Illustration_5.jpg"><img src="img/Art/illustration/Illustration_5.jpg" alt="" title="Hear the stories of passengers from the Cuban Freedom Flights"/></a>  
+        <a href="img/Art/illustration/Illustration_6.jpg"><img src="img/Art/illustration/Illustration_6.jpg" alt="" title="Drive the narrative forward"/></a>
+        <a href="img/Art/illustration/Illustration_7.jpg"><img src="img/Art/illustration/Illustration_7.jpg" alt="" title="Custom Animation"/></a>
+        <a href="img/Art/illustration/Illustration_8.jpg"><img src="img/Art/illustration/Illustration_8.jpg" alt="" title="Custom Animation"/></a>
+   
+        <div class="clear">
+        </div>
+        </div>
+    </div>
+  </div>
+  </div>
+
+    <!-- --------------------Challenges Section--------------------------  --> 
+
+    <div class="inner_shield">
+  
+     </div> <!--This cuts off the "inner shield to allow the gallery to run full width"-->
+      <div class="container">
+        <div class="gallery3">
+          <div class="gallery-margin">
+        <div class="centerd-gallery">
+        
+          <a href="img/Art/illustration/Illustration_9.jpg"><img src="img/Art/illustration/Illustration_9.jpg" alt="" title="Hear the stories of passengers from the Cuban Freedom Flights"/></a>  
+          <a href="img/Art/illustration/Illustration_10.jpg"><img src="img/Art/illustration/Illustration_10.jpg" alt="" title="Drive the narrative forward"/></a>
+          <a href="img/Art/illustration/Illustration_11.jpg"><img src="img/Art/illustration/Illustration_11.jpg" alt="" title="Custom Animation"/></a>
+          <a href="img/Art/illustration/Illustration_12.jpg"><img src="img/Art/illustration/Illustration_12.jpg" alt="" title="Custom Animation"/></a>
+            
+          <div class="clear">
+          </div>
+          </div>
+      </div>
+    </div>
+    </div>
+<!-- --------------------Code Section--------------------------  --> 
+
+<div class="inner_shield">
+ </div> <!--This cuts off the "inner shield to allow the gallery to run full width"-->
+  <div class="container">
+    <div class="gallery4">
+      <div class="gallery-margin">      
+    <div class="centerd-gallery">
+     
+      <a href="img/Art/illustration/Illustration_13.jpg"><img src="img/Art/illustration/Illustration_13.jpg" alt="" title="Hear the stories of passengers from the Cuban Freedom Flights"/></a>  
+      <a href="img/Art/illustration/Illustration_14.jpg"><img src="img/Art/illustration/Illustration_14.jpg" alt="" title="Drive the narrative forward"/></a>
+      <a href="img/Art/illustration/Illustration_15.jpg"><img src="img/Art/illustration/Illustration_15.jpg" alt="" title="Custom Animation"/></a>
+      <!--<a href="img/Art/illustration/Illustration_16.jpg"><img src="img/Art/illustration/Illustration_16.jpg" alt="" title="Custom Animation"/></a>-->
+      <a href="img/Art/illustration/Illustration_17.jpg"><img src="img/Art/illustration/Illustration_17.jpg" alt="" title="Hear the stories of passengers from the Cuban Freedom Flights"/></a>  
+      <div class="clear">
+      </div>
+      </div>
+  </div>
+</div>
+</div>
+
+<!-- --------------------Production Section--------------------------  --> 
+
+<div class="inner_shield">
+
+  <h2><center>- Figure Drawings - </center></h2>
+
+  <br>
+ </div> <!--This cuts off the "inner shield to allow the gallery to run full width"-->
+  <div class="container">
+    <div class="gallery5">
+      <div class="gallery-margin">      
+    <div class="centerd-gallery">
+      <a href="img/Art/Figure/Figure_1.jpg"><img src="img/Art/Figure/Figure_1.jpg" alt="" title=""/></a>  
+      <a href="img/Art/Figure/Figure_2.jpg"><img src="img/Art/Figure/Figure_2.jpg" alt="" title=""/></a>  
+      <a href="img/Art/Figure/Figure_3.jpg"><img src="img/Art/Figure/Figure_3.jpg" alt="" title=""/></a>
+      <a href="img/Art/Figure/Figure_4.jpg"><img src="img/Art/Figure/Figure_4.jpg" alt="" title=""/></a>
+      <div class="clear">
+      </div>
+      </div>
+  </div>
+</div>
+</div>
+<!-- --------------------Deployment Section--------------------------  --> 
+
+<div class="inner_shield">
+
+  <h2><center>- Murals & Paintings - </center></h2>
+
+  <br>
+ </div> <!--This cuts off the "inner shield to allow the gallery to run full width"-->
+  <div class="container">
+    <div class="gallery6">
+      <div class="gallery-margin">      
+    <div class="centerd-gallery">
+      
+      <a href="img/Art/Mural/Mural_2.jpg"><img src="img/Art/Mural/Mural_2.jpg" alt="" title=""/></a>  
+      <a href="img/Art/Mural/Mural_6.jpg"><img src="img/Art/Mural/Mural_6.jpg" alt="" title=""/></a>  
+      <!--<a href="img/Art/Mural/Mural_3.jpg"><img src="img/Art/Mural/Mural_3.jpg" alt="" title=""/></a>-->
+      <a href="img/Art/Mural/Mural_4.jpg"><img src="img/Art/Mural/Mural_4.jpg" alt="" title=""/></a>
+      <!--<a href="img/Art/Mural/Mural_5.jpg"><img src="img/Art/Mural/Mural_5.jpg" alt="" title=""/></a>-->
+           <a href="img/Art/Mural/Mural_7.jpg"><img src="img/Art/Mural/Mural_7.jpg" alt="" title=""/></a>
+      <a href="img/Art/Mural/Mural_8.jpg"><img src="img/Art/Mural/Mural_8.jpg" alt="" title=""/></a>
+      <a href="img/Art/Mural/Mural_9.jpg"><img src="img/Art/Mural/Mural_9.jpg" alt="" title=""/></a>  
+      <a href="img/Art/Mural/Mural_10.jpg"><img src="img/Art/Mural/Mural_10.jpg" alt="" title=""/></a>  
+      <a href="img/Art/Mural/Mural_11.jpg"><img src="img/Art/Mural/Mural_11.jpg" alt="" title=""/></a>
+      <a href="img/Art/Mural/Mural_1.jpg"><img src="img/Art/Mural/Mural_1.jpg" alt="" title=""/></a>  
+      <!--<a href="img/Art/Mural/Mural_12.jpg"><img src="img/Art/Mural/Mural_12.jpg" alt="" title=""/></a>
+      <a href="img/Art/Mural/Mural_13.jpg"><img src="img/Art/Mural/Mural_13.jpg" alt="" title=""/></a>  
+      <a href="img/Art/Mural/Mural_14.jpg"><img src="img/Art/Mural/Mural_14.jpg" alt="" title=""/></a>-->  
+      <a href="img/Art/Mural/Mural_15.jpg"><img src="img/Art/Mural/Mural_15.jpg" alt="" title=""/></a>
+      <a href="img/Art/Mural/Mural_16.jpg"><img src="img/Art/Mural/Mural_16.jpg" alt="" title=""/></a>
+      <a href="img/Art/Mural/Mural_17.jpg"><img src="img/Art/Mural/Mural_17.jpg" alt="" title=""/></a>
+
+      <div class="clear">
+      </div>
+      </div>
+  </div>
+</div>
+</div>
+<!-- --------------------More Paintings Section--------------------------  --> 
+<div class="inner_shield">
+
+ </div> <!--This cuts off the "inner shield to allow the gallery to run full width"-->
+  <div class="container">
+    <div class="gallery6">
+      <div class="gallery-margin">      
+    <div class="centerd-gallery">
+      
+      <a href="img/Art/Painting/Painting_1.jpg"><img src="img/Art/Painting/Painting_1.jpg" alt="" title=""/></a>
+      <a href="img/Art/Painting/Painting_2.jpg"><img src="img/Art/Painting/Painting_2.jpg" alt="" title=""/></a>
+      <a href="img/Art/Painting/Painting_3.jpg"><img src="img/Art/Painting/Painting_3.jpg" alt="" title=""/></a>
+
+      <div class="clear">
+      </div>
+      </div>
+  </div>
+</div>
+</div>
+<!-----------------------End of Modal ----------------- -->
+<br>
+    
+
+</div>  <!-- This is the end of the container for the main content -->
+<br>
+        </div>
+      </div>
+    </div>
+        
+         <!-- -------------------- Javascript--------------------------  --> 
+
+         <script src="../dist/simple-lightbox.js?v2.14.0"></script>
+         <script>
+             (function() {
+                 var $gallery = new SimpleLightbox('.gallery1 a', {});      
+             })();
+
+         </script>
+                 <script>
+                  (function() {
+                      var $gallery = new SimpleLightbox('.gallery2 a', {});        
+                  })();
+     
+              </script>
+
+         <script>
+          (function() {
+              var $gallery = new SimpleLightbox('.gallery3 a', {});
+          })();
+      </script>
+
+<script>
+  (function() {
+      var $gallery = new SimpleLightbox('.gallery4 a', {});
+  })();
+</script>
+
+<script>
+  (function() {
+      var $gallery = new SimpleLightbox('.gallery5 a', {});
+  })();
+</script>
+
+<script>
+  (function() {
+      var $gallery = new SimpleLightbox('.gallery6 a', {});
+  })();
+</script>
+
+<script>
+  (function() {
+      var $gallery = new SimpleLightbox('.gallery7 a', {});
+  })();
+</script>
+
+</body>
+<footer>
+    <p>(C) Noel Nuñez 2025</p></footer>
+</html>
