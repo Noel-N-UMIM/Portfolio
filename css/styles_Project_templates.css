@@ -197,6 +197,7 @@ h4{
   .column-right .img{
     width: 50%;
     height: auto;
+    
   }
   
   /* Add responsiveness - make the columns appear on top of each other instead of next to each other on small screens */
@@ -870,6 +871,12 @@ max-width: 1000px;
    margin: 0 auto;
    max-width: 1000px;
  }
+
+ .img_zigzag{
+  max-width: 350px; 
+  height: 0, auto;
+}
+
  .Story_inner_shield{
   padding:0 40px;
  margin: 0 auto;
@@ -985,8 +992,8 @@ max-width: 1000px;
     }
     .inner_shield{
       padding:0 20px;
-    
-    }
+        }
+
     .banner-text{
       font-size: 40px;
  
@@ -1050,7 +1057,12 @@ box-shadow: none;
   }
   @media only screen and (max-width: 578px) {
   
-  .banner-text{
+    .img_zigzag{
+      max-width: 300px; 
+      height: 0, auto;
+    }
+
+    .banner-text{
 
     font-size: 25px;
     margin-left: 10px;
