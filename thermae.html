@@ -1,4 +1,6 @@
 <!--https://www.youtube.com/watch?v=oU3IhuZscPo -------  Teaches how to add background image   -->
+<!--ZigZag Layout Tutorial --  https://www.w3schools.com/howto/howto_css_zig_zag_layout.asp  -->
+<!-- Simple Lightbox  https://simplelightbox.com/------------>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,9 +9,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- custom css file link  -->
-    <link rel="stylesheet" href="css/style_interaction_projects.css">
+    <link rel="stylesheet" href="../dist/simple-lightbox.css?v2.14.0" />
+    <link rel="stylesheet" href="css/styles_Thermae_Projecty.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Alata&family=Josefin+Sans:wght@600;700&family=Sen:wght@700&family=Montserrat:wght@800&family=Poppins:wght@400;500&display=swap&family=Alice&display=swap" rel="stylesheet"> 
+    <style>
+      body {
+          font-family: 'Raleway', sans-serif;
+          font-size: 20px;
+          line-height: 34px;
+      }
+
+      * {
+          box-sizing: border-box;
+      }
+
+      .container .gallery1 a img {
+          float: left;
+          width: 25%;
+          height: auto;
+          border: 4px solid #ffffff00;
+          -webkit-transition: -webkit-transform .15s ease;
+          -moz-transition: -moz-transform .15s ease;
+          -o-transition: -o-transform .15s ease;
+          -ms-transition: -ms-transform .15s ease;
+          transition: transform .15s ease;
+          position: relative;
+      }
+      .gallery-margin{
+        margin: 40px 20px 40px 20px;
+      }
+      .container .gallery2 a img {
+          float: left;
+          width: 25%;
+          height: auto;
+          border: 4px solid #ffffff00;
+          -webkit-transition: -webkit-transform .15s ease;
+          -moz-transition: -moz-transform .15s ease;
+          -o-transition: -o-transform .15s ease;
+          -ms-transition: -ms-transform .15s ease;
+          transition: transform .15s ease;
+          position: relative;
+      }
+      .container .gallery3 a img {
+          float: left;
+          width: 25%;
+          height: auto;
+          border: 4px solid #ffffff00;
+          -webkit-transition: -webkit-transform .15s ease;
+          -moz-transition: -moz-transform .15s ease;
+          -o-transition: -o-transform .15s ease;
+          -ms-transition: -ms-transform .15s ease;
+          transition: transform .15s ease;
+          position: relative;
+      }
+      .container .gallery4 a img {
+          float: left;
+          width: 25%;
+          height: auto;
+          border: 4px solid #ffffff00;
+          -webkit-transition: -webkit-transform .15s ease;
+          -moz-transition: -moz-transform .15s ease;
+          -o-transition: -o-transform .15s ease;
+          -ms-transition: -ms-transform .15s ease;
+          transition: transform .15s ease;
+          position: relative;
+      }
+      .container .gallery5 a img {
+          float: left;
+          width: 25%;
+          height: auto;
+          border: 4px solid #ffffff00;
+          -webkit-transition: -webkit-transform .15s ease;
+          -moz-transition: -moz-transform .15s ease;
+          -o-transition: -o-transform .15s ease;
+          -ms-transition: -ms-transform .15s ease;
+          transition: transform .15s ease;
+          position: relative;
+      }
+      .container .gallery6 a img {
+          float: left;
+          width: 25%;
+          height: auto;
+          border: 4px solid #ffffff00;
+          -webkit-transition: -webkit-transform .15s ease;
+          -moz-transition: -moz-transform .15s ease;
+          -o-transition: -o-transform .15s ease;
+          -ms-transition: -ms-transform .15s ease;
+          transition: transform .15s ease;
+          position: relative;
+      }
+
+      .clear {
+          clear: both;
+      }
+
+      a {
+          color: #009688;
+          text-decoration: none;
+      }
+
+      a:hover {
+          color: #01695f;
+          text-decoration: none;
+      }
+      @media only screen and (max-width: 578px) {
+        .container .gallery1 a img {
+          width: 100%;
+      }
+      .container .gallery2 a img {
+          width: 100%;
+      }
+      .gallery-margin{
+        margin: 10px 10px 10px 10px;
+      }
+      }
+  </style>
    
- <title>Noel Nunez Thermae</title>
+ <title>Noel Nunez Thermae VR</title>
 </head>
 <body>
 <!-- -------------------Navigation -------------------------- -->
@@ -28,7 +145,6 @@
             <a href="interaction.html">Interaction Design</a>
             <a href="storyboard.html">Storyboards</a>
             <a href="animation.html">Animation</a>
-                <a href="art.html">Art</a>
             <!--<a href="index.html">UI/UX</a>-->
             <!--<a href="index.html">Interactive Media</a>-->
             </div>
@@ -49,7 +165,6 @@
           <a href="interaction.html">Interaction Design</a>
           <a href="storyboard.html">Storyboards</a>
           <a href="animation.html">Animation</a>
-        <a href="art.html">Art</a>
           <a href="home.html#about">About</a>
         <a href="https://interactivedesigndevelopment.blogspot.com/">Blog</a>
 
@@ -67,9 +182,9 @@
 </nav>
 <!-- -------------------Banner Area -------------------------- -->
 <div id="home"></div>
- <div class="banner-thermae">
+ <div class="banner-image">
      <div class="banner-text">Thermae</div>
-     <div class="banner-subheading">A Historical Virtual Reality Experience</div>
+     <div class="banner-subheading">An Immersive Historical Virtual Reality Experience</div>
  </div>
  </div>
 
@@ -86,356 +201,214 @@
             <div class="inner_shield">
                 <br>
 <!-- -------------------Top Video -------------------------- -->
-    <div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/824589005?h=a3f5bf4265&title=0&byline=0" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/824589005?h=a3f5bf4265&title=0&byline=0" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+<br>
 
-    <br>
+<!-- -------------------About the Project -------------------------- -->
+<h2><b>ABOUT THE PROJECT</b></h2> 
+<h4>Immersive Histories, a Roman Thermae Virtual Reality Experience allows users to experience life as a Roman and explore the unique social and functional nature of the Roman bathhouse.
+  <br><br>Users are given the opportunity to explore the <b>"frigidarium"</b> where they can learn about the artistic production featured in the bathhouse and get more in-depth exploration of the cooling and heating systems.  
+    <br>In addition to the bathhouse, users can explore the courtyard, a beautiful open-air area commonly referred to as the palestra, the place where exercising and socializing often took place.  By navigating the space, users may hear some interesting conversation and enjoy the music of a local minstrel.</h4>  
 
-<!-- -------------------Overview / Project Details Section Grid -------------------------- -->
-    
-<div class= "section_About">
-    <div class="inner_shield">
-        <div class="parent-about">
- <!-- --------------------LEFT SIDE MENU--------------------------  -->
-            <div class="div1">
-                <h6>Project Description</h6> 
-               <p>Immersive Histories, a Roman Thermae Virtual Reality Experience allows users to experience life as a Roman and explore the unique social and functional nature of the Roman bathhouse.    
-                <h6>The User Experience</h6> 
-                <p>Users are given the opportunity to explore the "frigidarium" where they can learn about the artistic production featured in the bathhouse and get more in-depth exploration of the cooling and heating systems.  
-                        <p>In addition to the bathhouse, users can explore the courtyard, a beautiful open-air area commonly referred to as the palestra, the place where exercising and socializing often took place.  By navigating the space, users may hear some interesting conversation and enjoy the music of a local minstrel.  
+ </h4><br>
 
-           
-            </div>
- <!-- ---------------------RIGHT SIDE MENU--------------------------  -->
-            <div class="side_menu">
-            <div class="div2">
-                <b>Collaborators</b><br>
-                Xueer Xia<br>
-                Ace Zhang<br>
-                Natalia Jimenez<br>
-                <br>
-                <b>Role</b>
-                <br>
-                Interaction Design<br>
-                VR Development<br>
-                Spacial Audio Design<br>
-                Terrain and Set Design
-                Final Composition and Deployment<br><br>
-                <b>Timeline</b>
-                <br>
-                Three Week Sprint
+
+ <!-- -------------------My Role (no image on right) -------------------------- 
+ <h3><b>My Role</b> <div class= "role"><div class = "padding_role">Interaction Design | VR Development | Spatial Audio Design | Animation | Deployment</div></div>
+ <h3><b>Collaborators</b></h3><div class= "role"><div class = "padding_role">Clay Ewing | Capstone Professor</div></div>
+ <h3><b>Timeline</b></h3><div class= "role"><div class = "padding_role">August 2023 - May 2024</div></div>
+ <h3><b>Technology</b></h3><div class= "role"><div class = "padding_role">Unity | Maya | Adobe Premiere | Photoshop | Meta Quest Pro | C#</div></div> -->
+
+ <!-- -------------------My Role With image on Right -------------------------- -->
+ <div class="row">
+  <div class="column-right">
+
+    <!--<img src="img/CubanFreedomFlights/gifs/Gallery.gif" alt="Explore Captivating Stories" style= "max-width: 350px; height: 0, auto;">-->
+    <img src="img/Thermae_images/thermae-thumb.jpg" alt="Thermae_an_immersive_historical_virtual_reality_experience"style= "max-width: 350px; height: 0, auto;">
+    </div>
+
+<div class="column-left">
+  <h3><b>My Role</b> <div class= "role"><div class = "padding_role">
+    Project Lead<br>
+    Interaction Design<br>
+    VR Development<br>
+    Spacial Audio Design<br>
+    Terrain and Set Design<br>
+    Final Composition and Deployment<br></div></div>
+
+    <h3><b>Collaborators</b></h3><div class= "role"><div class = "padding_role">
+      Xueer Xia<br>
+      Ace Zhang<br>
+      Natalia Jimenez<br>
+    </div></div>
+    <h3><b>Timeline</b></h3><div class= "role"><div class = "padding_role">                Three Week Sprint
                 <br>
                 May 2023
-                <br><br>               
-                <b>Technology</b><br>
-                Unity<br>
-                C#<br>
-                Photoshop<br>
-                Adobe Premiere
-            </div> 
-    </div>
+              </div></div>
+    <h3><b>Technology</b></h3><div class= "role"><div class = "padding_role">
+      Unity<br>
+      C#<br>
+      Photoshop<br>
+      Adobe Premiere</div></div>
+
+  </div>
 </div>
- 
-        
-<br>
-        <!-- ----------------------Image Gallery------------------------ -->     
-    <!--------------New RESPONSIVE Gallery-------------------- -->
+    <!-- -------------Divider---------------------------------- -->
+  
+    <hr class="divider_rounded">
 
-    <div class="responsive">
-        <div class="gallery">
-            <img src="img/Thermae_images/Blog_1.JPG"onclick="openModal();currentSlide(1)" class="hover-shadow">
-          </a>
-          <!--<div class="desc">Add a description of the image here</div>-->
-        </div>
-      </div>
-      
-      <div class="responsive">
-        <div class="gallery">
-            <img src="img/Thermae_images/Blog_2.JPG "onclick="openModal();currentSlide(2)" class="hover-shadow">
-            
-          </a>
-          <!--<div class="desc">Add a description of the image here</div>-->
-        </div>
-      </div>
-      
-      <div class="responsive">
-        <div class="gallery">
-            <img src="img/Thermae_images/Blog_3.JPG"onclick="openModal();currentSlide(3)" class="hover-shadow">
-            
-          </a>
-          <!--<div class="desc">Add a description of the image here</div>-->
-        </div>
-      </div>
-      
-      <div class="responsive">
-        <div class="gallery">
-            <img src="img/Thermae_images/Blog_4.JPG"onclick="openModal();currentSlide(4)" class="hover-shadow">
-          </a>
-          <!--<div class="desc">Add a description of the image here</div>-->
-        </div>
-      </div>
-      
-      <div class="clearfix"></div> 
+      <!-- -------------------KEY GOALS -------------------------- -->
+       <h2><center>KEY GOALS</center></h1>
+          
+       <h3> <center>What could it be?</center></h3>
+       <h4>The Roman Thermae Virtual Reality Experience aims to:<br>
+        <ul>
+            <li>Transport users back to the ancient world of Rome through <b>immersive</b> visuals, showcasing architectural wonders, artifacts, and daily life.</li>
+            <li>Provide insights into the significance of Roman bathhouses within the <b>social, cultural, and historical</b> context of ancient civilization.</li>
+            <li>Offer an <b>engaging</b> experience by enabling interaction with the virtual environment and its intricacies.</li>
+    </ul></h4>
+       <br>
+      </div> <!--This cuts off the "inner shield to allow the gallery to run full width"-->
+  <!-- -------------------Gallery Blue Sky -------------------------- -->
 
-  <!-- The Modal/Lightbox -->
-
-  <div id="myModal" class="modal">
-    <span class="close cursor" onclick="closeModal()">&times;</span>
-    <div class="modal-content">
-  
-      <div class="mySlides">
-        <div class="numbertext">1 / 7</div>
-        <img src="img/Thermae_images/Blog_1.JPG" style="width:100%">
-      </div>
-  
-      <div class="mySlides">
-        <div class="numbertext">2 / 7</div>
-        <img src="img/Thermae_images/Blog_2.JPG" style="width:100%">
-      </div>
-  
-      <div class="mySlides">
-        <div class="numbertext">3 / 7</div>
-        <img src="img/Thermae_images/Blog_3.JPG" style="width:100%">
-      </div>
-  
-      <div class="mySlides">
-        <div class="numbertext">4 / 7</div>
-        <img src="img/Thermae_images/Blog_4.JPG" style="width:100%">
-      </div>
-  
-      <!-- Next/previous controls -->
-      <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-      <a class="next" onclick="plusSlides(1)">&#10095;</a>
-    
-      <!-- Caption text -->
-      <div class="caption-container">
-        <p id="caption"></p>
-      </div>
-  
+  <div class="container">
+      <div class="gallery1">
+        <div class="gallery-margin">
+      <div class="centerd-gallery">
+        <a href="img/Thermae_images/Blog_1.JPG"><img src="img/Thermae_images/Blog_1.JPG" alt="" title="Interact with the stories"/></a>  
+        <a href="img/Thermae_images/Blog_2.JPG"><img src="img/Thermae_images/Blog_2.JPG" alt="" title="Hear the stories of passengers from the Cuban Freedom Flights"/></a>  
+        <a href="img/Thermae_images/Blog_3.JPG"><img src="img/Thermae_images/Blog_3.JPG" alt="" title="Drive the narrative forward"/></a>
+        <a href="img/Thermae_images/Blog_4.JPG"><img src="img/Thermae_images/Blog_4.JPG" alt="" title="Custom Animation"/></a>
+        <div class="clear">
+        </div>
+        </div>
     </div>
-  </div> 
-  <!-----------------------End of Modal ----------------- -->
-  
-  <!-- -------------------- Key Goals List--------------------------  -->   
-<h6>Key Goals</h6>
-<br>
-    <p>The Roman Thermae Virtual Reality Experience aims to:</p><br>
+  </div>
+</div>
+
+  <!-- --------------------Interactions Section--------------------------  --> 
+
+  <div class="inner_shield">
+
+    <h2><center>- INTERACTIONS - </center></h2>
+    <h3> <center>What can you do?</center></h3>
+    <h4>When designing this experience, the team wanted the end user to feel fully immersed in the environment, as if they had travelled back in time to be amongst the people and culture.
+    <br>
+    To pull this off we created the following key interactions:
     <ul>
-        <li>Transport users back to the ancient world of Rome through <b>immersive</b> visuals, showcasing architectural wonders, artifacts, and daily life.</li>
-        <li>Provide insights into the significance of Roman bathhouses within the <b>social, cultural, and historical</b> context of ancient civilization.</li>
-        <li>Offer an <b>engaging</b> experience by enabling interaction with the virtual environment and its intricacies.</li>
+      <li>Animated Characters</li>
+      <li>360 degree audio with triggers for educational content</li>
+      <li>Convenient user interfaces to provide guidance and transport the user to specific areas of the experience</li>
+      <li>Crossfading between scenes for a better user experience </li>
 </ul>
-</div> <!-- .inner_shield----  -->
- <!-- .section_About----  -->
-     <!-- projects_inner_shield -->
-
-<!-- --------------------- Interactions GIFS -------------------------- -->
-<h6>Interactions</h6>
-     
-   
-    <!--------------Interactions Gallery 4 -6 -------------------- -->
-
-    <div class="three"><div class="responsive">
-        <div class="gallery">
-            <img src="img/Thermae_images/Blog_19_Animator.JPG"onclick="openModal();currentSlide(5)" class="hover-shadow">
-          </a>
-          <div class="desc">Animation controller</div>
-        </div>
-      </div>
-    </div>
+</h4>
+   </div> <!--This cuts off the "inner shield to allow the gallery to run full width"-->
+    <div class="container">
+      <div class="gallery2">
+        <div class="gallery-margin">
+      <div class="centerd-gallery">
       
-    <div class="three"> <div class="responsive">
-        <div class="gallery">
-            <img src="img/Thermae_images/Blog_20_Animator.JPG "onclick="openModal();currentSlide(6)" class="hover-shadow">
-            
-          </a>
-          <div class="desc">Animation controller</div>
+        <a href="img/Thermae_images/Blog_20_Animator.JPG"><img src="img/Thermae_images/Blog_20_Animator.JPG" alt="" title="Hear the stories of passengers from the Cuban Freedom Flights"/></a>  
+        <a href="img/Thermae_images/Blog_18_Audio_Source_Button.JPG"><img src="img/Thermae_images/Blog_18_Audio_Source_Button.JPG" alt="" title="Drive the narrative forward"/></a>
+        <a href="img/Thermae_images/Button_Delay.gif"><img src="img/Thermae_images/Button_Delay.gif" alt="" title="Custom Animation"/></a>
+        <a href="img/Thermae_images/Fade Out.gif"><img src="img/Thermae_images/Fade Out.gif" alt="" title="Custom Animation"/></a>
+        <div class="clear">
         </div>
-      </div>
-    </div>
-      
-    <div class="three"><div class="responsive">
-        <div class="gallery">
-            <img src="img/Thermae_images/Blog_18_Audio_Source_Button.JPG"onclick="openModal();currentSlide(7)" class="hover-shadow">
-            
-          </a>
-          <div class="desc">Trigger audio</div>
         </div>
-      </div>
-      </div>
-    
-      
-      <div class="clearfix"></div> 
-
-  <!-- The Modal/Lightbox -->
-
-  <div id="myModal" class="modal">
-    <span class="close cursor" onclick="closeModal()">&times;</span>
-    <div class="modal-content">
-  
-      <div class="mySlides">
-        <div class="numbertext">5 / 7</div>
-        <img src="img/Thermae_images/Blog_19_Animator.JPG" style="width:100%">
-      </div>
-  
-      <div class="mySlides">
-        <div class="numbertext">6 / 7</div>
-        <img src="img/Thermae_images/Blog_20_Animator.JPG" style="width:100%">
-      </div>
-  
-      <div class="mySlides">
-        <div class="numbertext">7 / 7</div>
-        <img src="img/Thermae_images/Blog_18_Audio_Source_Button.JPG" style="width:100%">
-      </div>
-  
-  
-  
-      <!-- Next/previous controls -->
-      <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-      <a class="next" onclick="plusSlides(1)">&#10095;</a>
-    
-      <!-- Caption text -->
-      <div class="caption-container">
-        <p id="caption"></p>
-      </div>
-  
- 
-    </div>
-  </div> 
-  <!-----------------------End of Modal ----------------- -->
-   <!--------------Interactions Gallery 1 -3 -------------------- -->
-
-   <div class="three"><div class="responsive">
-    <div class="gallery">
-        <img src="img/Thermae_images/Title_Scale.gif" class="hover-shadow">
-      </a>
-      <div class="desc">Logo reveal</div>
     </div>
   </div>
-</div>
-  
-<div class="three"> <div class="responsive">
-    <div class="gallery">
-        <img src="img/Thermae_images/Button_Delay.gif " class="hover-shadow">
+  </div>
+
+    <!-- --------------------Challenges Section--------------------------  --> 
+
+    <div class="inner_shield">
+
+      <h2><center>- CHALLENGES and COMPLICATIONS - </center></h2>
+      <h3> <center>What will it take to make it real?</center></h3>
+      <h4>The biggest challenge that I faced was managing the file size of the file in order to collaborate with my team.  The project grew to be  whopping 29GB at one point, which made collaborating with my team very difficult.
+        <br>
+        <br>The solution was to reduce the polycount of most assets and to remove any unused materials and objects from the file.
+             <br>   
+             <br>
+             One of the most confounding problems was that the water shader asset (an integral aspect of this project!) would only render in <b>ONE EYEBALL</b> while using the Oculus headset.  As a workaround, I found a nice, simple, non-moving water shader and applied it to a plane.  I figured out how to animate the pattern of the simple shader to simulate the movement of water.<br>
         
-      </a>
-      <div class="desc">Main menu and buttons</div>
+                Another challenge was seeing the experience from the preview window in my laptop did not correlate 1:1 with the view inside of an Oculus head set. The UI looked different and the height of the "player" was different.  As a result there was a lot of going back and forth to find a comfortable experience for the user. 
+        </h4>
+      <br>
+     </div> <!--This cuts off the "inner shield to allow the gallery to run full width"-->
+      <!--<div class="container">
+        <div class="gallery3">
+          <div class="gallery-margin">
+        <div class="centerd-gallery">
+          <a href="img/CubanFreedomFlights/14_stories.jpg"><img src="img/CubanFreedomFlights/14_stories.jpg" alt="" title="Interact with the stories"/></a>  
+          <a href="img/CubanFreedomFlights/freedom_interaction_2.jpg"><img src="img/CubanFreedomFlights/freedom_interaction_2.jpg" alt="" title="Hear the stories of passengers from the Cuban Freedom Flights"/></a>  
+          <a href="img/CubanFreedomFlights/11_Stories.jpg"><img src="img/CubanFreedomFlights/11_Stories.jpg" alt="" title="Drive the narrative forward"/></a>
+          <a href="img/CubanFreedomFlights/Animation_.gif"><img src="img/CubanFreedomFlights/12_Stories.jpg" alt="" title="Custom Animation"/></a>
+          <div class="clear">
+          </div>
+          </div>
+      </div>
     </div>
-  </div>
-</div>
-  
-<div class="three"><div class="responsive">
-    <div class="gallery">
-        <img src="img/Thermae_images/Fade Out.gif" class="hover-shadow">
-        
-      </a>
-      <div class="desc">Fade out of scene</div>
-    </div>
-  </div>
-  </div>
+    </div>-->
+<!-- --------------------Code Section--------------------------  --> 
 
-  
-  <div class="clearfix"></div> 
+<div class="inner_shield">
 
-<!-- The Modal/Lightbox -->
-
-<!--<div id="myModal" class="modal">
-<span class="close cursor" onclick="closeModal()">&times;</span>
-<div class="modal-content">
-
-  <div class="mySlides">
-    <div class="numbertext">1 / 3</div>
-    <img src="img/Thermae_images/Title_Scale.gif" style="width:100%">
-  </div>
-
-  <div class="mySlides">
-    <div class="numbertext">2 / 3</div>
-    <img src="img/Thermae_images/Button_Delay.gif" style="width:100%">
-  </div>
-
-  <div class="mySlides">
-    <div class="numbertext">3 / 3</div>
-    <img src="img/Thermae_images/Fade Out.gif" style="width:100%">
-  </div>-->
+  <h2><center>- CODE - </center></h2>
+  <h3> <center></center></h3>
+  <h4>To explore some of the code to make this experience function, feel free to check out <a href="https://interactivedesigndevelopment.blogspot.com/2023/05/building-virtual-worlds-4-roman-art.html"><b>this post</b></a> on the Interactive Media production blog.</h4>
+  <br>
+ </div> <!--This cuts off the "inner shield to allow the gallery to run full width"-->
 
 
 
-  <!-- Next/previous controls -->
- <!-- <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-  <a class="next" onclick="plusSlides(1)">&#10095;</a>-->
-
-  <!-- Caption text -->
-  <!--<div class="caption-container">
-    <p id="caption"></p>
-  </div>
-
-
-</div>
-</div> -->
 <!-----------------------End of Modal ----------------- -->
-<!-- --------------------Challenges ------------------- -->
-<h6>Challenges and Complications</h6>
 <br>
-    <p>The biggest challenge that I faced was managing the file size of the file in order to collaborate with my team.  The project grew to be  whopping 29GB at one point, which made collaborating with my team very difficult.
-<br>
-<br>The solution was to reduce the polycount of most assets and to remove any unused materials and objects from the file.
-     <br>   
-     <br>
-     One of the most confounding problems was that the water shader asset (an integral aspect of this project!) would only render in <b>ONE EYEBALL</b> while using the Oculus headset.  As a workaround, I found a nice, simple, non-moving water shader and applied it to a plane.  I figured out how to animate the pattern of the simple shader to simulate the movement of water. </p><br>
-
-        Another challenge was seeing the experience from the preview window in my laptop did not correlate 1:1 with the view inside of an Oculus head set. The UI looked different and the height of the "player" was different.  As a result there was a lot of going back and forth to find a comfortable experience for the user. 
-
-        <!-- --------------------Code ------------------- -->
-<h6>Code</h6>
-<br>
-    <p>To explore some of the code to make this experience function, feel free to check out <a href="https://interactivedesigndevelopment.blogspot.com/2023/05/building-virtual-worlds-4-roman-art.html"><b>this post</b></a> on the Interactive Media production blog. 
 
 </div>  <!-- This is the end of the container for the main content -->
+<br>
         </div>
-        </div>
+      </div>
+    </div>
+        
          <!-- -------------------- Javascript--------------------------  --> 
-<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
-<script type="text/javascript">
-// Open the Modal
-function openModal() {
-  document.getElementById("myModal").style.display = "block";
-}
 
-// Close the Modal
-function closeModal() {
-  document.getElementById("myModal").style.display = "none";
-}
+         <script src="../dist/simple-lightbox.js?v2.14.0"></script>
+         <script>
+             (function() {
+                 var $gallery = new SimpleLightbox('.gallery1 a', {});      
+             })();
 
-var slideIndex = 1;
-showSlides(slideIndex);
+         </script>
+                 <script>
+                  (function() {
+                      var $gallery = new SimpleLightbox('.gallery2 a', {});        
+                  })();
+     
+              </script>
 
-// Next/previous controls
-function plusSlides(n) {
-  showSlides(slideIndex += n);
-}
+         <script>
+          (function() {
+              var $gallery = new SimpleLightbox('.gallery3 a', {});
+          })();
+      </script>
 
-// Thumbnail image controls
-function currentSlide(n) {
-  showSlides(slideIndex = n);
-}
+<script>
+  (function() {
+      var $gallery = new SimpleLightbox('.gallery4 a', {});
+  })();
+</script>
 
-function showSlides(n) {
-  var i;
-  var slides = document.getElementsByClassName("mySlides");
-  var dots = document.getElementsByClassName("demo");
-  var captionText = document.getElementById("caption");
-  if (n > slides.length) {slideIndex = 1}
-  if (n < 1) {slideIndex = slides.length}
-  for (i = 0; i < slides.length; i++) {
-    slides[i].style.display = "none";
-  }
-  for (i = 0; i < dots.length; i++) {
-    dots[i].className = dots[i].className.replace(" active", "");
-  }
-  slides[slideIndex-1].style.display = "block";
-  dots[slideIndex-1].className += " active";
-  captionText.innerHTML = dots[slideIndex-1].alt;
-}
+<script>
+  (function() {
+      var $gallery = new SimpleLightbox('.gallery5 a', {});
+  })();
+</script>
 
+<script>
+  (function() {
+      var $gallery = new SimpleLightbox('.gallery6 a', {});
+  })();
 </script>
 
 </body>
