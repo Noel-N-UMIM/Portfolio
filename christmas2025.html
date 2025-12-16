@@ -14,7 +14,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <style>
-        body { margin: 0; overflow: hidden; font-family: 'Press Start 2P', cursive; user-select: none; }
+        body { 
+            margin: 0; 
+    overflow: hidden; 
+    font-family: 'Press Start 2P', cursive; 
+    
+    /* PREVENT SELECTION & MENU POPUPS */
+    user-select: none;              /* Standard */
+    -webkit-user-select: none;      /* Safari / Chrome */
+    -webkit-touch-callout: none;    /* iOS Safari: Hides the magnifying glass/menu */
+    touch-action: none;             /* Prevents browser zooming/panning gestures */
+}
         
         /* UI OVERLAYS */
         #ui-layer {
