@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Christmas Delivery Run (8-Bit Edition)</title>
+    <!-- Import A-Frame Library -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <!-- Import A-Frame Environment Component -->
+    <script src="https://unpkg.com/aframe-environment-component@1.3.2/dist/aframe-environment-component.min.js"></script>
+    <!-- Import Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Import Pixel Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        body { margin: 0; overflow: hidden; font-family: 'Press Start 2P', cursive; user-select: none; }
+        
+        /* UI OVERLAYS */
+        #ui-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 10;
+        }
+
+        /* HUD SHARED STYLES - Enforces alignment */
+        .hud-item, #pause-btn {
+            position: absolute;
+            top: 20px;
+            height: 50px;
+            box-sizing: border-box;
+            background: #000; /* Solid black for retro contrast */
+            color: white;
+            border: 4px solid #fff; /* Thick retro border */
+            border-radius: 0; /* No round corners! */
+            font-size: 16px; /* Adjusted for pixel font width */
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.5); /* Hard shadow */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        /* HUD Specifics */
+        .hud-item {
+            padding: 0 15px;
+            gap: 15px;
+        }
+        #gift-counter { left: 20px; color: #ffeb3b; }
+        #timer { left: 50%; transform: translateX(-50%); color: #fff; }
+
+        /* PAUSE BUTTON Specifics */
+        #pause-btn {
+            right: 20px;
+            width: 50px; 
+            padding: 0;
+            cursor: pointer; 
+            pointer-events: auto;
+            display: none; 
+            z-index: 50;
+        }
+        #pause-btn:hover { background: #333; }
+
+        /* PAUSE MENU */
+        #pause-menu {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 60; pointer-events: auto;
+            color: white;
+        }
+
+        /* START SCREEN */
+        #start-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; z-index: 20; pointer-events: auto;
+        }
+        h1 { 
+            text-shadow: 4px 4px 0 #000; 
+            font-size: 32px; 
+            margin-bottom: 20px; 
+            text-align: center; 
+            line-height: 1.5;
+            padding: 0 20px;
+        }
+        
+        button {
+            padding: 20px 30px; font-size: 20px;
+            background: #2e7d32; color: white;
+            border: 4px solid #fff; border-radius: 0;
+            cursor: pointer; box-shadow: 6px 6px 0 #000;
+            margin-top: 30px; 
+            font-family: 'Press Start 2P', cursive;
+            text-transform: uppercase;
+        }
+        button:active { transform: translate(6px, 6px); box-shadow: none; }
+        
+        .menu-btn { min-width: 250px; margin: 15px; }
+
+        /* END SCREEN */
+        #end-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; display: none; z-index: 30;
+            pointer-events: auto; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        #end-image {
+            width: 100%; height: 100%; object-fit: cover;
+            position: absolute; top: 0; left: 0; z-index: -1; opacity: 0.6;
+            filter: pixelate(4px); /* Attempt to pixelate the background image */
+        }
+        .end-text {
+            position: relative; color: white; text-align: center;
+            text-shadow: 4px 4px 0 #000;
+            line-height: 2;
+        }
+
+        /* DAMAGE FLASH EFFECT */
+        #damage-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 0, 0, 0.6); opacity: 0; pointer-events: none; transition: opacity 0.1s;
+        }
+
+        /* COLLECTION FLASH EFFECT */
+        #collect-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 255, 0, 0.6); opacity: 0; pointer-events: none; transition: opacity 0.1s;
+        }
+
+        /* MOBILE CONTROLS HINT */
+        #mobile-hint {
+            position: absolute; bottom: 20px; width: 100%;
+            text-align: center; color: rgba(255,255,255,0.8);
+            font-size: 12px; text-shadow: 2px 2px 0 black;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
+        const CONFIG = {
+            GAME_DURATION: 90,           // Seconds
+            PLAYER_SPEED: 20,            // Speed
+            LATERAL_SPEED: 20,           // Steering speed
+            ROAD_WIDTH: 12,              // Slightly wider road
+            
+            // PHYSICS
+            GRAVITY: 20,                 // Downward force
+            JUMP_VELOCITY: 8,            // Upward velocity on ramp hit
+            
+            // AUDIO LINKS
+            AUDIO_SOURCE: 'media/song.mp3',      // Background Music
+            AUDIO_COLLECT: 'media/collect.mp3',  // Sound when collecting a gift
+            AUDIO_CRASH: 'media/crash.mp3',      // Sound when hitting obstacle
+            END_IMAGE_SOURCE: 'media/victory.jpg',
+            
+            INITIAL_GIFTS: 0,            // Start with 0 gifts
+            SNOW_START_PERCENT: 0.1,     // Snow starts at 10% progress (much earlier)
+            
+            // SPAWN SETTINGS
+            // SPAWN_DISTANCE removed - reverting to time based
+            GIFT_PERCENTAGE: 50,         // Percentage of objects that are Gifts
+            
+            OBSTACLE_SPAWN_RATE: 700,    // Milliseconds between spawns (Controls density)
+            CURVE_INTENSITY: 32          // Max amplitude of the winding road
+        };
+
+        // GLOBAL STATE
+        let gameState = {
+            isPlaying: false,
+            isPaused: false,
+            score: CONFIG.INITIAL_GIFTS,
+            timeRemaining: CONFIG.GAME_DURATION,
+            cottageSpawned: false 
+        };
+
+        // ==========================================
+        // COMPONENT: GAME MANAGER
+        // ==========================================
+        AFRAME.registerComponent('game-manager', {
+            init: function () {
+                this.timerVal = document.querySelector('#timer-val');
+                this.scoreVal = document.querySelector('#score-val');
+                this.endScreen = document.querySelector('#end-screen');
+                this.endMsg = document.querySelector('#end-msg');
+                this.endImg = document.querySelector('#end-image');
+                this.pauseBtn = document.querySelector('#pause-btn');
+                this.pauseMenu = document.querySelector('#pause-menu');
+
+                // Buttons
+                document.querySelector('#start-btn').addEventListener('click', () => this.startGame());
+                this.pauseBtn.addEventListener('click', () => this.togglePause());
+                document.querySelector('#resume-btn').addEventListener('click', () => this.togglePause());
+                document.querySelector('#restart-btn').addEventListener('click', () => this.restartGame());
+                document.querySelector('#play-again-btn').addEventListener('click', () => this.restartGame());
+
+                // Audio
+                this.bgMusic = new Audio(CONFIG.AUDIO_SOURCE);
+                this.bgMusic.loop = true;
+                this.bgMusic.volume = 0.5;
+                this.sfxCollect = new Audio(CONFIG.AUDIO_COLLECT);
+                this.sfxCrash = new Audio(CONFIG.AUDIO_CRASH);
+            },
+
+            startGame: function() {
+                document.querySelector('#start-screen').style.display = 'none';
+                this.endScreen.style.display = 'none';
+                this.pauseBtn.style.display = 'flex';
+                gameState.isPlaying = true;
+                gameState.isPaused = false;
+                this.bgMusic.currentTime = 0;
+                this.bgMusic.play().catch(e => console.log("Audio play failed:", e));
+                gameState.score = CONFIG.INITIAL_GIFTS;
+                gameState.timeRemaining = CONFIG.GAME_DURATION;
+                gameState.cottageSpawned = false;
+                this.updateHUD();
+            },
+
+            restartGame: function() {
+                gameState.isPlaying = false;
+                gameState.isPaused = false;
+                gameState.cottageSpawned = false;
+                this.pauseMenu.style.display = 'none';
+                this.endScreen.style.display = 'none';
+
+                const player = document.querySelector('#player');
+                player.setAttribute('position', '0 0.5 0');
+                player.components['player-controls'].directionX = 0;
+                player.components['player-controls'].visualSteering = 0;
+                player.components['player-controls'].velocityY = 0; 
+
+                const trash = document.querySelectorAll('.road-segment, .obstacle, .collectible, #cottage, .jump-ramp');
+                trash.forEach(el => {
+                    if (el.parentNode) el.parentNode.removeChild(el);
+                });
+
+                const wm = this.el.sceneEl.components['world-manager'];
+                wm.nextRoadZ = 0;
+                wm.nextSpawnTime = performance.now(); // Reset time-based spawn
+                wm.rampsSpawned = 0; 
+                wm.lastCleanup = 0;
+                wm.isFirstSpawn = true;
+
+                this.startGame();
+            },
+
+            togglePause: function() {
+                if (!gameState.isPlaying) return;
+                gameState.isPaused = !gameState.isPaused;
+                if (gameState.isPaused) {
+                    this.pauseMenu.style.display = 'flex';
+                    this.bgMusic.pause();
+                } else {
+                    this.pauseMenu.style.display = 'none';
+                    this.bgMusic.play().catch(e => console.log(e));
+                }
+            },
+
+            endGame: function() {
+                gameState.isPlaying = false;
+                this.pauseBtn.style.display = 'none';
+                this.bgMusic.pause();
+                
+                setTimeout(() => {
+                    this.endImg.src = CONFIG.END_IMAGE_SOURCE;
+                    this.endMsg.innerHTML = `<h1>Merry Christmas!</h1><h2>Score: ${gameState.score}</h2>`;
+                    this.endScreen.style.display = 'flex';
+                    this.endScreen.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 1000, fill: 'forwards' });
+                }, 1000); 
+            },
+
+            spawnCottage: function(zPos) {
+                const el = document.createElement('a-entity');
+                el.id = "cottage";
+                el.setAttribute('position', {x: 12, y: 0, z: zPos});
+                el.setAttribute('rotation', {x: 0, y: -45, z: 0});
+                
+                // LOW POLY / 8-BIT COTTAGE
+                // Using segments-radial=4 on cones to make them pyramids
+                // Using boxes instead of spheres
+                el.innerHTML = `
+                    <a-box color="#5D4037" width="6" height="3" depth="5" position="0 1.5 0"></a-box>
+                    
+                    <!-- Roof (Pyramids) -->
+                    <a-cone color="#3E2723" segments-radial="4" rotation="0 45 0" radius-bottom="5" height="2.5" position="0 4.25 0"></a-cone>
+                    <a-cone color="white" segments-radial="4" rotation="0 45 0" radius-bottom="4" height="1.5" position="0 4.8 0"></a-cone>
+                    
+                    <!-- Door -->
+                    <a-box color="#3E2723" width="1.2" height="2.2" depth="0.2" position="0 1.1 2.5"></a-box>
+                    <a-box color="gold" width="0.1" height="0.1" depth="0.1" position="0.4 1.1 2.6"></a-box>
+                    
+                    <!-- Windows -->
+                    <a-plane color="#FFF59D" width="1" height="1" position="2 2 2.51"></a-plane>
+                    <a-plane color="#FFF59D" width="1" height="1" position="-2 2 2.51"></a-plane>
+                    
+                    <!-- Chimney & Smoke -->
+                    <a-box color="#4E342E" width="0.8" height="2" depth="0.8" position="1.5 4.5 0"></a-box>
+                    <!-- Cube Smoke -->
+                    <a-box color="#CCC" width="0.6" height="0.6" depth="0.6" position="1.5 5.8 0" opacity="0.6" 
+                           animation="property: position; to: 1.5 7 0; loop: true; dur: 2000"></a-box>
+                `;
+                this.el.sceneEl.appendChild(el);
+            },
+
+            playCollectSound: function() {
+                if (this.sfxCollect) {
+                    this.sfxCollect.currentTime = 0;
+                    this.sfxCollect.play().catch(e => {});
+                }
+            },
+
+            playCrashSound: function() {
+                if (this.sfxCrash) {
+                    this.sfxCrash.currentTime = 0;
+                    this.sfxCrash.play().catch(e => {});
+                }
+            },
+
+            tick: function (time, timeDelta) {
+                if (!gameState.isPlaying || gameState.isPaused) return;
+
+                gameState.timeRemaining -= (timeDelta / 1000);
+                if (gameState.timeRemaining <= 0) {
+                    gameState.timeRemaining = 0;
+                    this.endGame();
+                }
+                this.updateHUD();
+
+                if (gameState.timeRemaining <= 10 && !gameState.cottageSpawned) {
+                    const player = document.querySelector('#player');
+                    const dist = 0.5 * CONFIG.PLAYER_SPEED * 10;
+                    const zPos = player.getAttribute('position').z - dist; 
+                    this.spawnCottage(zPos);
+                    gameState.cottageSpawned = true;
+                }
+
+                const progress = 1 - (gameState.timeRemaining / CONFIG.GAME_DURATION);
+                const snowSystem = this.el.sceneEl.systems['snow-system'];
+                if (progress > CONFIG.SNOW_START_PERCENT && snowSystem) {
+                    const activeSnowPeriod = 1 - CONFIG.SNOW_START_PERCENT;
+                    const snowProgress = (progress - CONFIG.SNOW_START_PERCENT) / activeSnowPeriod;
+                    snowSystem.setIntensity(snowProgress);
+                } else {
+                    snowSystem.setIntensity(0);
+                }
+            },
+
+            updateHUD: function() {
+                let minutes = Math.floor(gameState.timeRemaining / 60);
+                let seconds = Math.floor(gameState.timeRemaining % 60);
+                this.timerVal.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                this.scoreVal.textContent = gameState.score;
+            }
+        });
+
+        // ==========================================
+        // COMPONENT: WORLD & ROAD MANAGER
+        // ==========================================
+        AFRAME.registerComponent('world-manager', {
+            init: function() {
+                this.player = document.querySelector('#player');
+                this.ground = document.querySelector('#ground');
+                this.nextSpawnTime = 0;
+                this.nextRoadZ = 0; 
+                this.nextObstacleZ = -5; // Start near
+                this.lastCleanup = 0;
+                this.rampsSpawned = 0; 
+                this.isFirstSpawn = true;
+            },
+
+            getRoadCurve: function(z) {
+                const distanceTraveled = Math.abs(z);
+                const timeTraveled = distanceTraveled / CONFIG.PLAYER_SPEED;
+                
+                let curveAmplitude = 0;
+                const RAMP_TIME = 7;
+                const TOTAL_TIME = CONFIG.GAME_DURATION;
+                
+                if (timeTraveled < RAMP_TIME) {
+                    curveAmplitude = 0;
+                } else if (timeTraveled < TOTAL_TIME - RAMP_TIME) {
+                    const midDuration = TOTAL_TIME - (RAMP_TIME * 2);
+                    const timeInMid = timeTraveled - RAMP_TIME;
+                    const progress = Math.min(1, timeInMid / midDuration);
+                    curveAmplitude = progress * CONFIG.CURVE_INTENSITY;
+                } else {
+                    const timeInEnd = timeTraveled - (TOTAL_TIME - RAMP_TIME);
+                    const progress = 1 - Math.min(1, timeInEnd / RAMP_TIME);
+                    curveAmplitude = progress * CONFIG.CURVE_INTENSITY;
+                }
+
+                const frequency = 0.05; 
+                return Math.sin(z * frequency) * curveAmplitude;
+            },
+            
+            tick: function(time, timeDelta) {
+                if (!gameState.isPlaying || gameState.isPaused) return;
+
+                const playerZ = this.player.getAttribute('position').z;
+
+                if (this.ground) {
+                    this.ground.setAttribute('position', {x: 0, y: -0.1, z: playerZ - 20});
+                }
+
+                const spawnDistance = Math.max(400, CONFIG.PLAYER_SPEED * 15); 
+                
+                // 1. Road Generation
+                let safetyLoop = 0;
+                while (this.nextRoadZ > playerZ - spawnDistance && safetyLoop < 50) {
+                    this.spawnRoadSegment(this.nextRoadZ);
+                    this.nextRoadZ -= 2; 
+                    safetyLoop++;
+                }
+
+                // 2. Entity Generation (Gifts, Obstacles, RAMPS) - TIME BASED
+                if (performance.now() > this.nextSpawnTime) {
+                    // Check if we should spawn a ramp here based on distance travelled approx
+                    // Threshold check:
+                    let isRampLocation = false;
+                    // Approximate Z position for ramps based on timing? Or check player Z
+                    if (this.rampsSpawned === 0 && playerZ < -400) isRampLocation = true;
+                    if (this.rampsSpawned === 1 && playerZ < -900) isRampLocation = true;
+                    if (this.rampsSpawned === 2 && playerZ < -1400) isRampLocation = true;
+
+                    // Calculate spawn Z ahead of player
+                    const spawnZ = playerZ - 50;
+
+                    if (isRampLocation && this.rampsSpawned < 3) {
+                        this.spawnRampCombo(spawnZ);
+                        this.rampsSpawned++;
+                        // Delay next spawn to account for ramp length
+                        this.nextSpawnTime = performance.now() + CONFIG.OBSTACLE_SPAWN_RATE + 1000;
+                    } else {
+                        this.spawnEntity(spawnZ);
+                        this.nextSpawnTime = performance.now() + CONFIG.OBSTACLE_SPAWN_RATE;
+                    }
+                }
+
+                if (time - this.lastCleanup > 500) {
+                    this.cleanupEntities(playerZ);
+                    this.lastCleanup = time;
+                }
+            },
+
+            spawnRoadSegment: function(zPos) {
+                const xOffset = this.getRoadCurve(zPos);
+                
+                const seg = document.createElement('a-entity');
+                seg.classList.add('road-segment');
+                seg.setAttribute('position', {x: xOffset, y: 0.05, z: zPos});
+                
+                const asphalt = document.createElement('a-plane');
+                asphalt.setAttribute('rotation', '-90 0 0');
+                asphalt.setAttribute('width', CONFIG.ROAD_WIDTH);
+                asphalt.setAttribute('height', 2.1);
+                asphalt.setAttribute('color', '#444');
+                
+                const line = document.createElement('a-plane');
+                line.setAttribute('rotation', '-90 0 0');
+                line.setAttribute('width', 0.5);
+                line.setAttribute('height', 1.5);
+                line.setAttribute('position', '0 0.01 0');
+                line.setAttribute('color', '#FEFE33');
+
+                const leftBank = document.createElement('a-box');
+                leftBank.setAttribute('position', `-${CONFIG.ROAD_WIDTH/2 + 0.5} 0.2 0`);
+                leftBank.setAttribute('width', 1);
+                leftBank.setAttribute('height', 0.4);
+                leftBank.setAttribute('depth', 2.1);
+                leftBank.setAttribute('color', 'white');
+
+                const rightBank = document.createElement('a-box');
+                rightBank.setAttribute('position', `${CONFIG.ROAD_WIDTH/2 + 0.5} 0.2 0`);
+                rightBank.setAttribute('width', 1);
+                rightBank.setAttribute('height', 0.4);
+                rightBank.setAttribute('depth', 2.1);
+                rightBank.setAttribute('color', 'white');
+
+                seg.appendChild(asphalt);
+                seg.appendChild(line);
+                seg.appendChild(leftBank);
+                seg.appendChild(rightBank);
+                
+                const treeBuffer = 4;
+                const spawnChance = 0.3; 
+                
+                if (Math.random() < spawnChance) {
+                    const treeLeft = this.createTree();
+                    const xLeft = -(CONFIG.ROAD_WIDTH/2 + treeBuffer + Math.random() * 5);
+                    treeLeft.setAttribute('position', {x: xLeft, y: 0, z: 0}); 
+                    seg.appendChild(treeLeft);
+                }
+
+                if (Math.random() < spawnChance) {
+                    const treeRight = this.createTree();
+                    const xRight = (CONFIG.ROAD_WIDTH/2 + treeBuffer + Math.random() * 5);
+                    treeRight.setAttribute('position', {x: xRight, y: 0, z: 0});
+                    seg.appendChild(treeRight);
+                }
+
+                this.el.sceneEl.appendChild(seg);
+            },
+
+            createTree: function() {
+                const tree = document.createElement('a-entity');
+                tree.classList.add('tree');
+                // BLOCKY TREE: Use segments-radial="4" to make 4-sided pyramids/prisms
+                tree.innerHTML = `
+                    <a-cylinder color="#5d4037" height="1" radius="0.3" segments-radial="4"></a-cylinder>
+                    <a-cone color="#2e7d32" height="2" radius-bottom="1.2" position="0 1 0" segments-radial="4"></a-cone>
+                    <a-cone color="#2e7d32" height="1.5" radius-bottom="1" position="0 2 0" segments-radial="4"></a-cone>
+                    <a-cone color="white" height="0.8" radius-bottom="0.7" position="0 2.5 0" segments-radial="4"></a-cone>
+                `;
+                return tree;
+            },
+
+            spawnRampCombo: function(zPos) {
+                const roadCenter = this.getRoadCurve(zPos);
+                const xPos = roadCenter;
+
+                // CALCULATE RAMP ANGLE TO MATCH ROAD CURVE
+                // Sample road points slightly ahead and behind to get the vector
+                const z1 = zPos + 1;
+                const x1 = this.getRoadCurve(z1);
+                const z2 = zPos - 1;
+                const x2 = this.getRoadCurve(z2);
+                const dx = x2 - x1;
+                const dz = z2 - z1; // -2
+                const angleRad = Math.atan2(dx, dz);
+                const angleDeg = angleRad * (180 / Math.PI);
+                // Adjust for A-Frame: atan2(0,-1) = 180 (facing -Z). 
+                // A-Frame entities naturally face -Z if rotation is 0. 
+                // If angleDeg is 180, we want rotation 0.
+                // So rotationY = angleDeg - 180.
+                const rotationY = angleDeg - 180;
+
+                const ramp = document.createElement('a-entity');
+                ramp.classList.add('jump-ramp');
+                // Apply the calculated rotation to the container
+                ramp.setAttribute('position', {x: xPos, y: 0, z: zPos});
+                ramp.setAttribute('rotation', {x: 0, y: rotationY, z: 0});
+                
+                // UPDATED GEOMETRY
+                ramp.innerHTML = `
+                    <!-- The Ramp Surface: Rotated 15 so +Z (near player) is low, -Z (far) is high -->
+                    <a-box color="#8D6E63" width="6" height="0.2" depth="6" 
+                           rotation="15 0 0" position="0 0.75 0"></a-box>
+                    
+                    <!-- CHEVRON ARROWS GROUP -->
+                    <!-- Rotated -75 deg on X to lay flat against the 15 deg slope -->
+                    <a-entity position="0 0.8 0" rotation="-75 0 0">
+                        <!-- Arrow 1 (Bottom/Start) -->
+                        <a-triangle color="#FFFF00" vertex-a="0 0.5 0" vertex-b="-0.5 -0.5 0" vertex-c="0.5 -0.5 0" 
+                                    scale="2 2 2" position="0 -1.5 0.1"></a-triangle>
+                        
+                        <!-- Arrow 2 (Middle) -->
+                        <a-triangle color="#FFFF00" vertex-a="0 0.5 0" vertex-b="-0.5 -0.5 0" vertex-c="0.5 -0.5 0" 
+                                    scale="2 2 2" position="0 0 0.1"></a-triangle>
+
+                        <!-- Arrow 3 (Top/End) -->
+                        <a-triangle color="#FFFF00" vertex-a="0 0.5 0" vertex-b="-0.5 -0.5 0" vertex-c="0.5 -0.5 0" 
+                                    scale="2 2 2" position="0 1.5 0.1"></a-triangle>
+                    </a-entity>
+
+                    <a-box color="#5D4037" width="6" height="1" depth="5" 
+                           position="0 0 0" visible="false"></a-box>
+                `;
+                this.el.sceneEl.appendChild(ramp);
+
+                const log = document.createElement('a-entity');
+                log.classList.add('obstacle');
+                // Calculate LOG position based on the SAME rotation
+                // Local offset: -10 Z. We need to project this using the rotation.
+                // Or just append it as a child of the ramp? 
+                // No, obstacle logic might remove ramp but not log if separated. 
+                // But wait, they are spawned together.
+                // However, cleanup is by class.
+                // Let's spawn log independently but calculated correctly.
+                
+                // Simple Math:
+                const offsetZ = -10;
+                // Rotate vector (0, 0, offsetZ) by rotationY
+                const rad = rotationY * (Math.PI / 180);
+                const logX = xPos + (Math.sin(rad) * offsetZ); // A-Frame rotation logic...
+                // Actually, if we rotate Y, Z axis rotates.
+                // New Z component is cos(rad)*offsetZ.
+                // New X component is sin(rad)*offsetZ.
+                // But rotation Y is positive CCW.
+                // Standard 3D rotation: x' = x cos - z sin ?? 
+                // Let's trust simpler logic:
+                // Just use the curve function again for the log's Z position?
+                // The log is at zPos - 10.
+                const logZ = zPos - 10;
+                const logRoadX = this.getRoadCurve(logZ);
+                
+                log.setAttribute('position', {x: logRoadX, y: 0.5, z: logZ}); 
+                // Rotate log to align with road too? (Perpendicular to road)
+                // Tangent angle is rotationY. Perpendicular is rotationY + 90 or -90.
+                // Log was 90deg Z rotation (vertical on side). 
+                // Wait, log is a cylinder on its side.
+                // Original: rotation="0 0 90".
+                // If we want it perpendicular to road, we rotate Y by rotationY.
+                log.setAttribute('rotation', {x: 0, y: rotationY, z: 90});
+
+                // LOW POLY LOG
+                log.innerHTML = `
+                    <a-cylinder color="#4E342E" radius="0.6" height="8" segments-radial="6"></a-cylinder>
+                `;
+                this.el.sceneEl.appendChild(log);
+            },
+
+            spawnEntity: function(zPos) {
+                let isGift = Math.random() < (CONFIG.GIFT_PERCENTAGE / 100);
+                
+                if (this.isFirstSpawn) {
+                    isGift = true;
+                    this.isFirstSpawn = false;
+                }
+
+                const roadCenter = this.getRoadCurve(zPos);
+                const safeWidth = CONFIG.ROAD_WIDTH - 2; 
+                const laneOffset = (Math.random() * safeWidth) - (safeWidth / 2);
+                
+                const xPos = this.isFirstSpawn ? roadCenter : roadCenter + laneOffset;
+
+                const el = document.createElement('a-entity');
+                el.setAttribute('position', {x: xPos, y: 0, z: zPos});
+
+                if (isGift) {
+                    el.classList.add('collectible');
+                    el.innerHTML = `
+                        <a-box position="0 0.5 0" width="0.8" height="0.8" depth="0.8" color="#FFD700"
+                               animation="property: rotation; to: 0 360 0; loop: true; dur: 3000; easing: linear">
+                        </a-box>
+                        <a-box position="0 0.5 0" width="0.82" height="0.82" depth="0.2" color="red"
+                               animation="property: rotation; to: 0 360 0; loop: true; dur: 3000; easing: linear"></a-box>
+                        <a-box position="0 0.5 0" width="0.2" height="0.82" depth="0.82" color="red"
+                               animation="property: rotation; to: 0 360 0; loop: true; dur: 3000; easing: linear"></a-box>
+                    `;
+                } else {
+                    el.classList.add('obstacle');
+                    const types = ['snowman', 'sled', 'wreath', 'candy', 'gingerbread'];
+                    const type = types[Math.floor(Math.random() * types.length)];
+
+                    if (type === 'snowman') {
+                        // 8-BIT SNOWMAN (Using Boxes)
+                        el.innerHTML = `
+                            <a-entity scale="1.2 1.2 1.2">
+                                <!-- Body Base -->
+                                <a-box position="0 0.5 0" width="1" height="1" depth="1" color="white"></a-box>
+                                <!-- Body Middle -->
+                                <a-box position="0 1.2 0" width="0.7" height="0.7" depth="0.7" color="white"></a-box>
+                                <!-- Head -->
+                                <a-box position="0 1.7 0" width="0.4" height="0.4" depth="0.4" color="white"></a-box>
+                                
+                                <!-- Carrot nose (Pyramid) -->
+                                <a-cone position="0 1.7 0.2" radius-bottom="0.05" height="0.2" rotation="90 0 0" color="orange" segments-radial="4"></a-cone>
+                                
+                                <!-- Stick Arms (Brown Boxes) -->
+                                <a-box position="0.45 1.3 0" width="0.6" height="0.05" depth="0.05" rotation="0 0 -30" color="#5D4037"></a-box>
+                                <a-box position="-0.45 1.3 0" width="0.6" height="0.05" depth="0.05" rotation="0 0 30" color="#5D4037"></a-box>
+
+                                <!-- Top Hat -->
+                                <!-- Brim -->
+                                <a-box position="0 1.9 0" width="0.6" height="0.05" depth="0.6" color="#111"></a-box>
+                                <!-- Top -->
+                                <a-box position="0 2.1 0" width="0.35" height="0.4" depth="0.35" color="#111"></a-box>
+                            </a-entity>
+                        `;
+                    } else if (type === 'sled') {
+                        el.innerHTML = `<a-box position="0 0.5 0" width="1.5" height="0.6" depth="1.5" color="#8a1c1d"></a-box>`;
+                    } else if (type === 'wreath') {
+                        // Low poly wreath
+                        el.innerHTML = `
+                            <a-torus position="0 1 0" radius="0.8" radius-tubular="0.2" color="#2e7d32" segments-tubular="8" segments-radial="6"></a-torus>
+                            <a-cylinder position="0 0 0" height="2" radius="0.1" color="#5d4037" segments-radial="4"></a-cylinder>
+                        `;
+                    } else if (type === 'candy') {
+                        // 8-BIT VOXEL CANDY CANE (Red & White blocks)
+                        // Built manually with boxes to form a J shape
+                        el.innerHTML = `
+                            <a-entity scale="1.5 1.5 1.5" position="0 0 0" rotation="0 -90 0">
+                                <!-- Main Stem -->
+                                <a-box color="white" width="0.2" depth="0.2" height="0.4" position="0 0.2 0"></a-box>
+                                <a-box color="red"   width="0.2" depth="0.2" height="0.4" position="0 0.6 0"></a-box>
+                                <a-box color="white" width="0.2" depth="0.2" height="0.4" position="0 1.0 0"></a-box>
+                                <a-box color="red"   width="0.2" depth="0.2" height="0.4" position="0 1.4 0"></a-box>
+                                <a-box color="white" width="0.2" depth="0.2" height="0.4" position="0 1.8 0"></a-box>
+                                
+                                <!-- Curve Top -->
+                                <a-box color="red"   width="0.2" depth="0.2" height="0.22" position="0 2.1 0"></a-box>
+                                <a-box color="white" width="0.2" depth="0.2" height="0.22" position="0 2.2 0.15" rotation="10 0 0"></a-box>
+                                <a-box color="red"   width="0.2" depth="0.2" height="0.22" position="0 2.15 0.35" rotation="45 0 0"></a-box>
+                                <a-box color="white" width="0.2" depth="0.2" height="0.22" position="0 2.0 0.5" rotation="90 0 0"></a-box>
+                                
+                                <!-- Hook Tip -->
+                                <a-box color="red"   width="0.2" depth="0.2" height="0.3" position="0 1.75 0.5"></a-box>
+                            </a-entity>
+                        `;
+                    } else if (type === 'gingerbread') {
+                        el.innerHTML = `<a-box position="0 1 0" width="1" height="1.8" depth="0.3" color="#795548"></a-box>`;
+                    }
+                }
+
+                this.el.sceneEl.appendChild(el);
+            },
+
+            cleanupEntities: function(playerZ) {
+                const cleanupZ = playerZ + 50; 
+                // Add jump-ramp to cleanup list
+                const objects = document.querySelectorAll('.obstacle, .collectible, .jump-ramp');
+                objects.forEach(obs => {
+                    if (obs.object3D.position.z > cleanupZ) obs.parentNode.removeChild(obs);
+                });
+                const segments = document.querySelectorAll('.road-segment');
+                segments.forEach(seg => {
+                    if (seg.object3D.position.z > cleanupZ) seg.parentNode.removeChild(seg);
+                });
+            }
+        });
+
+        // ==========================================
+        // COMPONENT: PLAYER CONTROLS
+        // ==========================================
+        AFRAME.registerComponent('player-controls', {
+            init: function () {
+                this.directionX = 0;
+                this.visualSteering = 0; 
+                this.velocityY = 0; // Vertical Velocity for jumping
+                this.isJumping = false;
+                
+                this.worldManager = null;
+                this.gameManager = null;
+                this.frontWheels = null; 
+
+                window.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft' || e.key === 'a') this.directionX = -1;
+                    if (e.key === 'ArrowRight' || e.key === 'd') this.directionX = 1;
+                });
+                window.addEventListener('keyup', (e) => {
+                    if (['ArrowLeft', 'a', 'ArrowRight', 'd'].includes(e.key)) this.directionX = 0;
+                });
+                window.addEventListener('touchstart', (e) => {
+                    const touchX = e.touches[0].clientX;
+                    this.directionX = touchX < window.innerWidth / 2 ? -1 : 1;
+                });
+                window.addEventListener('touchend', () => this.directionX = 0);
+            },
+
+            tick: function (time, timeDelta) {
+                if (!gameState.isPlaying || gameState.isPaused) return;
+
+                if (!this.worldManager) {
+                    this.worldManager = this.el.sceneEl.components['world-manager'];
+                    this.gameManager = this.el.sceneEl.components['game-manager'];
+                    if (!this.worldManager) return;
+                }
+
+                const pos = this.el.getAttribute('position');
+                const dt = timeDelta / 1000;
+
+                // --- STEERING ---
+                const steeringSpeed = 10 * dt; 
+                const targetSteer = this.directionX;
+                if (this.visualSteering < targetSteer) {
+                    this.visualSteering = Math.min(this.visualSteering + steeringSpeed, targetSteer);
+                } else if (this.visualSteering > targetSteer) {
+                    this.visualSteering = Math.max(this.visualSteering - steeringSpeed, targetSteer);
+                }
+
+                // --- SPEED ---
+                let currentSpeed = CONFIG.PLAYER_SPEED;
+                if (gameState.timeRemaining < 10) {
+                    const factor = gameState.timeRemaining / 10;
+                    currentSpeed = CONFIG.PLAYER_SPEED * factor;
+                    currentSpeed = Math.max(currentSpeed, 0); 
+                }
+
+                // --- JUMP & GRAVITY ---
+                // Apply Gravity if above ground
+                if (pos.y > 0.5) {
+                    this.velocityY -= CONFIG.GRAVITY * dt;
+                }
+                pos.y += this.velocityY * dt;
+
+                // Floor Collision
+                if (pos.y < 0.5) {
+                    pos.y = 0.5;
+                    this.velocityY = 0;
+                    this.isJumping = false;
+                }
+
+                pos.z -= currentSpeed * dt;
+                pos.x += this.directionX * CONFIG.LATERAL_SPEED * dt;
+
+                // Road Constraint
+                const roadCenterX = this.worldManager.getRoadCurve(pos.z);
+                const limitLeft = roadCenterX - (CONFIG.ROAD_WIDTH / 2) + 0.8; 
+                const limitRight = roadCenterX + (CONFIG.ROAD_WIDTH / 2) - 0.8;
+
+                if (pos.x < limitLeft) pos.x = limitLeft;
+                if (pos.x > limitRight) pos.x = limitRight;
+
+                this.el.setAttribute('position', pos);
+
+                // Rotation Visuals
+                const visuals = document.getElementById('truck-visuals');
+                // When in air, pitch up slightly then down
+                let pitch = 0;
+                if (pos.y > 0.6) {
+                    // Simple pitch effect based on velocity
+                    pitch = this.velocityY * 2; 
+                }
+
+                visuals.setAttribute('rotation', {
+                    x: pitch, 
+                    y: this.visualSteering * -10,  
+                    z: this.visualSteering * -8   
+                });
+
+                if (!this.frontWheels) {
+                    this.frontWheels = document.querySelectorAll('.front-wheel');
+                }
+                
+                this.frontWheels.forEach(wheel => {
+                    wheel.setAttribute('rotation', {
+                        x: 0, 
+                        y: this.visualSteering * -35,
+                        z: 0 
+                    });
+                });
+
+                this.checkCollisions(pos);
+            },
+
+            checkCollisions: function(playerPos) {
+                // Check RAMPS
+                const ramps = document.querySelectorAll('.jump-ramp');
+                ramps.forEach(ramp => {
+                    const rPos = ramp.getAttribute('position');
+                    // Check if entering ramp trigger zone
+                    if (Math.abs(rPos.z - playerPos.z) < 2.0 && Math.abs(rPos.x - playerPos.x) < 3.0) {
+                        if (playerPos.y < 1.0) { // Only jump if on ground
+                            this.velocityY = CONFIG.JUMP_VELOCITY;
+                            this.isJumping = true;
+                        }
+                    }
+                });
+
+                // Check OBSTACLES & GIFTS
+                const interactables = document.querySelectorAll('.obstacle, .collectible');
+                interactables.forEach(el => {
+                    const pos = el.getAttribute('position');
+                    
+                    if (Math.abs(pos.z - playerPos.z) < 1.5) {
+                        if (Math.abs(pos.x - playerPos.x) < 1.3) {
+                            
+                            // VERTICAL CLEARANCE CHECK
+                            // If player is high enough (jumping), ignore collision with low obstacles
+                            // Logs usually sit at y=0.5. Player at 0.5 hits. Player at 2.0 clears.
+                            // Give a generous clearance.
+                            if (playerPos.y - pos.y > 1.2) {
+                                return; // Cleared it!
+                            }
+
+                            this.handleCollision(el);
+                        }
+                    }
+                });
+            },
+
+            handleCollision: function(el) {
+                if (el.classList.contains('collectible')) {
+                    gameState.score += 1;
+                    if (this.gameManager) this.gameManager.playCollectSound();
+                    
+                    const overlay = document.querySelector('#collect-overlay');
+                    overlay.style.opacity = 0.6;
+                    setTimeout(() => overlay.style.opacity = 0, 100);
+                } else {
+                    gameState.score = Math.max(0, gameState.score - 1);
+                    if (this.gameManager) this.gameManager.playCrashSound();
+                    
+                    const overlay = document.querySelector('#damage-overlay');
+                    overlay.style.opacity = 0.6;
+                    setTimeout(() => overlay.style.opacity = 0, 100);
+                    
+                    this.el.emit('hit');
+                }
+                el.parentNode.removeChild(el);
+            }
+        });
+
+        // ==========================================
+        // SYSTEM: SNOW PARTICLES (WORLD SPACE)
+        // ==========================================
+        AFRAME.registerSystem('snow-system', {
+            init: function() {
+                this.flakes = [];
+                // More flakes spread over larger area
+                const count = 1000; 
+                const scene = document.querySelector('a-scene');
+                
+                for (let i = 0; i < count; i++) {
+                    // 8-BIT SNOW: USE A-BOX (Squares) INSTEAD OF SPHERES
+                    const flake = document.createElement('a-box');
+                    flake.setAttribute('width', 0.15); 
+                    flake.setAttribute('height', 0.15); 
+                    flake.setAttribute('depth', 0.15);
+                    flake.setAttribute('color', 'white');
+                    flake.setAttribute('opacity', 0);
+                    flake.setAttribute('shader', 'flat');
+                    
+                    // Initial positions don't matter much as they reset in tick
+                    flake.setAttribute('position', {x: 0, y: 100, z: 0});
+                    scene.appendChild(flake);
+                    
+                    this.flakes.push({ 
+                        el: flake, 
+                        speed: 2 + Math.random() * 3, // Fall speed
+                        xOffset: (Math.random() - 0.5) * 60, // Wide spread X
+                        zOffset: (Math.random() * 250) + 10 // Forward distance INCREASED to fill view
+                    });
+                }
+            },
+            setIntensity: function(val) {
+                // Max opacity 0.8
+                this.flakes.forEach(f => f.el.setAttribute('opacity', Math.min(val, 0.8)));
+            },
+            tick: function(t, dt) {
+                if (!gameState.isPlaying || gameState.isPaused) return;
+                
+                const player = document.querySelector('#player');
+                if(!player) return;
+                
+                const playerPos = player.getAttribute('position');
+                const dtSec = dt / 1000;
+
+                this.flakes.forEach(f => {
+                    const el = f.el;
+                    const currentPos = el.getAttribute('position');
+                    
+                    // Update physics (Fall down)
+                    currentPos.y -= f.speed * dtSec;
+                    
+                    // Logic: If too low OR too far behind player
+                    // Reset to a new position in FRONT of player
+                    if (currentPos.y < 0 || currentPos.z > playerPos.z + 5) {
+                        currentPos.y = 15 + Math.random() * 10;
+                        currentPos.x = playerPos.x + f.xOffset;
+                        currentPos.z = playerPos.z - f.zOffset;
+                    }
+                    
+                    el.setAttribute('position', currentPos);
+                });
+            }
+        });
+    </script>
+
+    <!-- UI HTML -->
+    <div id="ui-layer">
+        <div id="gift-counter" class="hud-item">
+            <i class="fas fa-gift" style="color: gold;"></i>
+            <span id="score-val">0</span>
+        </div>
+        <div id="timer" class="hud-item">
+            <i class="fas fa-clock"></i>
+            <span id="timer-val">1:30</span>
+        </div>
+        
+        <button id="pause-btn">
+            <i class="fas fa-pause"></i>
+        </button>
+        
+        <div id="damage-overlay"></div>
+        <div id="collect-overlay"></div>
+        
+        <div id="start-screen">
+            <h1>Christmas Delivery<br>Run</h1>
+            <p>Collect the gifts!</p>
+            <p style="font-size: 14px; margin-top:5px; color:#ddd">Keyboard Arrows to Steer</p>
+            <button id="start-btn">INSERT COIN</button>
+        </div>
+
+        <div id="pause-menu">
+            <h1 style="color: #fff; text-shadow: 4px 4px 0 #000;">PAUSED</h1>
+            <button id="resume-btn" class="menu-btn">
+                <i class="fas fa-play"></i> RESUME
+            </button>
+            <button id="restart-btn" class="menu-btn" style="background: #a02020;">
+                <i class="fas fa-redo"></i> RESTART
+            </button>
+        </div>
+
+        <div id="end-screen">
+            <img id="end-image" src="" alt="">
+            <div class="end-text" id="end-msg"></div>
+            <button id="play-again-btn">
+                <i class="fas fa-redo"></i> PLAY AGAIN
+            </button>
+        </div>
+        
+        <div id="mobile-hint">Tap Left/Right to Steer</div>
+    </div>
+
+    <!-- A-FRAME SCENE -->
+    <!-- UPDATED FOG SETTINGS: Linear fog for better control -->
+    <!-- DISABLED ANTIALIAS for retro pixelated look -->
+    <a-scene 
+        vr-mode-ui="enabled: false"
+        game-manager 
+        world-manager 
+        background="color: #a4c4d6"
+        fog="type: linear; color: #a4c4d6; near: 50; far: 300" 
+        renderer="antialias: false; highRefreshRate: true; colorManagement: true;">
+
+        <!-- ASSETS -->
+        <a-assets>
+            <!-- Add glTF assets here later -->
+        </a-assets>
+
+        <!-- REMOVED SKY GEOMETRY TO PREVENT "REACHING THE WALL" -->
+        
+        <!-- BASE GROUND PLANE (Snow field underneath everything) -->
+        <a-plane id="ground" 
+                 rotation="-90 0 0" 
+                 width="200" height="200" 
+                 color="#e0f7fa"
+                 material="roughness: 1; metalness: 0">
+        </a-plane>
+
+        <!-- PLAYER -->
+        <a-entity id="player" position="0 0.5 0" player-controls>
+            
+            <!-- CAMERA: Far clip just beyond fog -->
+            <a-entity id="main-camera" camera="far: 400;" position="0 6 7" rotation="-25 0 0">
+                 <!-- Snow attached here -->
+            </a-entity>
+
+            <!-- TRUCK VISUALS -->
+            <a-entity id="truck-visuals" animation__hit="property: position; from: 0 0 0; to: 0.1 0 0; dur: 50; dir: alternate; loop: 4; startEvents: hit">
+                
+                <!-- Body -->
+                <a-box color="#d32f2f" width="1.4" height="0.8" depth="2.8" position="0 0.4 0" shadow></a-box>
+                <!-- Cabin -->
+                <a-box color="#b71c1c" width="1.3" height="0.7" depth="1.0" position="0 1.1 -0.5" shadow></a-box>
+                <!-- Windshield -->
+                <a-plane color="#87ceeb" width="1.1" height="0.5" position="0 1.2 -1.01" rotation="0 180 0"></a-plane>
+                
+                <!-- Wheels (Low Poly - 8 segments) -->
+                <a-cylinder color="#222" radius="0.4" height="0.4" rotation="0 0 90" position="0.8 0.4 0.8" segments-radial="8"></a-cylinder>
+                <a-cylinder color="#222" radius="0.4" height="0.4" rotation="0 0 90" position="-0.8 0.4 0.8" segments-radial="8"></a-cylinder>
+                
+                <!-- Front Wheels (Steerable - Low Poly) -->
+                <a-entity class="front-wheel" position="0.8 0.4 -0.8">
+                    <a-cylinder color="#222" radius="0.4" height="0.4" rotation="0 0 90" segments-radial="8"></a-cylinder>
+                </a-entity>
+                <a-entity class="front-wheel" position="-0.8 0.4 -0.8">
+                    <a-cylinder color="#222" radius="0.4" height="0.4" rotation="0 0 90" segments-radial="8"></a-cylinder>
+                </a-entity>
+
+                <!-- Cargo (Low Poly) -->
+                <a-entity position="0 0.8 0.8">
+                    <a-cone color="#2e7d32" radius-bottom="0.5" height="1.2" position="0 0.2 0" segments-radial="4"></a-cone>
+                    <a-box color="#ffd700" depth="0.4" height="0.4" width="0.4" position="0.4 0.2 0.4"></a-box>
+                    <a-box color="#ff0000" depth="0.3" height="0.3" width="0.3" position="-0.4 0.15 0.3"></a-box>
+                </a-entity>
+                
+                <!-- Headlights -->
+                <a-entity light="type: spot; angle: 35; penumbra: 0.5; intensity: 1.5; distance: 30; decay: 2" position="0.5 0.8 -1.4" rotation="-15 0 0"></a-entity>
+                <a-entity light="type: spot; angle: 35; penumbra: 0.5; intensity: 1.5; distance: 30; decay: 2" position="-0.5 0.8 -1.4" rotation="-15 0 0"></a-entity>
+            </a-entity>
+        </a-entity>
+        
+        <!-- LIGHTING -->
+        <a-entity light="type: ambient; color: #FFF; intensity: 0.7"></a-entity>
+        <a-entity light="type: directional; color: #FFF; intensity: 0.8" position="-10 20 5" shadow></a-entity>
+
+    </a-scene>
+</body>
+</html>
