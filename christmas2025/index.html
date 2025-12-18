@@ -16,15 +16,15 @@
     <style>
         body { 
             margin: 0; 
-    overflow: hidden; 
-    font-family: 'Press Start 2P', cursive; 
-    
-    /* PREVENT SELECTION & MENU POPUPS */
-    user-select: none;              /* Standard */
-    -webkit-user-select: none;      /* Safari / Chrome */
-    -webkit-touch-callout: none;    /* iOS Safari: Hides the magnifying glass/menu */
-    touch-action: none;             /* Prevents browser zooming/panning gestures */
-}
+            overflow: hidden; 
+            font-family: 'Press Start 2P', cursive; 
+            
+            /* PREVENT SELECTION & MENU POPUPS */
+            user-select: none;              /* Standard */
+            -webkit-user-select: none;      /* Safari / Chrome */
+            -webkit-touch-callout: none;    /* iOS Safari: Hides the magnifying glass/menu */
+            touch-action: none;             /* Prevents browser zooming/panning gestures */
+        }
         
         /* UI OVERLAYS */
         #ui-layer {
@@ -72,6 +72,48 @@
         }
         #pause-btn:hover { background: #333; }
 
+        /* ARCADE CONTROLS - 8-BIT STYLE */
+        .arcade-btn {
+            position: absolute;
+            bottom: 40px;
+            width: 85px;
+            height: 85px;
+            
+            background: #d32f2f; /* Red */
+            border: 4px solid #fff;
+            border-radius: 0; /* Square for 8-bit look */
+            
+            /* Hard Shadow matching other UI elements */
+            box-shadow: 8px 8px 0 #000;
+            
+            cursor: pointer;
+            z-index: 100;
+            pointer-events: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.1s, box-shadow 0.1s;
+            -webkit-tap-highlight-color: transparent;
+            
+            /* Text Style */
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 30px;
+            text-shadow: 4px 4px 0 #000;
+            
+            /* Prevent text selection */
+            user-select: none;
+        }
+
+        .arcade-btn:active, .arcade-btn.pressed {
+            transform: translate(6px, 6px); /* Diagonal press animation */
+            box-shadow: 2px 2px 0 #000; /* Reduced shadow */
+            background-color: #f44336; /* Lighter red */
+        }
+
+        .arcade-btn-left { left: 30px; }
+        .arcade-btn-right { right: 30px; }
+
         /* PAUSE MENU */
         #pause-menu {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -99,7 +141,7 @@
             padding: 0 20px;
         }
         
-        button {
+        button.menu-btn, button#start-btn, button#play-again-btn {
             padding: 20px 30px; font-size: 20px;
             background: #2e7d32; color: white;
             border: 4px solid #fff; border-radius: 0;
@@ -144,9 +186,53 @@
 
         /* MOBILE CONTROLS HINT */
         #mobile-hint {
-            position: absolute; bottom: 20px; width: 100%;
-            text-align: center; color: rgba(255,255,255,0.8);
-            font-size: 12px; text-shadow: 2px 2px 0 black;
+            position: absolute; bottom: 10px; width: 100%;
+            text-align: center; color: rgba(255,255,255,0.5);
+            font-size: 10px; text-shadow: 1px 1px 0 black;
+            pointer-events: none;
+        }
+
+        /* NEW: 8-BIT GIFT ANIMATION */
+        .instruction-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .pixel-gift {
+            position: relative;
+            width: 24px; 
+            height: 24px;
+            background-color: #d32f2f;
+            border: 4px solid #fff; /* Thick retro border */
+            box-shadow: 6px 6px 0 #000; /* Hard shadow */
+            animation: bounce 0.8s infinite steps(2); /* Jerky 8-bit bounce */
+        }
+        
+        /* Vertical Ribbon */
+        .pixel-gift::before {
+            content: ''; 
+            position: absolute;
+            left: 8px; top: 0; 
+            width: 8px; height: 100%;
+            background: #ffeb3b;
+        }
+        
+        /* Horizontal Ribbon */
+        .pixel-gift::after {
+            content: ''; 
+            position: absolute;
+            top: 8px; left: 0; 
+            width: 100%; height: 8px;
+            background: #ffeb3b;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
         }
     </style>
 </head>
@@ -225,6 +311,9 @@
                 document.querySelector('#start-screen').style.display = 'none';
                 this.endScreen.style.display = 'none';
                 this.pauseBtn.style.display = 'flex';
+                // Show arcade buttons
+                document.querySelectorAll('.arcade-btn').forEach(b => b.style.display = 'flex');
+                
                 gameState.isPlaying = true;
                 gameState.isPaused = false;
                 this.bgMusic.currentTime = 0;
@@ -278,6 +367,9 @@
             endGame: function() {
                 gameState.isPlaying = false;
                 this.pauseBtn.style.display = 'none';
+                // Hide arcade buttons
+                document.querySelectorAll('.arcade-btn').forEach(b => b.style.display = 'none');
+                
                 this.bgMusic.pause();
                 
                 setTimeout(() => {
@@ -295,8 +387,6 @@
                 el.setAttribute('rotation', {x: 0, y: -45, z: 0});
                 
                 // LOW POLY / 8-BIT COTTAGE
-                // Using segments-radial=4 on cones to make them pyramids
-                // Using boxes instead of spheres
                 el.innerHTML = `
                     <a-box color="#5D4037" width="6" height="3" depth="5" position="0 1.5 0"></a-box>
                     
@@ -434,9 +524,7 @@
                 // 2. Entity Generation (Gifts, Obstacles, RAMPS) - TIME BASED
                 if (performance.now() > this.nextSpawnTime) {
                     // Check if we should spawn a ramp here based on distance travelled approx
-                    // Threshold check:
                     let isRampLocation = false;
-                    // Approximate Z position for ramps based on timing? Or check player Z
                     if (this.rampsSpawned === 0 && playerZ < -400) isRampLocation = true;
                     if (this.rampsSpawned === 1 && playerZ < -900) isRampLocation = true;
                     if (this.rampsSpawned === 2 && playerZ < -1400) isRampLocation = true;
@@ -538,45 +626,30 @@
                 const xPos = roadCenter;
 
                 // CALCULATE RAMP ANGLE TO MATCH ROAD CURVE
-                // Sample road points slightly ahead and behind to get the vector
                 const z1 = zPos + 1;
                 const x1 = this.getRoadCurve(z1);
                 const z2 = zPos - 1;
                 const x2 = this.getRoadCurve(z2);
                 const dx = x2 - x1;
-                const dz = z2 - z1; // -2
+                const dz = z2 - z1; 
                 const angleRad = Math.atan2(dx, dz);
                 const angleDeg = angleRad * (180 / Math.PI);
-                // Adjust for A-Frame: atan2(0,-1) = 180 (facing -Z). 
-                // A-Frame entities naturally face -Z if rotation is 0. 
-                // If angleDeg is 180, we want rotation 0.
-                // So rotationY = angleDeg - 180.
                 const rotationY = angleDeg - 180;
 
                 const ramp = document.createElement('a-entity');
                 ramp.classList.add('jump-ramp');
-                // Apply the calculated rotation to the container
                 ramp.setAttribute('position', {x: xPos, y: 0, z: zPos});
                 ramp.setAttribute('rotation', {x: 0, y: rotationY, z: 0});
                 
-                // UPDATED GEOMETRY
                 ramp.innerHTML = `
-                    <!-- The Ramp Surface: Rotated 15 so +Z (near player) is low, -Z (far) is high -->
                     <a-box color="#8D6E63" width="6" height="0.2" depth="6" 
                            rotation="15 0 0" position="0 0.75 0"></a-box>
                     
-                    <!-- CHEVRON ARROWS GROUP -->
-                    <!-- Rotated -75 deg on X to lay flat against the 15 deg slope -->
                     <a-entity position="0 0.8 0" rotation="-75 0 0">
-                        <!-- Arrow 1 (Bottom/Start) -->
                         <a-triangle color="#FFFF00" vertex-a="0 0.5 0" vertex-b="-0.5 -0.5 0" vertex-c="0.5 -0.5 0" 
                                     scale="2 2 2" position="0 -1.5 0.1"></a-triangle>
-                        
-                        <!-- Arrow 2 (Middle) -->
                         <a-triangle color="#FFFF00" vertex-a="0 0.5 0" vertex-b="-0.5 -0.5 0" vertex-c="0.5 -0.5 0" 
                                     scale="2 2 2" position="0 0 0.1"></a-triangle>
-
-                        <!-- Arrow 3 (Top/End) -->
                         <a-triangle color="#FFFF00" vertex-a="0 0.5 0" vertex-b="-0.5 -0.5 0" vertex-c="0.5 -0.5 0" 
                                     scale="2 2 2" position="0 1.5 0.1"></a-triangle>
                     </a-entity>
@@ -586,42 +659,14 @@
                 `;
                 this.el.sceneEl.appendChild(ramp);
 
-                const log = document.createElement('a-entity');
-                log.classList.add('obstacle');
-                // Calculate LOG position based on the SAME rotation
-                // Local offset: -10 Z. We need to project this using the rotation.
-                // Or just append it as a child of the ramp? 
-                // No, obstacle logic might remove ramp but not log if separated. 
-                // But wait, they are spawned together.
-                // However, cleanup is by class.
-                // Let's spawn log independently but calculated correctly.
-                
-                // Simple Math:
                 const offsetZ = -10;
-                // Rotate vector (0, 0, offsetZ) by rotationY
-                const rad = rotationY * (Math.PI / 180);
-                const logX = xPos + (Math.sin(rad) * offsetZ); // A-Frame rotation logic...
-                // Actually, if we rotate Y, Z axis rotates.
-                // New Z component is cos(rad)*offsetZ.
-                // New X component is sin(rad)*offsetZ.
-                // But rotation Y is positive CCW.
-                // Standard 3D rotation: x' = x cos - z sin ?? 
-                // Let's trust simpler logic:
-                // Just use the curve function again for the log's Z position?
-                // The log is at zPos - 10.
                 const logZ = zPos - 10;
                 const logRoadX = this.getRoadCurve(logZ);
-                
+                const log = document.createElement('a-entity');
+                log.classList.add('obstacle');
                 log.setAttribute('position', {x: logRoadX, y: 0.5, z: logZ}); 
-                // Rotate log to align with road too? (Perpendicular to road)
-                // Tangent angle is rotationY. Perpendicular is rotationY + 90 or -90.
-                // Log was 90deg Z rotation (vertical on side). 
-                // Wait, log is a cylinder on its side.
-                // Original: rotation="0 0 90".
-                // If we want it perpendicular to road, we rotate Y by rotationY.
                 log.setAttribute('rotation', {x: 0, y: rotationY, z: 90});
 
-                // LOW POLY LOG
                 log.innerHTML = `
                     <a-cylinder color="#4E342E" radius="0.6" height="8" segments-radial="6"></a-cylinder>
                 `;
@@ -662,57 +707,37 @@
                     const type = types[Math.floor(Math.random() * types.length)];
 
                     if (type === 'snowman') {
-                        // 8-BIT SNOWMAN (Using Boxes)
                         el.innerHTML = `
                             <a-entity scale="1.2 1.2 1.2">
-                                <!-- Body Base -->
                                 <a-box position="0 0.5 0" width="1" height="1" depth="1" color="white"></a-box>
-                                <!-- Body Middle -->
                                 <a-box position="0 1.2 0" width="0.7" height="0.7" depth="0.7" color="white"></a-box>
-                                <!-- Head -->
                                 <a-box position="0 1.7 0" width="0.4" height="0.4" depth="0.4" color="white"></a-box>
-                                
-                                <!-- Carrot nose (Pyramid) -->
                                 <a-cone position="0 1.7 0.2" radius-bottom="0.05" height="0.2" rotation="90 0 0" color="orange" segments-radial="4"></a-cone>
-                                
-                                <!-- Stick Arms (Brown Boxes) -->
                                 <a-box position="0.45 1.3 0" width="0.6" height="0.05" depth="0.05" rotation="0 0 -30" color="#5D4037"></a-box>
                                 <a-box position="-0.45 1.3 0" width="0.6" height="0.05" depth="0.05" rotation="0 0 30" color="#5D4037"></a-box>
-
-                                <!-- Top Hat -->
-                                <!-- Brim -->
                                 <a-box position="0 1.9 0" width="0.6" height="0.05" depth="0.6" color="#111"></a-box>
-                                <!-- Top -->
                                 <a-box position="0 2.1 0" width="0.35" height="0.4" depth="0.35" color="#111"></a-box>
                             </a-entity>
                         `;
                     } else if (type === 'sled') {
                         el.innerHTML = `<a-box position="0 0.5 0" width="1.5" height="0.6" depth="1.5" color="#8a1c1d"></a-box>`;
                     } else if (type === 'wreath') {
-                        // Low poly wreath
                         el.innerHTML = `
                             <a-torus position="0 1 0" radius="0.8" radius-tubular="0.2" color="#2e7d32" segments-tubular="8" segments-radial="6"></a-torus>
                             <a-cylinder position="0 0 0" height="2" radius="0.1" color="#5d4037" segments-radial="4"></a-cylinder>
                         `;
                     } else if (type === 'candy') {
-                        // 8-BIT VOXEL CANDY CANE (Red & White blocks)
-                        // Built manually with boxes to form a J shape
                         el.innerHTML = `
                             <a-entity scale="1.5 1.5 1.5" position="0 0 0" rotation="0 -90 0">
-                                <!-- Main Stem -->
                                 <a-box color="white" width="0.2" depth="0.2" height="0.4" position="0 0.2 0"></a-box>
                                 <a-box color="red"   width="0.2" depth="0.2" height="0.4" position="0 0.6 0"></a-box>
                                 <a-box color="white" width="0.2" depth="0.2" height="0.4" position="0 1.0 0"></a-box>
                                 <a-box color="red"   width="0.2" depth="0.2" height="0.4" position="0 1.4 0"></a-box>
                                 <a-box color="white" width="0.2" depth="0.2" height="0.4" position="0 1.8 0"></a-box>
-                                
-                                <!-- Curve Top -->
                                 <a-box color="red"   width="0.2" depth="0.2" height="0.22" position="0 2.1 0"></a-box>
                                 <a-box color="white" width="0.2" depth="0.2" height="0.22" position="0 2.2 0.15" rotation="10 0 0"></a-box>
                                 <a-box color="red"   width="0.2" depth="0.2" height="0.22" position="0 2.15 0.35" rotation="45 0 0"></a-box>
                                 <a-box color="white" width="0.2" depth="0.2" height="0.22" position="0 2.0 0.5" rotation="90 0 0"></a-box>
-                                
-                                <!-- Hook Tip -->
                                 <a-box color="red"   width="0.2" depth="0.2" height="0.3" position="0 1.75 0.5"></a-box>
                             </a-entity>
                         `;
@@ -726,7 +751,6 @@
 
             cleanupEntities: function(playerZ) {
                 const cleanupZ = playerZ + 50; 
-                // Add jump-ramp to cleanup list
                 const objects = document.querySelectorAll('.obstacle, .collectible, .jump-ramp');
                 objects.forEach(obs => {
                     if (obs.object3D.position.z > cleanupZ) obs.parentNode.removeChild(obs);
@@ -752,18 +776,69 @@
                 this.gameManager = null;
                 this.frontWheels = null; 
 
+                // BUTTON CONTROLS (Arcade Style)
+                const btnLeft = document.getElementById('btn-left');
+                const btnRight = document.getElementById('btn-right');
+
+                // KEYBOARD CONTROLS
                 window.addEventListener('keydown', (e) => {
-                    if (e.key === 'ArrowLeft' || e.key === 'a') this.directionX = -1;
-                    if (e.key === 'ArrowRight' || e.key === 'd') this.directionX = 1;
+                    if (e.key === 'ArrowLeft' || e.key === 'a') {
+                        this.setDirection(-1);
+                        if (btnLeft) btnLeft.classList.add('pressed');
+                    }
+                    if (e.key === 'ArrowRight' || e.key === 'd') {
+                        this.setDirection(1);
+                        if (btnRight) btnRight.classList.add('pressed');
+                    }
                 });
                 window.addEventListener('keyup', (e) => {
-                    if (['ArrowLeft', 'a', 'ArrowRight', 'd'].includes(e.key)) this.directionX = 0;
+                    if (e.key === 'ArrowLeft' || e.key === 'a') {
+                        // Only stop steering if we are currently steering left
+                        if (this.directionX === -1) this.setDirection(0);
+                        if (btnLeft) btnLeft.classList.remove('pressed');
+                    }
+                    if (e.key === 'ArrowRight' || e.key === 'd') {
+                        // Only stop steering if we are currently steering right
+                        if (this.directionX === 1) this.setDirection(0);
+                        if (btnRight) btnRight.classList.remove('pressed');
+                    }
                 });
-                window.addEventListener('touchstart', (e) => {
-                    const touchX = e.touches[0].clientX;
-                    this.directionX = touchX < window.innerWidth / 2 ? -1 : 1;
-                });
-                window.addEventListener('touchend', () => this.directionX = 0);
+
+                // Helper to add pressed visual state
+                const pressBtn = (btn, dir) => {
+                    btn.classList.add('pressed');
+                    this.setDirection(dir);
+                };
+                const releaseBtn = (btn) => {
+                    btn.classList.remove('pressed');
+                    // Only reset if we are releasing the current active direction
+                    // Simple logic: if both released, reset.
+                    this.setDirection(0);
+                };
+
+                // Mouse/Touch Events for Left Button
+                if (btnLeft) {
+                    btnLeft.addEventListener('mousedown', () => pressBtn(btnLeft, -1));
+                    btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); pressBtn(btnLeft, -1); });
+                    
+                    btnLeft.addEventListener('mouseup', () => releaseBtn(btnLeft));
+                    btnLeft.addEventListener('mouseleave', () => releaseBtn(btnLeft));
+                    btnLeft.addEventListener('touchend', () => releaseBtn(btnLeft));
+                }
+
+                // Mouse/Touch Events for Right Button
+                if (btnRight) {
+                    btnRight.addEventListener('mousedown', () => pressBtn(btnRight, 1));
+                    btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); pressBtn(btnRight, 1); });
+
+                    btnRight.addEventListener('mouseup', () => releaseBtn(btnRight));
+                    btnRight.addEventListener('mouseleave', () => releaseBtn(btnRight));
+                    btnRight.addEventListener('touchend', () => releaseBtn(btnRight));
+                }
+            },
+
+            setDirection: function(dir) {
+                this.directionX = dir;
             },
 
             tick: function (time, timeDelta) {
@@ -876,8 +951,6 @@
                             
                             // VERTICAL CLEARANCE CHECK
                             // If player is high enough (jumping), ignore collision with low obstacles
-                            // Logs usually sit at y=0.5. Player at 0.5 hits. Player at 2.0 clears.
-                            // Give a generous clearance.
                             if (playerPos.y - pos.y > 1.2) {
                                 return; // Cleared it!
                             }
@@ -990,14 +1063,28 @@
         <button id="pause-btn">
             <i class="fas fa-pause"></i>
         </button>
+
+        <!-- ARCADE BUTTONS -->
+        <div id="btn-left" class="arcade-btn arcade-btn-left" style="display:none;">
+            <span>L</span>
+        </div>
+        <div id="btn-right" class="arcade-btn arcade-btn-right" style="display:none;">
+            <span>R</span>
+        </div>
         
         <div id="damage-overlay"></div>
         <div id="collect-overlay"></div>
         
         <div id="start-screen">
             <h1>Christmas Delivery<br>Run</h1>
-            <p>Collect the gifts!</p>
-            <p style="font-size: 14px; margin-top:5px; color:#ddd">Keyboard Arrows to Steer</p>
+            
+            <!-- Updated Instruction Line with Gift Animation -->
+            <div class="instruction-container">
+                <p style="margin: 0;">Collect the gifts!</p>
+                <div class="pixel-gift"></div>
+            </div>
+
+            <p style="font-size: 14px; margin-top:15px; color:#ddd">Keyboard Arrows or Buttons to Steer</p>
             <button id="start-btn">INSERT COIN</button>
         </div>
 
@@ -1019,12 +1106,10 @@
             </button>
         </div>
         
-        <div id="mobile-hint">Tap Left/Right to Steer</div>
+        <div id="mobile-hint">Tap Buttons to Steer</div>
     </div>
 
     <!-- A-FRAME SCENE -->
-    <!-- UPDATED FOG SETTINGS: Linear fog for better control -->
-    <!-- DISABLED ANTIALIAS for retro pixelated look -->
     <a-scene 
         device-orientation-permission-ui="enabled: false"    
         vr-mode-ui="enabled: false"
@@ -1039,8 +1124,6 @@
             <!-- Add glTF assets here later -->
         </a-assets>
 
-        <!-- REMOVED SKY GEOMETRY TO PREVENT "REACHING THE WALL" -->
-        
         <!-- BASE GROUND PLANE (Snow field underneath everything) -->
         <a-plane id="ground" 
                  rotation="-90 0 0" 
@@ -1099,15 +1182,3 @@
     </a-scene>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
