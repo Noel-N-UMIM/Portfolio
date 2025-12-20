@@ -415,8 +415,15 @@
                 this.bgMusic = new Audio(CONFIG.AUDIO_SOURCE);
                 this.bgMusic.loop = false;
                 this.bgMusic.volume = 0.5;
+                
+                // PRELOAD SFX to avoid delay
                 this.sfxCollect = new Audio(CONFIG.AUDIO_COLLECT);
+                this.sfxCollect.preload = 'auto';
+                this.sfxCollect.load(); // Force load
+
                 this.sfxCrash = new Audio(CONFIG.AUDIO_CRASH);
+                this.sfxCrash.preload = 'auto';
+                this.sfxCrash.load(); // Force load
             },
 
             // --- TUTORIAL LOGIC ---
@@ -605,15 +612,18 @@
 
             playCollectSound: function() {
                 if (this.sfxCollect) {
-                    this.sfxCollect.currentTime = 0;
-                    this.sfxCollect.play().catch(e => {});
+                    // Clone node allows overlapping sounds and instant replay without cutting off or delay
+                    const sfx = this.sfxCollect.cloneNode();
+                    sfx.volume = 1.0; 
+                    sfx.play().catch(e => {});
                 }
             },
 
             playCrashSound: function() {
                 if (this.sfxCrash) {
-                    this.sfxCrash.currentTime = 0;
-                    this.sfxCrash.play().catch(e => {});
+                    const sfx = this.sfxCrash.cloneNode();
+                    sfx.volume = 1.0;
+                    sfx.play().catch(e => {});
                 }
             },
 
