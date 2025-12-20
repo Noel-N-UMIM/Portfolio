@@ -345,10 +345,10 @@
         // CONFIGURATION
         // ==========================================
         const CONFIG = {
-            GAME_DURATION: 90,           // Seconds
+            GAME_DURATION: 100,           // Seconds
             PLAYER_SPEED: 15,            // Speed
             LATERAL_SPEED: 15,           // Steering speed
-            ROAD_WIDTH: 10,              // Slightly wider road
+            ROAD_WIDTH: 9,              // Slightly wider road
             
             // PHYSICS
             GRAVITY: 20,                 // Downward force
@@ -365,10 +365,10 @@
             
             // SPAWN SETTINGS
             // SPAWN_DISTANCE removed - reverting to time based
-            GIFT_PERCENTAGE: 35,         // Percentage of objects that are Gifts
+            GIFT_PERCENTAGE: 40,         // Percentage of objects that are Gifts
             
             OBSTACLE_SPAWN_RATE: 450,    // Milliseconds between spawns (Controls density)
-            CURVE_INTENSITY: 13          // Max amplitude of the winding road
+            CURVE_INTENSITY: 15          // Max amplitude of the winding road
         };
 
         // GLOBAL STATE
@@ -427,8 +427,8 @@
                 this.endScreen.style.display = 'none';
                 this.pauseBtn.style.display = 'none'; // Hide pause during tutorial
                 
-                // Show arcade buttons visually, but they won't steer yet
-                document.querySelectorAll('.arcade-btn').forEach(b => b.style.display = 'flex');
+                // Hide arcade buttons initially for tutorial
+                document.querySelectorAll('.arcade-btn').forEach(b => b.style.display = 'none');
 
                 gameState.isTutorial = true;
                 gameState.tutorialStep = 1;
@@ -455,16 +455,26 @@
                 } else if (step === 3) {
                     // LEFT BUTTON PROMPT
                     document.getElementById('tut-step-3').style.display = 'flex';
+                    
+                    // Show Left Button
+                    const btnLeftEl = document.getElementById('btn-left');
+                    btnLeftEl.style.display = 'flex';
+                    
                     // Position Arrow over Left Button
-                    const btnLeft = document.getElementById('btn-left').getBoundingClientRect();
+                    const btnLeft = btnLeftEl.getBoundingClientRect();
                     this.tutorialArrow.style.left = (btnLeft.left + 20) + 'px';
                     this.tutorialArrow.style.top = (btnLeft.top - 60) + 'px';
                     this.tutorialArrow.style.display = 'block';
                 } else if (step === 4) {
                     // RIGHT BUTTON PROMPT
                     document.getElementById('tut-step-4').style.display = 'flex';
+                    
+                    // Show Right Button
+                    const btnRightEl = document.getElementById('btn-right');
+                    btnRightEl.style.display = 'flex';
+                    
                     // Position Arrow over Right Button
-                    const btnRight = document.getElementById('btn-right').getBoundingClientRect();
+                    const btnRight = btnRightEl.getBoundingClientRect();
                     this.tutorialArrow.style.left = (btnRight.left + 20) + 'px';
                     this.tutorialArrow.style.top = (btnRight.top - 60) + 'px';
                     this.tutorialArrow.style.display = 'block';
@@ -499,6 +509,9 @@
             startGame: function() {
                 // Actual Gameplay Start
                 this.pauseBtn.style.display = 'flex';
+                
+                // Ensure buttons are visible
+                document.querySelectorAll('.arcade-btn').forEach(b => b.style.display = 'flex');
                 
                 gameState.isPlaying = true;
                 gameState.isPaused = false;
@@ -573,7 +586,7 @@
                 const el = document.createElement('a-entity');
                 el.id = "cottage";
                 // Moved closer to road (x: 8) for better visibility on mobile portrait screens
-                el.setAttribute('position', {x: 2, y: 0, z: zPos});
+                el.setAttribute('position', {x: 1, y: 0, z: zPos});
                 el.setAttribute('rotation', {x: 0, y: -45, z: 0});
                 el.innerHTML = `
                     <a-box color="#5D4037" width="6" height="3" depth="5" position="0 1.5 0"></a-box>
@@ -1174,7 +1187,7 @@
                 <p style="margin: 0;">Collect the gifts!</p>
                 <div class="pixel-gift"></div>
             </div>
-            <p style="font-size: 14px; margin-top:15px; color:#ddd">Keyboard Arrows or Buttons to Steer</p>
+            <center><p style="font-size: 14px; margin-top:15px; color:#ddd">Keyboard Arrows or Buttons to Steer</p></center>
             <button id="start-btn">INSERT COIN</button>
         </div>
 
