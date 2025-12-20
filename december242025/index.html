@@ -795,7 +795,7 @@
                 pointX = viewState.x;
                 pointY = viewState.y;
                 scale = viewState.s; // Animate scale too
-                applyConstraints(); 
+                applyConstraints(); // Re-apply constraints within loop to keep it bound
                 updateTransform(false); 
             }
         });
