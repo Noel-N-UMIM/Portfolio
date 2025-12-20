@@ -322,9 +322,9 @@
 <script>
     // --- 1. CONFIGURATION ---
     let itinerary = [
-        { time: "8:00 AM", title: "Entrance", desc: "Tap in & head to Chinese Theater", note: "", icon: "\uf145", x: 450, y: 1050 },
+        { time: "8:00 AM", title: "Entrance", desc: "Tap in & head to Chinese Theater", note: "", icon: "\uf145", x: 440, y: 1050 },
         // Centered Runaway Railway better (approx 500, 640 for center hub Chinese Theater)
-        { time: "8:30 AM", title: "Runaway Railway", desc: "Early Entry. Ride Immediately.", note: "", icon: "\uf238", x: 450, y: 640 },
+        { time: "8:30 AM", title: "Runaway Railway", desc: "Early Entry. Ride Immediately.", note: "", icon: "\uf238", x: 500, y: 640 },
         { time: "9:15 AM", title: "Star Tours", desc: "LL: Tap & Book next LL.", note: "", icon: "\uf197", x: 160, y: 620 },
         { time: "9:45 AM", title: "Smugglers Run", desc: "Standby Queue.", note: "", icon: "\uf135", x: 260, y: 180 },
         { time: "11:15 AM", title: "Backlot Express", desc: "Mobile Order Pickup.", note: "", icon: "\uf805", x: 140, y: 700 },
@@ -461,7 +461,7 @@
         const containerW = mapArea.clientWidth;
         const containerH = mapArea.clientHeight;
         let targetScale = scale;
-        if (autoZoom && scale < 1.7) targetScale = 1.7;
+        if (autoZoom && scale < 1.2) targetScale = 2.5;
 
         // Apply visual offset if desired
         const targetX = (containerW / 2) - (x * targetScale);
