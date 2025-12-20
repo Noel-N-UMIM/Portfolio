@@ -409,7 +409,7 @@
         { time: "1:45 PM", title: "Toy Story Mania", desc: "LL Multi Pass.", note: "", icon: "\uf140", type: "ll", x: 550, y: 380 },
         { time: "2:40 PM", title: "Little Mermaid", desc: "Animation Courtyard.", note: "", icon: "\uf001", type: "show", x: 600, y: 620 },
         { time: "3:05 PM", title: "Slinky Dog Dash", desc: "LL Multi Pass.", note: "", icon: "\uf6d3", type: "ll", x: 680, y: 240 },
-        { time: "3:35 PM", title: "Exit Park", desc: "Back to Ft. Wilderness for Dinner.", note: "", icon: "\uf52b", type: "transport", x: 300, y: 1100 },
+        { time: "3:35 PM", title: "Exit Park", desc: "Minnie Van to Dinner.", note: "", icon: "\uf52b", type: "transport", x: 300, y: 1100 },
         { time: "6:30 PM", title: "Begin Return to the Park", desc: "Commute to Hollywood Studios.", note: "", icon: "\uf145", type: "transport", x: 440, y: 1050 },
         { time: "7:00 PM", title: "Enjoy Sunset Blvd", desc: "Enjoy the nightime lighting and ambiance", note: "", icon: "\uf185", type: "show", x: 580, y: 850 },
         { time: "7:50 PM", title: "Villains: Unfairly Ever After", desc: "A silly show before the finale", note: "", icon: "\uf6d5", type: "show", x: 920, y: 920 },
@@ -425,9 +425,17 @@
     const sidebar = document.getElementById('sidebar');
     
     // --- MANUAL CENTER OFFSET ---
-    const CENTER_OFFSET_Y = 0; 
+    const CENTER_OFFSET_Y = 500; 
+    const CENTER_OFFSET_X = 400;
 
     function init() {
+        if(itinerary.length > 0) {
+            // Initialize dot at first step immediately
+            userDotPos = { x: itinerary[0].x, y: itinerary[0].y };
+            svgUserDot.setAttribute("transform", `translate(${userDotPos.x}, ${userDotPos.y})`);
+            svgUserDot.style.opacity = 1; 
+        }
+
         renderTimeline();
         initZoomPan();
         resetView();
@@ -515,6 +523,7 @@
     function activateStep(index) {
         if(index < 0 || index >= itinerary.length) return;
 
+        // UI Highlights
         document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
         const stepEls = document.querySelectorAll('.step');
         if(stepEls[index]) {
@@ -528,69 +537,64 @@
 
         const currentStep = itinerary[index];
         
-        if (index === 0 || index === itinerary.length - 1) {
-            const viewState = { x: pointX, y: pointY, s: scale };
-            gsap.to(viewState, {
-                x: 0,
-                y: 0,
-                s: 1,
-                duration: 1.5,
-                ease: "power2.inOut",
-                onUpdate: function() {
-                    pointX = viewState.x;
-                    pointY = viewState.y;
-                    scale = viewState.s;
-                    updateTransform();
-                }
-            });
-        } else {
-            panTo(currentStep.x, currentStep.y, true);
-        }
+        // --- SYNCHRONIZED CAMERA & DOT ANIMATION ---
+        
+        // 1. Kill old animation if running
+        if(cameraTween) cameraTween.kill();
 
-        gsap.to(svgUserDot, {
-            attr: { transform: `translate(${currentStep.x}, ${currentStep.y})` },
-            duration: 2.5,
-            ease: "back.out(0.6)", 
+        // 2. Setup Targets
+        const targetX = currentStep.x;
+        const targetY = currentStep.y;
+        
+        // Ensure we are zoomed in enough to see details
+        const targetScale = scale < 2.0 ? 1.5 : scale;
+
+        // 3. Animation State (Proxy Object)
+        // We animate this object, then apply values to Map and Dot every frame
+        const animState = {
+            x: userDotPos.x,
+            y: userDotPos.y,
+            s: scale
+        };
+
+        cameraTween = gsap.to(animState, {
+            x: targetX,
+            y: targetY,
+            s: targetScale,
+            duration: 2.8,
+            ease: "power2.inOut",
             onUpdate: function() {
+                // A. Update Globals
+                userDotPos.x = animState.x;
+                userDotPos.y = animState.y;
+                scale = animState.s;
+
+                // B. Move Dot (Visual)
+                svgUserDot.setAttribute("transform", `translate(${userDotPos.x}, ${userDotPos.y})`);
                 svgUserDot.style.opacity = 1;
+
+                // C. Move Map Camera (Center on Dot)
+                const containerW = mapArea.clientWidth;
+                const containerH = mapArea.clientHeight;
+
+                // Calculate PointX/Y so that userDotPos is in the center
+                // Formula: Center = Point + (Dot * Scale)  =>  Point = Center - (Dot * Scale)
+                pointX = (containerW / 2) - (userDotPos.x * scale) + CENTER_OFFSET_X; 
+                pointY = (containerH / 2) - (userDotPos.y * scale) + CENTER_OFFSET_Y;
+
+                // D. Apply Constraints & Transform
+                applyConstraints();
+                updateTransform(false); // False prevents re-applying constraints doubles
             }
         });
 
+        // 4. Draw Path
         if (index > 0) {
             const prevStep = itinerary[index - 1];
             drawPath(prevStep, currentStep);
         } else {
             pathLine.style.opacity = 0;
         }
-    }
-
-    function panTo(x, y, autoZoom = false) {
-        const containerW = mapArea.clientWidth;
-        const containerH = mapArea.clientHeight;
-
-        let targetScale = scale;
-        if (autoZoom && scale < 1.6) {
-            targetScale = 2;
-        }
-
-        const targetX = (containerW / 2) - (x * targetScale);
-        const targetY = (containerH / 2) - (y * targetScale) + CENTER_OFFSET_Y;
-
-        const viewState = { x: pointX, y: pointY, s: scale };
-        gsap.to(viewState, {
-            x: targetX,
-            y: targetY,
-            s: targetScale,
-            duration: 1.5,
-            ease: "power2.inOut",
-            onUpdate: function() {
-                pointX = viewState.x;
-                pointY = viewState.y;
-                scale = viewState.s; 
-                applyConstraints(); 
-                updateTransform(false); 
-            }
-        });
     }
 
     function drawPath(start, end) {
@@ -620,6 +624,11 @@
     let scale = 1;
     let pointX = 0;
     let pointY = 0;
+    
+    // NEW GLOBALS
+    let userDotPos = { x: 0, y: 0 };
+    let cameraTween = null;
+
     let isDragging = false;
     let startX = 0;
     let startY = 0;
