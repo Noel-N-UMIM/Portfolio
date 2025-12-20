@@ -87,55 +87,49 @@
             pointer-events: none;
         }
 
-        /* MARKERS are now embedded via foreignObject inside SVG */
-        .marker-fo {
-            overflow: visible;
-        }
-
-        .marker-btn {
-            width: 44px;
-            height: 44px;
-            background: white;
-            border-radius: 50%;
-            border: 2px solid #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        /* MARKERS - SVG Native Implementation */
+        .marker-group {
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.2s;
+            transition: opacity 0.2s;
+        }
+        
+        .marker-circle {
+            fill: white;
+            stroke: #333;
+            stroke-width: 2;
+            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3));
+            transition: all 0.2s ease;
+        }
+        
+        .marker-group:hover .marker-circle, 
+        .marker-group.active .marker-circle {
+            fill: var(--primary);
+            stroke: white;
+            r: 26; /* Scale up slightly */
+        }
+        
+        .marker-icon-text {
+            font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands";
+            font-weight: 900;
+            text-anchor: middle;
+            dominant-baseline: central;
+            fill: var(--text-dark);
             font-size: 20px;
-            color: var(--text-dark);
-            overflow: hidden; 
-            transform: translate(-50%, -50%); 
+            pointer-events: none;
         }
-
-        .marker-btn img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .marker-btn:hover, .marker-btn.active {
-            transform: translate(-50%, -50%) scale(1.2);
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.3);
-            background: var(--primary);
-            color: white;
-            z-index: 101;
+        
+        .marker-group:hover .marker-icon-text, 
+        .marker-group.active .marker-icon-text {
+            fill: white;
+            font-size: 24px;
         }
 
         /* User Location Dot */
-        .user-dot {
-            width: 24px;
-            height: 24px;
-            background: var(--path-color);
-            border: 3px solid white;
-            border-radius: 50%;
-            box-shadow: 0 0 15px var(--path-color);
-            opacity: 0;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
+        .user-dot-circle {
+            fill: var(--path-color);
+            stroke: white;
+            stroke-width: 3;
+            filter: drop-shadow(0px 0px 10px var(--path-color));
         }
 
         /* Sidebar & Timeline */
@@ -424,13 +418,14 @@
                 <!-- Dynamic Path Line -->
                 <path id="path-line" class="walking-path-anim" d="" />
                 
-                <!-- MARKERS LAYER -->
+                <!-- MARKERS LAYER (Native SVG Group) -->
                 <g id="svg-markers-layer">
                     <!-- Injected by JS -->
-                    <!-- User Dot -->
-                    <foreignObject id="fo-user-dot" x="0" y="0" width="1" height="1" class="marker-fo" style="overflow:visible;">
-                        <div class="user-dot" id="user-dot"></div>
-                    </foreignObject>
+                    
+                    <!-- User Dot (Native SVG) -->
+                    <g id="svg-user-dot" transform="translate(0,0)" style="opacity:0;">
+                        <circle cx="0" cy="0" r="12" class="user-dot-circle" />
+                    </g>
                 </g>
             </g>
         </svg>
@@ -482,8 +477,11 @@
                 <input type="text" id="inp-note" class="form-control" placeholder="e.g. Mobile order now">
             </div>
             <div class="form-group">
-                <label>Icon (Font Awesome Class)</label>
-                <input type="text" id="inp-icon" class="form-control" value="fa-circle">
+                <label>Icon (Font Awesome Unicode)</label>
+                <!-- For SVG text icons, we use the unicode character or handle text. 
+                     Here we'll keep the class name but JS will map to unicode for simplicity or use text content -->
+                <input type="text" id="inp-icon" class="form-control" value="f005" placeholder="Unicode (e.g. f005)">
+                <small style="color:#64748b">Enter the Unicode (e.g. f005 for star). <a href="https://fontawesome.com/search?o=r&m=free" target="_blank">Look up here</a></small>
             </div>
             <div class="form-group">
                 <label>Location (X, Y)</label>
@@ -506,14 +504,14 @@
 
 <script>
     // --- 1. CONFIGURATION ---
+    // Note: Unicode values for FontAwesome Free Solid
     let itinerary = [
         {
             time: "8:00 AM",
             title: "Entrance",
             desc: "Tap in & head to Chinese Theater",
             note: "",
-            icon: "fa-ticket",
-            image: "", 
+            icon: "\uf145", // fa-ticket
             x: 440, y: 1050
         },
         {
@@ -521,8 +519,7 @@
             title: "Runaway Railway",
             desc: "Early Entry. Ride Immediately.",
             note: "",
-            icon: "fa-train", 
-            image: "",
+            icon: "\uf238", // fa-train
             x: 450, y: 640
         },
         {
@@ -530,8 +527,7 @@
             title: "Star Tours",
             desc: "LL: Tap & Book next LL.",
             note: "",
-            icon: "fa-shuttle-space", 
-            image: "",
+            icon: "\uf197", // fa-space-shuttle (approx)
             x: 160, y: 620
         },
         {
@@ -539,8 +535,7 @@
             title: "Smugglers Run",
             desc: "Standby Queue.",
             note: "",
-            icon: "fa-rocket",
-            image: "",
+            icon: "\uf135", // fa-rocket
             x: 260, y: 180
         },
         {
@@ -548,8 +543,7 @@
             title: "Backlot Express",
             desc: "Mobile Order Pickup.",
             note: "",
-            icon: "fa-burger",
-            image: "",
+            icon: "\uf805", // fa-burger
             x: 140, y: 700
         },
         {
@@ -557,8 +551,7 @@
             title: "Indy Stunt Show",
             desc: "Watch the show.",
             note: "",
-            icon: "fa-hat-cowboy",
-            image: "",
+            icon: "\uf8c0", // fa-hat-cowboy
             x: 200, y: 830
         },
         {
@@ -566,8 +559,7 @@
             title: "Rise of Resistance",
             desc: "LL Single Pass.",
             note: "",
-            icon: "fa-bolt",
-            image: "",
+            icon: "\uf0e7", // fa-bolt
             x: 180, y: 350
         },
         {
@@ -575,8 +567,7 @@
             title: "Toy Story Mania",
             desc: "LL Multi Pass.",
             note: "",
-            icon: "fa-bullseye",
-            image: "",
+            icon: "\uf140", // fa-bullseye
             x: 550, y: 380
         },
         {
@@ -584,8 +575,7 @@
             title: "Little Mermaid",
             desc: "Animation Courtyard.",
             note: "",
-            icon: "fa-music",
-            image: "",
+            icon: "\uf001", // fa-music
             x: 600, y: 620
         },
         {
@@ -593,8 +583,7 @@
             title: "Slinky Dog Dash",
             desc: "LL Multi Pass.",
             note: "",
-            icon: "fa-dog",
-            image: "",
+            icon: "\uf6d3", // fa-dog
             x: 680, y: 240
         },
         {
@@ -602,8 +591,7 @@
             title: "Exit Park",
             desc: "Minnie Van to Dinner.",
             note: "",
-            icon: "fa-door-open",
-            image: "",
+            icon: "\uf52b", // fa-door-open
             x: 300, y: 1100
         },
         {
@@ -611,8 +599,7 @@
             title: "Villains & Fantasmic",
             desc: "Sunset Blvd Evening.",
             note: "",
-            icon: "fa-dragon",
-            image: "",
+            icon: "\uf6d5", // fa-dragon
             x: 900, y: 950
         }
     ];
@@ -622,8 +609,7 @@
     const svgMarkersLayer = document.getElementById('svg-markers-layer');
     const mapViewport = document.getElementById('map-viewport-group');
     const pathLine = document.getElementById('path-line');
-    const userDot = document.getElementById('user-dot');
-    const foUserDot = document.getElementById('fo-user-dot');
+    const svgUserDot = document.getElementById('svg-user-dot');
     const mapArea = document.getElementById('map-area');
     
     // UI State
@@ -636,18 +622,19 @@
         renderTimeline();
         initZoomPan();
         
-        // Start in reset/zoomed out view and don't auto-activate step 0 movement
+        // Start in reset/zoomed out view
         resetView();
     }
 
     function renderTimeline() {
-        // Clear current
+        // Clear current timeline
         timelineContainer.innerHTML = '';
-        // Clear Markers (except user dot)
-        const markers = Array.from(svgMarkersLayer.children);
-        markers.forEach(m => {
-            if(m.id !== 'fo-user-dot') m.remove();
-        });
+        
+        // Clear Markers (except user dot which is index 0 or specialized)
+        // We will preserve the user dot group which is hardcoded in HTML
+        // Remove all dynamically added 'g' elements
+        const markers = svgMarkersLayer.querySelectorAll('.marker-group');
+        markers.forEach(m => m.remove());
 
         // Rebuild
         itinerary.forEach((step, index) => {
@@ -659,10 +646,12 @@
             
             if(isEditMode) stepDiv.classList.add('draggable');
 
+            // Note: For timeline icon, we rely on the fa class logic if available or just a circle
+            // Since we switched to unicode for map, we can map back or just use a generic icon for timeline
             stepDiv.innerHTML = `
                 <div class="step-time">${step.time}</div>
                 <div class="step-content">
-                    <h3><i class="fa-solid ${step.icon}" style="color:var(--primary); margin-right:5px;"></i> ${step.title}</h3>
+                    <h3>${step.title}</h3>
                     <p>${step.desc}</p>
                     ${step.note ? `<small style="color:var(--accent); font-weight:bold;">${step.note}</small>` : ''}
                 </div>
@@ -675,7 +664,6 @@
             
             // Interaction
             stepDiv.addEventListener('click', (e) => {
-                // Don't activate if clicking actions
                 if(e.target.closest('.step-actions')) return;
                 activateStep(index);
             });
@@ -690,36 +678,35 @@
 
             timelineContainer.appendChild(stepDiv);
 
-            // 2. Map Marker
-            const fo = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
-            fo.setAttribute("x", step.x);
-            fo.setAttribute("y", step.y);
-            fo.setAttribute("width", "1"); 
-            fo.setAttribute("height", "1");
-            fo.setAttribute("class", "marker-fo");
-            fo.style.overflow = "visible"; 
-
-            const markerDiv = document.createElement('div');
-            markerDiv.className = 'marker-btn';
+            // 2. Map Marker (Native SVG)
+            const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            g.setAttribute("class", "marker-group");
+            g.setAttribute("transform", `translate(${step.x}, ${step.y})`);
             
-            if(step.image && step.image.trim() !== "") {
-                markerDiv.innerHTML = `<img src="${step.image}" alt="${step.title}">`;
-            } else {
-                markerDiv.innerHTML = `<i class="fa-solid ${step.icon}"></i>`;
-            }
+            // Circle Background
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("r", "22");
+            circle.setAttribute("class", "marker-circle");
+            
+            // Icon Text
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("class", "marker-icon-text");
+            text.textContent = step.icon; // Unicode character
 
-            markerDiv.addEventListener('click', (e) => {
+            g.appendChild(circle);
+            g.appendChild(text);
+
+            // Events
+            g.addEventListener('click', (e) => {
                 e.stopPropagation(); 
                 activateStep(index);
             });
-            markerDiv.addEventListener('touchstart', (e) => {
+            g.addEventListener('touchstart', (e) => {
                 e.stopPropagation(); 
             }, {passive: false});
             
-            step.markerEl = markerDiv; 
-            
-            fo.appendChild(markerDiv);
-            svgMarkersLayer.appendChild(fo);
+            step.markerEl = g; 
+            svgMarkersLayer.appendChild(g);
         });
     }
 
@@ -735,17 +722,14 @@
             stepEls[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        document.querySelectorAll('.marker-btn').forEach(el => el.classList.remove('active'));
+        const markers = svgMarkersLayer.querySelectorAll('.marker-group');
+        markers.forEach(el => el.classList.remove('active'));
         if(itinerary[index].markerEl) itinerary[index].markerEl.classList.add('active');
 
         const currentStep = itinerary[index];
         
-        // --- UPDATED LOGIC HERE ---
-        // If it's Entrance (index 0) or Exit (last index), zoom out to reset view
+        // Logic: Entrance(0) or Exit(last) -> Reset View
         if (index === 0 || index === itinerary.length - 1) {
-            // Animate to reset view (scale 1, centered)
-            // But we still want to move the user dot to that location
-            
             const viewState = { x: pointX, y: pointY, s: scale };
             gsap.to(viewState, {
                 x: 0,
@@ -761,19 +745,18 @@
                 }
             });
         } else {
-            // Pan Camera normally
-            panTo(currentStep.x, currentStep.y);
+            // Pan Camera + Auto Zoom Logic
+            panTo(currentStep.x, currentStep.y, true);
         }
 
-        // Move User Dot
-        // If this is the first interaction, snap the dot to the location instantly or animate from start?
-        // We'll animate normally.
-        gsap.to(foUserDot, {
-            attr: { x: currentStep.x, y: currentStep.y },
+        // Move User Dot (Native SVG transform)
+        // We animate the transform attribute of the group
+        gsap.to(svgUserDot, {
+            attr: { transform: `translate(${currentStep.x}, ${currentStep.y})` },
             duration: 2.5,
             ease: "back.out(1.7)",
             onUpdate: function() {
-                userDot.style.opacity = 1;
+                svgUserDot.style.opacity = 1;
             }
         });
 
@@ -786,24 +769,34 @@
         }
     }
 
-    function panTo(x, y) {
+    function panTo(x, y, autoZoom = false) {
         const containerW = mapArea.clientWidth;
         const containerH = mapArea.clientHeight;
 
-        const targetX = (containerW / 2) - (x * scale);
-        const targetY = (containerH / 2) - (y * scale);
+        // Target Zoom Level Logic
+        let targetScale = scale;
+        // If autoZoom requested and we are zoomed out, zoom in to at least 1.7 (approx 3 taps)
+        if (autoZoom && scale < 1.7) {
+            targetScale = 1.7;
+        }
 
-        const viewState = { x: pointX, y: pointY };
+        // Calculate Target Position based on NEW targetScale
+        const targetX = (containerW / 2) - (x * targetScale);
+        const targetY = (containerH / 2) - (y * targetScale);
+
+        const viewState = { x: pointX, y: pointY, s: scale };
         gsap.to(viewState, {
             x: targetX,
             y: targetY,
+            s: targetScale,
             duration: 1.5,
             ease: "power2.inOut",
             onUpdate: function() {
                 pointX = viewState.x;
                 pointY = viewState.y;
-                applyConstraints(); // Apply bounds on every frame of animation
-                updateTransform(false); // Don't re-apply constraints in updateTransform to avoid double calc
+                scale = viewState.s; // Animate scale too
+                applyConstraints(); 
+                updateTransform(false); 
             }
         });
     }
@@ -894,16 +887,18 @@
             document.getElementById('inp-title').value = step.title;
             document.getElementById('inp-desc').value = step.desc;
             document.getElementById('inp-note').value = step.note || '';
-            document.getElementById('inp-icon').value = step.icon;
+            
+            // Map unicode back to something readable? Or just keep raw.
+            // For simplicity in this demo, keeping raw or user must paste unicode.
+            document.getElementById('inp-icon').value = escape(step.icon); 
             document.getElementById('inp-x').value = step.x;
             document.getElementById('inp-y').value = step.y;
         } else {
-            // Defaults
             document.getElementById('inp-time').value = "";
             document.getElementById('inp-title').value = "";
             document.getElementById('inp-desc').value = "";
             document.getElementById('inp-note').value = "";
-            document.getElementById('inp-icon').value = "fa-star";
+            document.getElementById('inp-icon').value = "%uF005"; // Star default
             document.getElementById('inp-x').value = 500;
             document.getElementById('inp-y').value = 600;
         }
@@ -919,13 +914,16 @@
     
     function saveStep() {
         const index = parseInt(document.getElementById('edit-index').value);
+        let iconVal = document.getElementById('inp-icon').value;
+        // Decode if it looks like %uXXXX, else assume raw
+        try { iconVal = unescape(iconVal); } catch(e){}
+
         const newStep = {
             time: document.getElementById('inp-time').value,
             title: document.getElementById('inp-title').value,
             desc: document.getElementById('inp-desc').value,
             note: document.getElementById('inp-note').value,
-            icon: document.getElementById('inp-icon').value,
-            image: "",
+            icon: iconVal,
             x: parseInt(document.getElementById('inp-x').value) || 500,
             y: parseInt(document.getElementById('inp-y').value) || 600
         };
@@ -933,7 +931,6 @@
         if(index === -1) {
             itinerary.push(newStep);
         } else {
-            // Preserve image if existing, unless we add image editing later
             newStep.image = itinerary[index].image; 
             itinerary[index] = newStep;
         }
@@ -997,11 +994,9 @@
         const containerW = mapArea.clientWidth;
         const containerH = mapArea.clientHeight;
         
-        // Calculate scaled dimensions
         const scaledW = IMG_W * scale;
         const scaledH = IMG_H * scale;
 
-        // X Constraints
         if (scaledW > containerW) {
             const minX = containerW - scaledW;
             const maxX = 0; 
@@ -1011,11 +1006,9 @@
             pointX = (containerW - scaledW) / 2;
         }
         
-        // Y Constraints
-        // Key change: We must ensure Y doesn't go below bottom limit
         if (scaledH > containerH) {
-            const minY = containerH - scaledH; // Bottom of image aligns with bottom of view
-            const maxY = 0;                    // Top of image aligns with top of view
+            const minY = containerH - scaledH;
+            const maxY = 0;
             
             if (pointY < minY) pointY = minY;
             if (pointY > maxY) pointY = maxY;
@@ -1045,9 +1038,6 @@
         scale = 1;
         pointX = 0;
         pointY = 0;
-        // On reset, ensure we apply constraints immediately
-        // But usually 0,0 is fine unless image < container?
-        // Let's force update
         updateTransform();
     }
 
