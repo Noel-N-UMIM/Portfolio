@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DHS Day Planner: Dec 24, 2025</title>
-    <!-- GSAP for Animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         :root {
             --bg-color: #f0f4f8;
@@ -18,65 +15,48 @@
             --text-dark: #1e293b;
             --text-light: #64748b;
             --path-color: #ef4444;
-            --danger: #ef4444;
-            --success: #22c55e;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: var(--bg-color);
             color: var(--text-dark);
-            /* Use dvh to account for mobile browser UI bars */
             height: 100dvh; 
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
-
-        /* Layout */
         .container {
             display: flex;
             flex-direction: column;
             width: 100%;
             height: 100%;
         }
-
-        /* Map Area */
         .map-area {
             position: relative;
-            background-color: #e0f2fe; /* Light Blue BG */
+            background-color: #e0f2fe; 
             flex: 2;
             overflow: hidden;
             width: 100%;
             cursor: grab;
-            touch-action: none; /* Important for custom touch handling */
+            touch-action: none;
         }
-        
         .map-area.picking-location {
             cursor: crosshair !important;
             box-shadow: inset 0 0 0 5px var(--accent);
         }
-        
         .map-area:active {
             cursor: grabbing;
         }
-
-        /* SVG Map Styling */
         #park-map {
             width: 100%;
             height: 100%;
-            /* No object-fit here, we handle transform manually */
             transform-origin: 0 0;
         }
-
-        /* This group wraps EVERYTHING that moves (map + markers) */
         #map-viewport-group {
             will-change: transform;
         }
-
-        /* Walking Paths Animation Line */
         .walking-path-anim {
             fill: none;
             stroke: var(--path-color);
@@ -87,13 +67,10 @@
             filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.3));
             pointer-events: none;
         }
-
-        /* MARKERS - SVG Native Implementation */
         .marker-group {
             cursor: pointer;
             transition: opacity 0.2s;
         }
-        
         .marker-circle {
             fill: white;
             stroke: #333;
@@ -101,14 +78,12 @@
             filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3));
             transition: all 0.2s ease;
         }
-        
         .marker-group:hover .marker-circle, 
         .marker-group.active .marker-circle {
             fill: var(--primary);
             stroke: white;
-            r: 26; /* Scale up slightly */
+            r: 26;
         }
-        
         .marker-icon-text {
             font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands";
             font-weight: 900;
@@ -118,22 +93,17 @@
             font-size: 20px;
             pointer-events: none;
         }
-        
         .marker-group:hover .marker-icon-text, 
         .marker-group.active .marker-icon-text {
             fill: white;
             font-size: 24px;
         }
-
-        /* User Location Dot */
         .user-dot-circle {
             fill: var(--path-color);
             stroke: white;
             stroke-width: 3;
             filter: drop-shadow(0px 0px 10px var(--path-color));
         }
-
-        /* Sidebar & Timeline */
         .sidebar {
             background: var(--card-bg);
             border-top: 1px solid #e2e8f0;
@@ -144,7 +114,6 @@
             z-index: 30;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
         }
-
         .sidebar-header {
             padding: 15px 20px;
             background: #1e293b;
@@ -156,12 +125,10 @@
             justify-content: space-between;
             align-items: center;
         }
-        
         .header-controls {
             display: flex;
             gap: 10px;
         }
-        
         .btn-sm {
             background: rgba(255,255,255,0.1);
             border: 1px solid rgba(255,255,255,0.3);
@@ -172,23 +139,9 @@
             cursor: pointer;
             transition: background 0.2s;
         }
-        
-        .btn-sm:hover {
-            background: rgba(255,255,255,0.2);
-        }
-        
-        .btn-sm.active {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: #1e293b;
-            font-weight: bold;
-        }
-
-        .timeline {
-            padding: 10px 15px;
-            flex-grow: 1;
-        }
-
+        .btn-sm:hover { background: rgba(255,255,255,0.2); }
+        .btn-sm.active { background: var(--accent); border-color: var(--accent); color: #1e293b; font-weight: bold; }
+        .timeline { padding: 10px 15px; flex-grow: 1; }
         .step {
             display: flex;
             gap: 12px;
@@ -201,73 +154,18 @@
             background: white;
             position: relative;
         }
-        
-        .step.draggable {
-            cursor: grab;
-        }
-        
-        .step.dragging {
-            opacity: 0.5;
-            background: #f8fafc;
-            border: 2px dashed #cbd5e1;
-        }
-
-        .step.active {
-            background-color: #eff6ff;
-            border-color: var(--primary);
-            border-left: 4px solid var(--primary);
-        }
-        
-        .step-time {
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 0.8rem;
-            min-width: 65px;
-        }
-
-        .step-content {
-            flex-grow: 1;
-        }
-
-        .step-content h3 {
-            margin: 0 0 2px 0;
-            font-size: 0.95rem;
-        }
-
-        .step-content p {
-            margin: 0;
-            font-size: 0.8rem;
-            color: var(--text-light);
-        }
-        
-        .step-actions {
-            display: none; /* Hidden by default */
-            flex-direction: column;
-            gap: 5px;
-            justify-content: center;
-        }
-        
-        .editing-mode .step-actions {
-            display: flex;
-        }
-        
-        .action-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            padding: 5px;
-            color: #64748b;
-        }
-        
-        .action-btn:hover {
-            color: var(--primary);
-        }
-        
-        .action-btn.delete:hover {
-            color: var(--danger);
-        }
-        
+        .step.draggable { cursor: grab; }
+        .step.dragging { opacity: 0.5; background: #f8fafc; border: 2px dashed #cbd5e1; }
+        .step.active { background-color: #eff6ff; border-color: var(--primary); border-left: 4px solid var(--primary); }
+        .step-time { font-weight: 700; color: var(--primary); font-size: 0.8rem; min-width: 65px; }
+        .step-content { flex-grow: 1; }
+        .step-content h3 { margin: 0 0 2px 0; font-size: 0.95rem; }
+        .step-content p { margin: 0; font-size: 0.8rem; color: var(--text-light); }
+        .step-actions { display: none; flex-direction: column; gap: 5px; justify-content: center; }
+        .editing-mode .step-actions { display: flex; }
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 0.9rem; padding: 5px; color: #64748b; }
+        .action-btn:hover { color: var(--primary); }
+        .action-btn.delete:hover { color: var(--danger); }
         .add-step-btn {
             display: none;
             width: 100%;
@@ -280,18 +178,8 @@
             margin-top: 10px;
             font-weight: 600;
         }
-        
-        .editing-mode .add-step-btn {
-            display: block;
-        }
-        
-        .add-step-btn:hover {
-            background: #e2e8f0;
-            color: var(--primary);
-            border-color: var(--primary);
-        }
-
-        /* Modal Styles */
+        .editing-mode .add-step-btn { display: block; }
+        .add-step-btn:hover { background: #e2e8f0; color: var(--primary); border-color: var(--primary); }
         .modal-overlay {
             display: none;
             position: fixed;
@@ -302,7 +190,6 @@
             align-items: center;
             padding: 20px;
         }
-        
         .modal {
             background: white;
             border-radius: 12px;
@@ -313,7 +200,6 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-        
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -322,9 +208,7 @@
             border-bottom: 1px solid #f1f5f9;
             padding-bottom: 10px;
         }
-        
         .modal-header h2 { margin: 0; font-size: 1.25rem; }
-        
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.85rem; }
         .form-control {
@@ -335,27 +219,11 @@
             font-size: 1rem;
             box-sizing: border-box;
         }
-        
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .btn {
-            padding: 10px 16px;
-            border-radius: 6px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .btn { padding: 10px 16px; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; }
         .btn-cancel { background: #f1f5f9; color: #475569; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-accent { background: var(--accent); color: #fff; }
-        
-        /* Floating Controls */
         .map-controls {
             position: absolute;
             bottom: 20px;
@@ -365,7 +233,6 @@
             gap: 10px;
             z-index: 50;
         }
-        
         .control-btn {
             width: 40px;
             height: 40px;
@@ -379,10 +246,7 @@
             cursor: pointer;
             color: #333;
         }
-        
         .control-btn:active { background: #f1f1f1; }
-
-        /* Desktop Layout */
         @media (min-width: 769px) {
             .container { flex-direction: row; }
             .sidebar {
@@ -400,30 +264,16 @@
 
 <div class="container">
     <div class="map-area" id="map-area">
-        
-        <!-- Zoom Controls -->
         <div class="map-controls">
             <button class="control-btn" onclick="zoomIn()"><i class="fa-solid fa-plus"></i></button>
             <button class="control-btn" onclick="zoomOut()"><i class="fa-solid fa-minus"></i></button>
             <button class="control-btn" onclick="resetView()"><i class="fa-solid fa-compress"></i></button>
         </div>
-
-        <!-- SVG Map -->
-        <!-- Logic Dimensions: 0 0 1000 1200 -->
         <svg id="park-map" viewBox="0 0 1000 1200">
             <g id="map-viewport-group">
-                <!-- 1. MAP IMAGE BACKGROUND -->
-                <!-- Ensure Map_clean.png is in the same folder -->
                 <image href="Map_clean.png" x="0" y="0" width="1000" height="1200" preserveAspectRatio="xMidYMid slice" />
-
-                <!-- Dynamic Path Line -->
                 <path id="path-line" class="walking-path-anim" d="" />
-                
-                <!-- MARKERS LAYER (Native SVG Group) -->
                 <g id="svg-markers-layer">
-                    <!-- Injected by JS -->
-                    
-                    <!-- User Dot (Native SVG) -->
                     <g id="svg-user-dot" transform="translate(0,0)" style="opacity:0;">
                         <circle cx="0" cy="0" r="12" class="user-dot-circle" />
                     </g>
@@ -434,25 +284,17 @@
 
     <div class="sidebar">
         <div class="sidebar-header">
-            <div>
-                <h1 style="margin:0; font-size:1rem;"><i class="fa-solid fa-calendar-day"></i> Dec 24, 2025</h1>
-            </div>
+            <div><h1 style="margin:0; font-size:1rem;"><i class="fa-solid fa-calendar-day"></i> Dec 24, 2025</h1></div>
             <div class="header-controls">
                 <button class="btn-sm" id="edit-mode-btn" onclick="toggleEditMode()"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
                 <button class="btn-sm" onclick="resetView()"><i class="fa-solid fa-compress"></i></button>
             </div>
         </div>
-        <div class="timeline" id="timeline-container">
-            <!-- Items via JS -->
-        </div>
-        <!-- Add Button (Visible in Edit Mode) -->
-        <button class="add-step-btn" id="add-step-btn" onclick="openStepModal()">
-            <i class="fa-solid fa-plus"></i> Add New Step
-        </button>
+        <div class="timeline" id="timeline-container"></div>
+        <button class="add-step-btn" id="add-step-btn" onclick="openStepModal()"><i class="fa-solid fa-plus"></i> Add New Step</button>
     </div>
 </div>
 
-<!-- Edit/Add Modal -->
 <div class="modal-overlay" id="step-modal">
     <div class="modal">
         <div class="modal-header">
@@ -461,151 +303,39 @@
         </div>
         <div class="modal-body">
             <input type="hidden" id="edit-index" value="-1">
-            <div class="form-group">
-                <label>Time</label>
-                <input type="text" id="inp-time" class="form-control" placeholder="e.g. 9:00 AM">
-            </div>
-            <div class="form-group">
-                <label>Title</label>
-                <input type="text" id="inp-title" class="form-control" placeholder="Step Title">
-            </div>
-            <div class="form-group">
-                <label>Description</label>
-                <textarea id="inp-desc" class="form-control" rows="2" placeholder="Details..."></textarea>
-            </div>
-             <div class="form-group">
-                <label>Note (Optional)</label>
-                <input type="text" id="inp-note" class="form-control" placeholder="e.g. Mobile order now">
-            </div>
-            <div class="form-group">
-                <label>Icon (Font Awesome Unicode)</label>
-                <!-- For SVG text icons, we use the unicode character or handle text. 
-                     Here we'll keep the class name but JS will map to unicode for simplicity or use text content -->
-                <input type="text" id="inp-icon" class="form-control" value="f005" placeholder="Unicode (e.g. f005)">
-                <small style="color:#64748b">Enter the Unicode (e.g. f005 for star). <a href="https://fontawesome.com/search?o=r&m=free" target="_blank">Look up here</a></small>
-            </div>
+            <div class="form-group"><label>Time</label><input type="text" id="inp-time" class="form-control" placeholder="e.g. 9:00 AM"></div>
+            <div class="form-group"><label>Title</label><input type="text" id="inp-title" class="form-control" placeholder="Step Title"></div>
+            <div class="form-group"><label>Description</label><textarea id="inp-desc" class="form-control" rows="2" placeholder="Details..."></textarea></div>
+             <div class="form-group"><label>Note (Optional)</label><input type="text" id="inp-note" class="form-control" placeholder="e.g. Mobile order now"></div>
+            <div class="form-group"><label>Icon (Font Awesome Unicode)</label><input type="text" id="inp-icon" class="form-control" value="f005" placeholder="Unicode (e.g. f005)"><small style="color:#64748b">Enter the Unicode (e.g. f005 for star). <a href="https://fontawesome.com/search?o=r&m=free" target="_blank">Look up here</a></small></div>
             <div class="form-group">
                 <label>Location (X, Y)</label>
-                <div style="display:flex; gap:10px;">
-                    <input type="number" id="inp-x" class="form-control" placeholder="X">
-                    <input type="number" id="inp-y" class="form-control" placeholder="Y">
-                </div>
-                <button class="btn btn-accent" style="width:100%; margin-top:8px;" onclick="startLocationPicker()">
-                    <i class="fa-solid fa-map-pin"></i> Set Location on Map
-                </button>
+                <div style="display:flex; gap:10px;"><input type="number" id="inp-x" class="form-control" placeholder="X"><input type="number" id="inp-y" class="form-control" placeholder="Y"></div>
+                <button class="btn btn-accent" style="width:100%; margin-top:8px;" onclick="startLocationPicker()"><i class="fa-solid fa-map-pin"></i> Set Location on Map</button>
                 <small style="color:#64748b; display:block; margin-top:4px;">Click this, then tap the map to set coords.</small>
             </div>
         </div>
-        <div class="modal-actions">
-            <button class="btn btn-cancel" onclick="closeStepModal()">Cancel</button>
-            <button class="btn btn-primary" onclick="saveStep()">Save Step</button>
-        </div>
+        <div class="modal-actions"><button class="btn btn-cancel" onclick="closeStepModal()">Cancel</button><button class="btn btn-primary" onclick="saveStep()">Save Step</button></div>
     </div>
 </div>
 
 <script>
     // --- 1. CONFIGURATION ---
-    // Note: Unicode values for FontAwesome Free Solid
     let itinerary = [
-        {
-            time: "8:00 AM",
-            title: "Entrance",
-            desc: "Tap in & head to Chinese Theater",
-            note: "",
-            icon: "\uf145", // fa-ticket
-            x: 440, y: 1050
-        },
-        {
-            time: "8:30 AM",
-            title: "Runaway Railway",
-            desc: "Early Entry. Ride Immediately.",
-            note: "",
-            icon: "\uf238", // fa-train
-            x: 450, y: 640
-        },
-        {
-            time: "9:15 AM",
-            title: "Star Tours",
-            desc: "LL: Tap & Book next LL.",
-            note: "",
-            icon: "\uf197", // fa-space-shuttle (approx)
-            x: 160, y: 620
-        },
-        {
-            time: "9:45 AM",
-            title: "Smugglers Run",
-            desc: "Standby Queue.",
-            note: "",
-            icon: "\uf135", // fa-rocket
-            x: 260, y: 180
-        },
-        {
-            time: "11:15 AM",
-            title: "Backlot Express",
-            desc: "Mobile Order Pickup.",
-            note: "",
-            icon: "\uf805", // fa-burger
-            x: 140, y: 700
-        },
-        {
-            time: "12:00 PM",
-            title: "Indy Stunt Show",
-            desc: "Watch the show.",
-            note: "",
-            icon: "\uf8c0", // fa-hat-cowboy
-            x: 200, y: 830
-        },
-        {
-            time: "12:45 PM",
-            title: "Rise of Resistance",
-            desc: "LL Single Pass.",
-            note: "",
-            icon: "\uf0e7", // fa-bolt
-            x: 180, y: 350
-        },
-        {
-            time: "1:45 PM",
-            title: "Toy Story Mania",
-            desc: "LL Multi Pass.",
-            note: "",
-            icon: "\uf140", // fa-bullseye
-            x: 550, y: 380
-        },
-        {
-            time: "2:40 PM",
-            title: "Little Mermaid",
-            desc: "Animation Courtyard.",
-            note: "",
-            icon: "\uf001", // fa-music
-            x: 600, y: 620
-        },
-        {
-            time: "3:05 PM",
-            title: "Slinky Dog Dash",
-            desc: "LL Multi Pass.",
-            note: "",
-            icon: "\uf6d3", // fa-dog
-            x: 680, y: 240
-        },
-        {
-            time: "3:35 PM",
-            title: "Exit Park",
-            desc: "Minnie Van to Dinner.",
-            note: "",
-            icon: "\uf52b", // fa-door-open
-            x: 300, y: 1100
-        },
-        {
-            time: "7:50 PM",
-            title: "Villains & Fantasmic",
-            desc: "Sunset Blvd Evening.",
-            note: "",
-            icon: "\uf6d5", // fa-dragon
-            x: 900, y: 950
-        }
+        { time: "8:00 AM", title: "Entrance", desc: "Tap in & head to Chinese Theater", note: "", icon: "\uf145", x: 440, y: 1050 },
+        { time: "8:30 AM", title: "Runaway Railway", desc: "Early Entry. Ride Immediately.", note: "", icon: "\uf238", x: 450, y: 640 },
+        { time: "9:15 AM", title: "Star Tours", desc: "LL: Tap & Book next LL.", note: "", icon: "\uf197", x: 160, y: 620 },
+        { time: "9:45 AM", title: "Smugglers Run", desc: "Standby Queue.", note: "", icon: "\uf135", x: 260, y: 180 },
+        { time: "11:15 AM", title: "Backlot Express", desc: "Mobile Order Pickup.", note: "", icon: "\uf805", x: 140, y: 700 },
+        { time: "12:00 PM", title: "Indy Stunt Show", desc: "Watch the show.", note: "", icon: "\uf8c0", x: 200, y: 830 },
+        { time: "12:45 PM", title: "Rise of Resistance", desc: "LL Single Pass.", note: "", icon: "\uf0e7", x: 180, y: 350 },
+        { time: "1:45 PM", title: "Toy Story Mania", desc: "LL Multi Pass.", note: "", icon: "\uf140", x: 550, y: 380 },
+        { time: "2:40 PM", title: "Little Mermaid", desc: "Animation Courtyard.", note: "", icon: "\uf001", x: 600, y: 620 },
+        { time: "3:05 PM", title: "Slinky Dog Dash", desc: "LL Multi Pass.", note: "", icon: "\uf6d3", x: 680, y: 240 },
+        { time: "3:35 PM", title: "Exit Park", desc: "Minnie Van to Dinner.", note: "", icon: "\uf52b", x: 300, y: 1100 },
+        { time: "7:50 PM", title: "Villains & Fantasmic", desc: "Sunset Blvd Evening.", note: "", icon: "\uf6d5", x: 900, y: 950 }
     ];
 
-    // --- 2. DOM ELEMENTS ---
     const timelineContainer = document.getElementById('timeline-container');
     const svgMarkersLayer = document.getElementById('svg-markers-layer');
     const mapViewport = document.getElementById('map-viewport-group');
@@ -613,46 +343,37 @@
     const svgUserDot = document.getElementById('svg-user-dot');
     const mapArea = document.getElementById('map-area');
     
-    // UI State
     let isEditMode = false;
     let isPickingLocation = false;
     let dragSrcEl = null;
 
-    // --- 3. INIT LOGIC ---
+    // --- MANUAL CENTER OFFSET ---
+    // Positive Y moves center UP (focus lower), Negative Y moves center DOWN (focus higher)
+    // Adjust this if you feel the dot is too high or too low in the view.
+    const CENTER_OFFSET_Y = 0; 
+
     function init() {
         renderTimeline();
         initZoomPan();
-        
-        // Start in reset/zoomed out view
         resetView();
     }
 
     function renderTimeline() {
-        // Clear current timeline
         timelineContainer.innerHTML = '';
-        
-        // Clear Markers (except user dot which is index 0 or specialized)
-        // We will preserve the user dot group which is hardcoded in HTML
-        // Remove all dynamically added 'g' elements
         const markers = svgMarkersLayer.querySelectorAll('.marker-group');
         markers.forEach(m => m.remove());
 
-        // Rebuild
         itinerary.forEach((step, index) => {
-            // 1. Timeline Step
             const stepDiv = document.createElement('div');
             stepDiv.className = 'step';
             stepDiv.setAttribute('draggable', isEditMode);
             stepDiv.dataset.index = index;
-            
             if(isEditMode) stepDiv.classList.add('draggable');
 
-            // Note: For timeline icon, we rely on the fa class logic if available or just a circle
-            // Since we switched to unicode for map, we can map back or just use a generic icon for timeline
             stepDiv.innerHTML = `
                 <div class="step-time">${step.time}</div>
                 <div class="step-content">
-                    <h3>${step.title}</h3>
+                    <h3><i class="fa-solid ${step.icon}" style="color:var(--primary); margin-right:5px;"></i> ${step.title}</h3>
                     <p>${step.desc}</p>
                     ${step.note ? `<small style="color:var(--accent); font-weight:bold;">${step.note}</small>` : ''}
                 </div>
@@ -662,42 +383,29 @@
                     <div style="cursor:grab; padding:5px; color:#cbd5e1;"><i class="fa-solid fa-grip-vertical"></i></div>
                 </div>
             `;
-            
-            // Interaction
             stepDiv.addEventListener('click', (e) => {
                 if(e.target.closest('.step-actions')) return;
                 activateStep(index);
             });
-            
-            // Drag Events
             if(isEditMode) {
                 stepDiv.addEventListener('dragstart', handleDragStart);
                 stepDiv.addEventListener('dragover', handleDragOver);
                 stepDiv.addEventListener('drop', handleDrop);
                 stepDiv.addEventListener('dragend', handleDragEnd);
             }
-
             timelineContainer.appendChild(stepDiv);
 
-            // 2. Map Marker (Native SVG)
             const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
             g.setAttribute("class", "marker-group");
             g.setAttribute("transform", `translate(${step.x}, ${step.y})`);
-            
-            // Circle Background
             const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             circle.setAttribute("r", "22");
             circle.setAttribute("class", "marker-circle");
-            
-            // Icon Text
             const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
             text.setAttribute("class", "marker-icon-text");
-            text.textContent = step.icon; // Unicode character
-
+            text.textContent = step.icon; 
             g.appendChild(circle);
             g.appendChild(text);
-
-            // Events
             g.addEventListener('click', (e) => {
                 e.stopPropagation(); 
                 activateStep(index);
@@ -705,63 +413,41 @@
             g.addEventListener('touchstart', (e) => {
                 e.stopPropagation(); 
             }, {passive: false});
-            
             step.markerEl = g; 
             svgMarkersLayer.appendChild(g);
         });
     }
 
-    // --- 4. NAVIGATION LOGIC ---
     function activateStep(index) {
         if(index < 0 || index >= itinerary.length) return;
-
-        // UI Highlights
         document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
         const stepEls = document.querySelectorAll('.step');
         if(stepEls[index]) {
             stepEls[index].classList.add('active');
             stepEls[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-
         const markers = svgMarkersLayer.querySelectorAll('.marker-group');
         markers.forEach(el => el.classList.remove('active'));
         if(itinerary[index].markerEl) itinerary[index].markerEl.classList.add('active');
 
         const currentStep = itinerary[index];
-        
-        // Logic: Entrance(0) or Exit(last) -> Reset View
         if (index === 0 || index === itinerary.length - 1) {
             const viewState = { x: pointX, y: pointY, s: scale };
             gsap.to(viewState, {
-                x: 0,
-                y: 0,
-                s: 1,
-                duration: 1.5,
-                ease: "power2.inOut",
+                x: 0, y: 0, s: 1, duration: 1.5, ease: "power2.inOut",
                 onUpdate: function() {
-                    pointX = viewState.x;
-                    pointY = viewState.y;
-                    scale = viewState.s;
-                    updateTransform();
+                    pointX = viewState.x; pointY = viewState.y; scale = viewState.s; updateTransform();
                 }
             });
         } else {
-            // Pan Camera + Auto Zoom Logic
             panTo(currentStep.x, currentStep.y, true);
         }
-
-        // Move User Dot (Native SVG transform)
-        // We animate the transform attribute of the group
         gsap.to(svgUserDot, {
             attr: { transform: `translate(${currentStep.x}, ${currentStep.y})` },
             duration: 2.5,
-            ease: "back.out(0.6)", // DAMPENED OVERSHOOT
-            onUpdate: function() {
-                svgUserDot.style.opacity = 1;
-            }
+            ease: "back.out(0.6)", // Dampened overshoot
+            onUpdate: function() { svgUserDot.style.opacity = 1; }
         });
-
-        // Draw Path
         if (index > 0) {
             const prevStep = itinerary[index - 1];
             drawPath(prevStep, currentStep);
@@ -773,30 +459,19 @@
     function panTo(x, y, autoZoom = false) {
         const containerW = mapArea.clientWidth;
         const containerH = mapArea.clientHeight;
-
-        // Target Zoom Level Logic
         let targetScale = scale;
-        // If autoZoom requested and we are zoomed out, zoom in to at least 1.7 (approx 3 taps)
-        if (autoZoom && scale < 1.7) {
-            targetScale = 1.7;
-        }
+        if (autoZoom && scale < 1.7) targetScale = 1.7;
 
-        // Calculate Target Position based on NEW targetScale
+        // Apply visual offset if desired
         const targetX = (containerW / 2) - (x * targetScale);
-        const targetY = (containerH / 2) - (y * targetScale);
+        const targetY = (containerH / 2) - (y * targetScale) + CENTER_OFFSET_Y;
 
         const viewState = { x: pointX, y: pointY, s: scale };
         gsap.to(viewState, {
-            x: targetX,
-            y: targetY,
-            s: targetScale,
-            duration: 1.5,
-            ease: "power2.inOut",
+            x: targetX, y: targetY, s: targetScale, duration: 1.5, ease: "power2.inOut",
             onUpdate: function() {
-                pointX = viewState.x;
-                pointY = viewState.y;
-                scale = viewState.s; // Animate scale too
-                applyConstraints(); // Re-apply constraints within loop to keep it bound
+                pointX = viewState.x; pointY = viewState.y; scale = viewState.s; 
+                applyConstraints(); 
                 updateTransform(false); 
             }
         });
@@ -807,66 +482,35 @@
         const midY = (start.y + end.y) / 2;
         const offsetX = (Math.random() * 80) - 40;
         const offsetY = (Math.random() * 80) - 40;
-        
         const pathD = `M ${start.x} ${start.y} Q ${midX + offsetX} ${midY + offsetY} ${end.x} ${end.y}`;
-        
         pathLine.setAttribute('d', pathD);
         pathLine.style.opacity = 1;
-
         const length = pathLine.getTotalLength();
         pathLine.style.strokeDasharray = length;
         pathLine.style.strokeDashoffset = length;
-
-        gsap.to(pathLine, {
-            strokeDashoffset: 0,
-            duration: 3.0,
-            ease: "power2.inOut"
-        });
+        gsap.to(pathLine, { strokeDashoffset: 0, duration: 3.0, ease: "power2.inOut" });
     }
 
-    // --- 5. EDITING LOGIC ---
     function toggleEditMode() {
         isEditMode = !isEditMode;
         const btn = document.getElementById('edit-mode-btn');
         const container = document.querySelector('.sidebar');
-        
         if(isEditMode) {
-            btn.classList.add('active');
-            container.classList.add('editing-mode');
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> Done';
+            btn.classList.add('active'); container.classList.add('editing-mode'); btn.innerHTML = '<i class="fa-solid fa-check"></i> Done';
         } else {
-            btn.classList.remove('active');
-            container.classList.remove('editing-mode');
-            btn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit';
+            btn.classList.remove('active'); container.classList.remove('editing-mode'); btn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit';
         }
         renderTimeline();
     }
     
-    // Drag & Drop
-    function handleDragStart(e) {
-        dragSrcEl = this;
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/html', this.innerHTML);
-        this.classList.add('dragging');
-    }
-    
-    function handleDragOver(e) {
-        if (e.preventDefault) e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        return false;
-    }
-
-    function handleDragEnd() {
-        this.classList.remove('dragging');
-    }
-    
+    function handleDragStart(e) { dragSrcEl = this; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/html', this.innerHTML); this.classList.add('dragging'); }
+    function handleDragOver(e) { if (e.preventDefault) e.preventDefault(); e.dataTransfer.dropEffect = 'move'; return false; }
+    function handleDragEnd() { this.classList.remove('dragging'); }
     function handleDrop(e) {
         if (e.stopPropagation) e.stopPropagation();
         const dragIndex = parseInt(dragSrcEl.dataset.index);
         const dropIndex = parseInt(this.dataset.index);
-        
         if (dragIndex !== dropIndex) {
-            // Swap in array
             const movedItem = itinerary.splice(dragIndex, 1)[0];
             itinerary.splice(dropIndex, 0, movedItem);
             renderTimeline();
@@ -874,23 +518,17 @@
         return false;
     }
 
-    // Modal Logic
     const modal = document.getElementById('step-modal');
-    
     function openStepModal(index = -1) {
         const isNew = index === -1;
         document.getElementById('modal-title').innerText = isNew ? 'Add New Step' : 'Edit Step';
         document.getElementById('edit-index').value = index;
-        
         if (!isNew) {
             const step = itinerary[index];
             document.getElementById('inp-time').value = step.time;
             document.getElementById('inp-title').value = step.title;
             document.getElementById('inp-desc').value = step.desc;
             document.getElementById('inp-note').value = step.note || '';
-            
-            // Map unicode back to something readable? Or just keep raw.
-            // For simplicity in this demo, keeping raw or user must paste unicode.
             document.getElementById('inp-icon').value = escape(step.icon); 
             document.getElementById('inp-x').value = step.x;
             document.getElementById('inp-y').value = step.y;
@@ -899,26 +537,17 @@
             document.getElementById('inp-title').value = "";
             document.getElementById('inp-desc').value = "";
             document.getElementById('inp-note').value = "";
-            document.getElementById('inp-icon').value = "%uF005"; // Star default
+            document.getElementById('inp-icon').value = "%uF005"; 
             document.getElementById('inp-x').value = 500;
             document.getElementById('inp-y').value = 600;
         }
-        
         modal.style.display = 'flex';
     }
-    
-    function closeStepModal() {
-        modal.style.display = 'none';
-        isPickingLocation = false;
-        mapArea.classList.remove('picking-location');
-    }
-    
+    function closeStepModal() { modal.style.display = 'none'; isPickingLocation = false; mapArea.classList.remove('picking-location'); }
     function saveStep() {
         const index = parseInt(document.getElementById('edit-index').value);
         let iconVal = document.getElementById('inp-icon').value;
-        // Decode if it looks like %uXXXX, else assume raw
         try { iconVal = unescape(iconVal); } catch(e){}
-
         const newStep = {
             time: document.getElementById('inp-time').value,
             title: document.getElementById('inp-title').value,
@@ -928,213 +557,77 @@
             x: parseInt(document.getElementById('inp-x').value) || 500,
             y: parseInt(document.getElementById('inp-y').value) || 600
         };
-        
-        if(index === -1) {
-            itinerary.push(newStep);
-        } else {
-            newStep.image = itinerary[index].image; 
-            itinerary[index] = newStep;
-        }
-        
-        closeStepModal();
-        renderTimeline();
+        if(index === -1) { itinerary.push(newStep); } else { newStep.image = itinerary[index].image; itinerary[index] = newStep; }
+        closeStepModal(); renderTimeline();
     }
-    
-    function deleteStep(index, e) {
-        if(e) e.stopPropagation();
-        if(confirm("Delete this step?")) {
-            itinerary.splice(index, 1);
-            renderTimeline();
-        }
-    }
-    
-    function editStep(index, e) {
-        if(e) e.stopPropagation();
-        openStepModal(index);
-    }
-    
-    // Location Picker Logic
-    function startLocationPicker() {
-        isPickingLocation = true;
-        mapArea.classList.add('picking-location');
-        modal.style.display = 'none'; 
-        alert("Tap the map to set location.");
-    }
-    
+    function deleteStep(index, e) { if(e) e.stopPropagation(); if(confirm("Delete this step?")) { itinerary.splice(index, 1); renderTimeline(); } }
+    function editStep(index, e) { if(e) e.stopPropagation(); openStepModal(index); }
+    function startLocationPicker() { isPickingLocation = true; mapArea.classList.add('picking-location'); modal.style.display = 'none'; alert("Tap the map to set location."); }
     function handleMapClick(e) {
         if (!isPickingLocation) return;
-        
         const rect = mapArea.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
         const clickY = e.clientY - rect.top;
-        
         const svgX = (clickX - pointX) / scale;
         const svgY = (clickY - pointY) / scale;
-        
         document.getElementById('inp-x').value = Math.round(svgX);
         document.getElementById('inp-y').value = Math.round(svgY);
-        
-        modal.style.display = 'flex';
-        isPickingLocation = false;
-        mapArea.classList.remove('picking-location');
+        modal.style.display = 'flex'; isPickingLocation = false; mapArea.classList.remove('picking-location');
     }
 
-
-    // --- 6. ZOOM & PAN IMPLEMENTATION (With Bounds) ---
-    let scale = 1;
-    let pointX = 0;
-    let pointY = 0;
-    let isDragging = false;
-    let startX = 0;
-    let startY = 0;
-    
-    const IMG_W = 1000;
-    const IMG_H = 1200;
-    
+    let scale = 1; let pointX = 0; let pointY = 0; let isDragging = false; let startX = 0; let startY = 0;
+    const IMG_W = 1000; const IMG_H = 1200;
     function applyConstraints() {
-        const containerW = mapArea.clientWidth;
-        const containerH = mapArea.clientHeight;
-        
-        const scaledW = IMG_W * scale;
-        const scaledH = IMG_H * scale;
-
+        const containerW = mapArea.clientWidth; const containerH = mapArea.clientHeight;
+        const scaledW = IMG_W * scale; const scaledH = IMG_H * scale;
         if (scaledW > containerW) {
-            const minX = containerW - scaledW;
-            const maxX = 0; 
-            if (pointX < minX) pointX = minX;
-            if (pointX > maxX) pointX = maxX;
-        } else {
-            pointX = (containerW - scaledW) / 2;
-        }
-        
+            const minX = containerW - scaledW; const maxX = 0; 
+            if (pointX < minX) pointX = minX; if (pointX > maxX) pointX = maxX;
+        } else { pointX = (containerW - scaledW) / 2; }
         if (scaledH > containerH) {
-            const minY = containerH - scaledH;
-            const maxY = 0;
-            
-            if (pointY < minY) pointY = minY;
-            if (pointY > maxY) pointY = maxY;
-        } else {
-            pointY = (containerH - scaledH) / 2;
-        }
+            const minY = containerH - scaledH; const maxY = 0;
+            if (pointY < minY) pointY = minY; if (pointY > maxY) pointY = maxY;
+        } else { pointY = (containerH - scaledH) / 2; }
     }
-    
     function updateTransform(withConstraints = true) {
         if(withConstraints) applyConstraints();
         const transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
         mapViewport.style.transform = transform;
     }
-
-    function zoomIn() {
-        scale *= 1.2;
-        updateTransform();
-    }
-    
-    function zoomOut() {
-        scale /= 1.2;
-        if(scale < 0.3) scale = 0.3;
-        updateTransform();
-    }
-    
-    function resetView() {
-        scale = 1;
-        pointX = 0;
-        pointY = 0;
-        updateTransform();
-    }
-
+    function zoomIn() { scale *= 1.2; updateTransform(); }
+    function zoomOut() { scale /= 1.2; if(scale < 0.3) scale = 0.3; updateTransform(); }
+    function resetView() { scale = 1; pointX = 0; pointY = 0; updateTransform(); }
     function initZoomPan() {
-        mapArea.addEventListener('click', (e) => {
-            if (isPickingLocation) {
-                handleMapClick(e);
-                return;
-            }
-        });
-
+        mapArea.addEventListener('click', (e) => { if (isPickingLocation) { handleMapClick(e); return; } });
         mapArea.addEventListener('mousedown', (e) => {
-            if(isPickingLocation) return;
-            if(e.target.closest('.control-btn')) return;
-            isDragging = true;
-            startX = e.clientX - pointX;
-            startY = e.clientY - pointY;
-            mapArea.style.cursor = 'grabbing';
+            if(isPickingLocation) return; if(e.target.closest('.control-btn')) return;
+            isDragging = true; startX = e.clientX - pointX; startY = e.clientY - pointY; mapArea.style.cursor = 'grabbing';
         });
-
         window.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            e.preventDefault();
-            pointX = e.clientX - startX;
-            pointY = e.clientY - startY;
-            updateTransform();
+            if (!isDragging) return; e.preventDefault(); pointX = e.clientX - startX; pointY = e.clientY - startY; updateTransform();
         });
-
-        window.addEventListener('mouseup', () => {
-            isDragging = false;
-            mapArea.style.cursor = isPickingLocation ? 'crosshair' : 'grab';
-        });
-
+        window.addEventListener('mouseup', () => { isDragging = false; mapArea.style.cursor = isPickingLocation ? 'crosshair' : 'grab'; });
         mapArea.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? 0.9 : 1.1;
-            scale *= delta;
-            if (scale < 0.3) scale = 0.3;
-            if (scale > 4) scale = 4;
-            updateTransform();
+            e.preventDefault(); const delta = e.deltaY > 0 ? 0.9 : 1.1; scale *= delta; if (scale < 0.3) scale = 0.3; if (scale > 4) scale = 4; updateTransform();
         });
-
-        let initialPinchDist = 0;
-        let initialScale = 1;
-
+        let initialPinchDist = 0; let initialScale = 1;
         mapArea.addEventListener('touchstart', (e) => {
             if(e.target.closest('.control-btn')) return;
-
-            if (e.touches.length === 1) {
-                if(!isPickingLocation) {
-                    isDragging = true;
-                    startX = e.touches[0].clientX - pointX;
-                    startY = e.touches[0].clientY - pointY;
-                }
-            } else if (e.touches.length === 2) {
-                isDragging = false; 
-                initialPinchDist = getDist(e.touches);
-                initialScale = scale;
-            }
+            if (e.touches.length === 1) { if(!isPickingLocation) { isDragging = true; startX = e.touches[0].clientX - pointX; startY = e.touches[0].clientY - pointY; } } 
+            else if (e.touches.length === 2) { isDragging = false; initialPinchDist = getDist(e.touches); initialScale = scale; }
         });
-
         mapArea.addEventListener('touchmove', (e) => {
             e.preventDefault(); 
-            if (e.touches.length === 1 && isDragging && !isPickingLocation) {
-                pointX = e.touches[0].clientX - startX;
-                pointY = e.touches[0].clientY - startY;
-                updateTransform();
-            } else if (e.touches.length === 2) {
-                const currentDist = getDist(e.touches);
-                if (initialPinchDist > 0) {
-                    const diff = currentDist / initialPinchDist;
-                    scale = initialScale * diff;
-                    updateTransform();
-                }
-            }
+            if (e.touches.length === 1 && isDragging && !isPickingLocation) { pointX = e.touches[0].clientX - startX; pointY = e.touches[0].clientY - startY; updateTransform(); } 
+            else if (e.touches.length === 2) { const currentDist = getDist(e.touches); if (initialPinchDist > 0) { const diff = currentDist / initialPinchDist; scale = initialScale * diff; updateTransform(); } }
         });
-
         mapArea.addEventListener('touchend', (e) => {
-            if(isPickingLocation && !isDragging && e.changedTouches.length === 1) {
-                handleMapClick(e.changedTouches[0]);
-            }
-            isDragging = false;
-            initialPinchDist = 0;
+            if(isPickingLocation && !isDragging && e.changedTouches.length === 1) { handleMapClick(e.changedTouches[0]); }
+            isDragging = false; initialPinchDist = 0;
         });
     }
-
-    function getDist(touches) {
-        return Math.hypot(
-            touches[0].clientX - touches[1].clientX,
-            touches[0].clientY - touches[1].clientY
-        );
-    }
-
-    // Run
+    function getDist(touches) { return Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY); }
     init();
-
 </script>
 </body>
 </html>
