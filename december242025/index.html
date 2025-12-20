@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DHS Day Planner: Dec 24, 2025</title>
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --accent: #f59e0b;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --path-color: #ef4444;
+            --danger: #ef4444;
+            --success: #22c55e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Map Area */
+        .map-area {
+            position: relative;
+            background-color: #e0f2fe; /* Light Blue BG */
+            flex: 2;
+            overflow: hidden;
+            width: 100%;
+            cursor: grab;
+            touch-action: none; /* Important for custom touch handling */
+        }
+        
+        .map-area.picking-location {
+            cursor: crosshair !important;
+            box-shadow: inset 0 0 0 5px var(--accent);
+        }
+        
+        .map-area:active {
+            cursor: grabbing;
+        }
+
+        /* SVG Map Styling */
+        #park-map {
+            width: 100%;
+            height: 100%;
+            /* No object-fit here, we handle transform manually */
+            transform-origin: 0 0;
+        }
+
+        /* This group wraps EVERYTHING that moves (map + markers) */
+        #map-viewport-group {
+            will-change: transform;
+        }
+
+        /* Walking Paths Animation Line */
+        .walking-path-anim {
+            fill: none;
+            stroke: var(--path-color);
+            stroke-width: 6;
+            stroke-dasharray: 12;
+            stroke-linecap: round;
+            opacity: 0;
+            filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.3));
+            pointer-events: none;
+        }
+
+        /* MARKERS are now embedded via foreignObject inside SVG */
+        .marker-fo {
+            overflow: visible;
+        }
+
+        .marker-btn {
+            width: 44px;
+            height: 44px;
+            background: white;
+            border-radius: 50%;
+            border: 2px solid #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.2s;
+            font-size: 20px;
+            color: var(--text-dark);
+            overflow: hidden; 
+            transform: translate(-50%, -50%); 
+        }
+
+        .marker-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .marker-btn:hover, .marker-btn.active {
+            transform: translate(-50%, -50%) scale(1.2);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.3);
+            background: var(--primary);
+            color: white;
+            z-index: 101;
+        }
+
+        /* User Location Dot */
+        .user-dot {
+            width: 24px;
+            height: 24px;
+            background: var(--path-color);
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--path-color);
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Sidebar & Timeline */
+        .sidebar {
+            background: var(--card-bg);
+            border-top: 1px solid #e2e8f0;
+            overflow-y: auto;
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            z-index: 30;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-header {
+            padding: 15px 20px;
+            background: #1e293b;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-sm {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .btn-sm:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .btn-sm.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #1e293b;
+            font-weight: bold;
+        }
+
+        .timeline {
+            padding: 10px 15px;
+            flex-grow: 1;
+        }
+
+        .step {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #f1f5f9;
+            margin-bottom: 8px;
+            background: white;
+            position: relative;
+        }
+        
+        .step.draggable {
+            cursor: grab;
+        }
+        
+        .step.dragging {
+            opacity: 0.5;
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+        }
+
+        .step.active {
+            background-color: #eff6ff;
+            border-color: var(--primary);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .step-time {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.8rem;
+            min-width: 65px;
+        }
+
+        .step-content {
+            flex-grow: 1;
+        }
+
+        .step-content h3 {
+            margin: 0 0 2px 0;
+            font-size: 0.95rem;
+        }
+
+        .step-content p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        
+        .step-actions {
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            gap: 5px;
+            justify-content: center;
+        }
+        
+        .editing-mode .step-actions {
+            display: flex;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 5px;
+            color: #64748b;
+        }
+        
+        .action-btn:hover {
+            color: var(--primary);
+        }
+        
+        .action-btn.delete:hover {
+            color: var(--danger);
+        }
+        
+        .add-step-btn {
+            display: none;
+            width: 100%;
+            padding: 12px;
+            background: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+            color: #64748b;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+        
+        .editing-mode .add-step-btn {
+            display: block;
+        }
+        
+        .add-step-btn:hover {
+            background: #e2e8f0;
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+        
+        .modal-header h2 { margin: 0; font-size: 1.25rem; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.85rem; }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .btn-cancel { background: #f1f5f9; color: #475569; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-accent { background: var(--accent); color: #fff; }
+        
+        /* Floating Controls */
+        .map-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 50;
+        }
+        
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            border: none;
+            cursor: pointer;
+            color: #333;
+        }
+        
+        .control-btn:active { background: #f1f1f1; }
+
+        /* Desktop Layout */
+        @media (min-width: 769px) {
+            .container { flex-direction: row; }
+            .sidebar {
+                width: 350px;
+                flex: none;
+                height: 100%;
+                border-right: 1px solid #e2e8f0;
+                border-top: none;
+            }
+            .map-area { flex: 1; height: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="map-area" id="map-area">
+        
+        <!-- Zoom Controls -->
+        <div class="map-controls">
+            <button class="control-btn" onclick="zoomIn()"><i class="fa-solid fa-plus"></i></button>
+            <button class="control-btn" onclick="zoomOut()"><i class="fa-solid fa-minus"></i></button>
+            <button class="control-btn" onclick="resetView()"><i class="fa-solid fa-compress"></i></button>
+        </div>
+
+        <!-- SVG Map -->
+        <!-- Logic Dimensions: 0 0 1000 1200 -->
+        <svg id="park-map" viewBox="0 0 1000 1200">
+            <g id="map-viewport-group">
+                <!-- 1. MAP IMAGE BACKGROUND -->
+                <!-- Ensure Map_clean.png is in the same folder -->
+                <image href="Map_clean.png" x="0" y="0" width="1000" height="1200" preserveAspectRatio="xMidYMid slice" />
+
+                <!-- Dynamic Path Line -->
+                <path id="path-line" class="walking-path-anim" d="" />
+                
+                <!-- MARKERS LAYER -->
+                <g id="svg-markers-layer">
+                    <!-- Injected by JS -->
+                    <!-- User Dot -->
+                    <foreignObject id="fo-user-dot" x="0" y="0" width="1" height="1" class="marker-fo" style="overflow:visible;">
+                        <div class="user-dot" id="user-dot"></div>
+                    </foreignObject>
+                </g>
+            </g>
+        </svg>
+    </div>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div>
+                <h1 style="margin:0; font-size:1rem;"><i class="fa-solid fa-calendar-day"></i> Dec 24, 2025</h1>
+            </div>
+            <div class="header-controls">
+                <button class="btn-sm" id="edit-mode-btn" onclick="toggleEditMode()"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                <button class="btn-sm" onclick="resetView()"><i class="fa-solid fa-compress"></i></button>
+            </div>
+        </div>
+        <div class="timeline" id="timeline-container">
+            <!-- Items via JS -->
+        </div>
+        <!-- Add Button (Visible in Edit Mode) -->
+        <button class="add-step-btn" id="add-step-btn" onclick="openStepModal()">
+            <i class="fa-solid fa-plus"></i> Add New Step
+        </button>
+    </div>
+</div>
+
+<!-- Edit/Add Modal -->
+<div class="modal-overlay" id="step-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="modal-title">Edit Step</h2>
+            <button onclick="closeStepModal()" style="background:none;border:none;cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="edit-index" value="-1">
+            <div class="form-group">
+                <label>Time</label>
+                <input type="text" id="inp-time" class="form-control" placeholder="e.g. 9:00 AM">
+            </div>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="inp-title" class="form-control" placeholder="Step Title">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="inp-desc" class="form-control" rows="2" placeholder="Details..."></textarea>
+            </div>
+             <div class="form-group">
+                <label>Note (Optional)</label>
+                <input type="text" id="inp-note" class="form-control" placeholder="e.g. Mobile order now">
+            </div>
+            <div class="form-group">
+                <label>Icon (Font Awesome Class)</label>
+                <input type="text" id="inp-icon" class="form-control" value="fa-circle">
+            </div>
+            <div class="form-group">
+                <label>Location (X, Y)</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="number" id="inp-x" class="form-control" placeholder="X">
+                    <input type="number" id="inp-y" class="form-control" placeholder="Y">
+                </div>
+                <button class="btn btn-accent" style="width:100%; margin-top:8px;" onclick="startLocationPicker()">
+                    <i class="fa-solid fa-map-pin"></i> Set Location on Map
+                </button>
+                <small style="color:#64748b; display:block; margin-top:4px;">Click this, then tap the map to set coords.</small>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-cancel" onclick="closeStepModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="saveStep()">Save Step</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 1. CONFIGURATION ---
+    let itinerary = [
+        {
+            time: "8:00 AM",
+            title: "Entrance",
+            desc: "Tap in & head to Chinese Theater",
+            note: "",
+            icon: "fa-ticket",
+            image: "", 
+            x: 440, y: 1050
+        },
+        {
+            time: "8:30 AM",
+            title: "Runaway Railway",
+            desc: "Early Entry. Ride Immediately.",
+            note: "",
+            icon: "fa-train", 
+            image: "",
+            x: 450, y: 640
+        },
+        {
+            time: "9:15 AM",
+            title: "Star Tours",
+            desc: "LL: Tap & Book next LL.",
+            note: "",
+            icon: "fa-shuttle-space", 
+            image: "",
+            x: 160, y: 620
+        },
+        {
+            time: "9:45 AM",
+            title: "Smugglers Run",
+            desc: "Standby Queue.",
+            note: "",
+            icon: "fa-rocket",
+            image: "",
+            x: 260, y: 180
+        },
+        {
+            time: "11:15 AM",
+            title: "Backlot Express",
+            desc: "Mobile Order Pickup.",
+            note: "",
+            icon: "fa-burger",
+            image: "",
+            x: 140, y: 700
+        },
+        {
+            time: "12:00 PM",
+            title: "Indy Stunt Show",
+            desc: "Watch the show.",
+            note: "",
+            icon: "fa-hat-cowboy",
+            image: "",
+            x: 200, y: 830
+        },
+        {
+            time: "12:45 PM",
+            title: "Rise of Resistance",
+            desc: "LL Single Pass.",
+            note: "",
+            icon: "fa-bolt",
+            image: "",
+            x: 180, y: 350
+        },
+        {
+            time: "1:45 PM",
+            title: "Toy Story Mania",
+            desc: "LL Multi Pass.",
+            note: "",
+            icon: "fa-bullseye",
+            image: "",
+            x: 550, y: 380
+        },
+        {
+            time: "2:40 PM",
+            title: "Little Mermaid",
+            desc: "Animation Courtyard.",
+            note: "",
+            icon: "fa-music",
+            image: "",
+            x: 600, y: 620
+        },
+        {
+            time: "3:05 PM",
+            title: "Slinky Dog Dash",
+            desc: "LL Multi Pass.",
+            note: "",
+            icon: "fa-dog",
+            image: "",
+            x: 680, y: 240
+        },
+        {
+            time: "3:35 PM",
+            title: "Exit Park",
+            desc: "Minnie Van to Dinner.",
+            note: "",
+            icon: "fa-door-open",
+            image: "",
+            x: 300, y: 1100
+        },
+        {
+            time: "7:50 PM",
+            title: "Villains & Fantasmic",
+            desc: "Sunset Blvd Evening.",
+            note: "",
+            icon: "fa-dragon",
+            image: "",
+            x: 900, y: 950
+        }
+    ];
+
+    // --- 2. DOM ELEMENTS ---
+    const timelineContainer = document.getElementById('timeline-container');
+    const svgMarkersLayer = document.getElementById('svg-markers-layer');
+    const mapViewport = document.getElementById('map-viewport-group');
+    const pathLine = document.getElementById('path-line');
+    const userDot = document.getElementById('user-dot');
+    const foUserDot = document.getElementById('fo-user-dot');
+    const mapArea = document.getElementById('map-area');
+    
+    // UI State
+    let isEditMode = false;
+    let isPickingLocation = false;
+    let dragSrcEl = null;
+
+    // --- 3. INIT LOGIC ---
+    function init() {
+        renderTimeline();
+        initZoomPan();
+        
+        // Start in reset/zoomed out view and don't auto-activate step 0 movement
+        resetView();
+    }
+
+    function renderTimeline() {
+        // Clear current
+        timelineContainer.innerHTML = '';
+        // Clear Markers (except user dot)
+        const markers = Array.from(svgMarkersLayer.children);
+        markers.forEach(m => {
+            if(m.id !== 'fo-user-dot') m.remove();
+        });
+
+        // Rebuild
+        itinerary.forEach((step, index) => {
+            // 1. Timeline Step
+            const stepDiv = document.createElement('div');
+            stepDiv.className = 'step';
+            stepDiv.setAttribute('draggable', isEditMode);
+            stepDiv.dataset.index = index;
+            
+            if(isEditMode) stepDiv.classList.add('draggable');
+
+            stepDiv.innerHTML = `
+                <div class="step-time">${step.time}</div>
+                <div class="step-content">
+                    <h3><i class="fa-solid ${step.icon}" style="color:var(--primary); margin-right:5px;"></i> ${step.title}</h3>
+                    <p>${step.desc}</p>
+                    ${step.note ? `<small style="color:var(--accent); font-weight:bold;">${step.note}</small>` : ''}
+                </div>
+                <div class="step-actions">
+                    <button class="action-btn" onclick="editStep(${index}, event)"><i class="fa-solid fa-pen"></i></button>
+                    <button class="action-btn delete" onclick="deleteStep(${index}, event)"><i class="fa-solid fa-trash"></i></button>
+                    <div style="cursor:grab; padding:5px; color:#cbd5e1;"><i class="fa-solid fa-grip-vertical"></i></div>
+                </div>
+            `;
+            
+            // Interaction
+            stepDiv.addEventListener('click', (e) => {
+                // Don't activate if clicking actions
+                if(e.target.closest('.step-actions')) return;
+                activateStep(index);
+            });
+            
+            // Drag Events
+            if(isEditMode) {
+                stepDiv.addEventListener('dragstart', handleDragStart);
+                stepDiv.addEventListener('dragover', handleDragOver);
+                stepDiv.addEventListener('drop', handleDrop);
+                stepDiv.addEventListener('dragend', handleDragEnd);
+            }
+
+            timelineContainer.appendChild(stepDiv);
+
+            // 2. Map Marker
+            const fo = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
+            fo.setAttribute("x", step.x);
+            fo.setAttribute("y", step.y);
+            fo.setAttribute("width", "1"); 
+            fo.setAttribute("height", "1");
+            fo.setAttribute("class", "marker-fo");
+            fo.style.overflow = "visible"; 
+
+            const markerDiv = document.createElement('div');
+            markerDiv.className = 'marker-btn';
+            
+            if(step.image && step.image.trim() !== "") {
+                markerDiv.innerHTML = `<img src="${step.image}" alt="${step.title}">`;
+            } else {
+                markerDiv.innerHTML = `<i class="fa-solid ${step.icon}"></i>`;
+            }
+
+            markerDiv.addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                activateStep(index);
+            });
+            markerDiv.addEventListener('touchstart', (e) => {
+                e.stopPropagation(); 
+            }, {passive: false});
+            
+            step.markerEl = markerDiv; 
+            
+            fo.appendChild(markerDiv);
+            svgMarkersLayer.appendChild(fo);
+        });
+    }
+
+    // --- 4. NAVIGATION LOGIC ---
+    function activateStep(index) {
+        if(index < 0 || index >= itinerary.length) return;
+
+        // UI Highlights
+        document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+        const stepEls = document.querySelectorAll('.step');
+        if(stepEls[index]) {
+            stepEls[index].classList.add('active');
+            stepEls[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        document.querySelectorAll('.marker-btn').forEach(el => el.classList.remove('active'));
+        if(itinerary[index].markerEl) itinerary[index].markerEl.classList.add('active');
+
+        const currentStep = itinerary[index];
+        
+        // --- UPDATED LOGIC HERE ---
+        // If it's Entrance (index 0) or Exit (last index), zoom out to reset view
+        if (index === 0 || index === itinerary.length - 1) {
+            // Animate to reset view (scale 1, centered)
+            // But we still want to move the user dot to that location
+            
+            const viewState = { x: pointX, y: pointY, s: scale };
+            gsap.to(viewState, {
+                x: 0,
+                y: 0,
+                s: 1,
+                duration: 1.5,
+                ease: "power2.inOut",
+                onUpdate: function() {
+                    pointX = viewState.x;
+                    pointY = viewState.y;
+                    scale = viewState.s;
+                    updateTransform();
+                }
+            });
+        } else {
+            // Pan Camera normally
+            panTo(currentStep.x, currentStep.y);
+        }
+
+        // Move User Dot
+        // If this is the first interaction, snap the dot to the location instantly or animate from start?
+        // We'll animate normally.
+        gsap.to(foUserDot, {
+            attr: { x: currentStep.x, y: currentStep.y },
+            duration: 2.5,
+            ease: "back.out(1.7)",
+            onUpdate: function() {
+                userDot.style.opacity = 1;
+            }
+        });
+
+        // Draw Path
+        if (index > 0) {
+            const prevStep = itinerary[index - 1];
+            drawPath(prevStep, currentStep);
+        } else {
+            pathLine.style.opacity = 0;
+        }
+    }
+
+    function panTo(x, y) {
+        const containerW = mapArea.clientWidth;
+        const containerH = mapArea.clientHeight;
+
+        const targetX = (containerW / 2) - (x * scale);
+        const targetY = (containerH / 2) - (y * scale);
+
+        const viewState = { x: pointX, y: pointY };
+        gsap.to(viewState, {
+            x: targetX,
+            y: targetY,
+            duration: 1.5,
+            ease: "power2.inOut",
+            onUpdate: function() {
+                pointX = viewState.x;
+                pointY = viewState.y;
+                applyConstraints(); // Apply bounds on every frame of animation
+                updateTransform(false); // Don't re-apply constraints in updateTransform to avoid double calc
+            }
+        });
+    }
+
+    function drawPath(start, end) {
+        const midX = (start.x + end.x) / 2;
+        const midY = (start.y + end.y) / 2;
+        const offsetX = (Math.random() * 80) - 40;
+        const offsetY = (Math.random() * 80) - 40;
+        
+        const pathD = `M ${start.x} ${start.y} Q ${midX + offsetX} ${midY + offsetY} ${end.x} ${end.y}`;
+        
+        pathLine.setAttribute('d', pathD);
+        pathLine.style.opacity = 1;
+
+        const length = pathLine.getTotalLength();
+        pathLine.style.strokeDasharray = length;
+        pathLine.style.strokeDashoffset = length;
+
+        gsap.to(pathLine, {
+            strokeDashoffset: 0,
+            duration: 3.0,
+            ease: "power2.inOut"
+        });
+    }
+
+    // --- 5. EDITING LOGIC ---
+    function toggleEditMode() {
+        isEditMode = !isEditMode;
+        const btn = document.getElementById('edit-mode-btn');
+        const container = document.querySelector('.sidebar');
+        
+        if(isEditMode) {
+            btn.classList.add('active');
+            container.classList.add('editing-mode');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Done';
+        } else {
+            btn.classList.remove('active');
+            container.classList.remove('editing-mode');
+            btn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit';
+        }
+        renderTimeline();
+    }
+    
+    // Drag & Drop
+    function handleDragStart(e) {
+        dragSrcEl = this;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', this.innerHTML);
+        this.classList.add('dragging');
+    }
+    
+    function handleDragOver(e) {
+        if (e.preventDefault) e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        return false;
+    }
+
+    function handleDragEnd() {
+        this.classList.remove('dragging');
+    }
+    
+    function handleDrop(e) {
+        if (e.stopPropagation) e.stopPropagation();
+        const dragIndex = parseInt(dragSrcEl.dataset.index);
+        const dropIndex = parseInt(this.dataset.index);
+        
+        if (dragIndex !== dropIndex) {
+            // Swap in array
+            const movedItem = itinerary.splice(dragIndex, 1)[0];
+            itinerary.splice(dropIndex, 0, movedItem);
+            renderTimeline();
+        }
+        return false;
+    }
+
+    // Modal Logic
+    const modal = document.getElementById('step-modal');
+    
+    function openStepModal(index = -1) {
+        const isNew = index === -1;
+        document.getElementById('modal-title').innerText = isNew ? 'Add New Step' : 'Edit Step';
+        document.getElementById('edit-index').value = index;
+        
+        if (!isNew) {
+            const step = itinerary[index];
+            document.getElementById('inp-time').value = step.time;
+            document.getElementById('inp-title').value = step.title;
+            document.getElementById('inp-desc').value = step.desc;
+            document.getElementById('inp-note').value = step.note || '';
+            document.getElementById('inp-icon').value = step.icon;
+            document.getElementById('inp-x').value = step.x;
+            document.getElementById('inp-y').value = step.y;
+        } else {
+            // Defaults
+            document.getElementById('inp-time').value = "";
+            document.getElementById('inp-title').value = "";
+            document.getElementById('inp-desc').value = "";
+            document.getElementById('inp-note').value = "";
+            document.getElementById('inp-icon').value = "fa-star";
+            document.getElementById('inp-x').value = 500;
+            document.getElementById('inp-y').value = 600;
+        }
+        
+        modal.style.display = 'flex';
+    }
+    
+    function closeStepModal() {
+        modal.style.display = 'none';
+        isPickingLocation = false;
+        mapArea.classList.remove('picking-location');
+    }
+    
+    function saveStep() {
+        const index = parseInt(document.getElementById('edit-index').value);
+        const newStep = {
+            time: document.getElementById('inp-time').value,
+            title: document.getElementById('inp-title').value,
+            desc: document.getElementById('inp-desc').value,
+            note: document.getElementById('inp-note').value,
+            icon: document.getElementById('inp-icon').value,
+            image: "",
+            x: parseInt(document.getElementById('inp-x').value) || 500,
+            y: parseInt(document.getElementById('inp-y').value) || 600
+        };
+        
+        if(index === -1) {
+            itinerary.push(newStep);
+        } else {
+            // Preserve image if existing, unless we add image editing later
+            newStep.image = itinerary[index].image; 
+            itinerary[index] = newStep;
+        }
+        
+        closeStepModal();
+        renderTimeline();
+    }
+    
+    function deleteStep(index, e) {
+        if(e) e.stopPropagation();
+        if(confirm("Delete this step?")) {
+            itinerary.splice(index, 1);
+            renderTimeline();
+        }
+    }
+    
+    function editStep(index, e) {
+        if(e) e.stopPropagation();
+        openStepModal(index);
+    }
+    
+    // Location Picker Logic
+    function startLocationPicker() {
+        isPickingLocation = true;
+        mapArea.classList.add('picking-location');
+        modal.style.display = 'none'; 
+        alert("Tap the map to set location.");
+    }
+    
+    function handleMapClick(e) {
+        if (!isPickingLocation) return;
+        
+        const rect = mapArea.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
+        
+        const svgX = (clickX - pointX) / scale;
+        const svgY = (clickY - pointY) / scale;
+        
+        document.getElementById('inp-x').value = Math.round(svgX);
+        document.getElementById('inp-y').value = Math.round(svgY);
+        
+        modal.style.display = 'flex';
+        isPickingLocation = false;
+        mapArea.classList.remove('picking-location');
+    }
+
+
+    // --- 6. ZOOM & PAN IMPLEMENTATION (With Bounds) ---
+    let scale = 1;
+    let pointX = 0;
+    let pointY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    
+    const IMG_W = 1000;
+    const IMG_H = 1200;
+    
+    function applyConstraints() {
+        const containerW = mapArea.clientWidth;
+        const containerH = mapArea.clientHeight;
+        
+        // Calculate scaled dimensions
+        const scaledW = IMG_W * scale;
+        const scaledH = IMG_H * scale;
+
+        // X Constraints
+        if (scaledW > containerW) {
+            const minX = containerW - scaledW;
+            const maxX = 0; 
+            if (pointX < minX) pointX = minX;
+            if (pointX > maxX) pointX = maxX;
+        } else {
+            pointX = (containerW - scaledW) / 2;
+        }
+        
+        // Y Constraints
+        // Key change: We must ensure Y doesn't go below bottom limit
+        if (scaledH > containerH) {
+            const minY = containerH - scaledH; // Bottom of image aligns with bottom of view
+            const maxY = 0;                    // Top of image aligns with top of view
+            
+            if (pointY < minY) pointY = minY;
+            if (pointY > maxY) pointY = maxY;
+        } else {
+            pointY = (containerH - scaledH) / 2;
+        }
+    }
+    
+    function updateTransform(withConstraints = true) {
+        if(withConstraints) applyConstraints();
+        const transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+        mapViewport.style.transform = transform;
+    }
+
+    function zoomIn() {
+        scale *= 1.2;
+        updateTransform();
+    }
+    
+    function zoomOut() {
+        scale /= 1.2;
+        if(scale < 0.3) scale = 0.3;
+        updateTransform();
+    }
+    
+    function resetView() {
+        scale = 1;
+        pointX = 0;
+        pointY = 0;
+        // On reset, ensure we apply constraints immediately
+        // But usually 0,0 is fine unless image < container?
+        // Let's force update
+        updateTransform();
+    }
+
+    function initZoomPan() {
+        mapArea.addEventListener('click', (e) => {
+            if (isPickingLocation) {
+                handleMapClick(e);
+                return;
+            }
+        });
+
+        mapArea.addEventListener('mousedown', (e) => {
+            if(isPickingLocation) return;
+            if(e.target.closest('.control-btn')) return;
+            isDragging = true;
+            startX = e.clientX - pointX;
+            startY = e.clientY - pointY;
+            mapArea.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            pointX = e.clientX - startX;
+            pointY = e.clientY - startY;
+            updateTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+            mapArea.style.cursor = isPickingLocation ? 'crosshair' : 'grab';
+        });
+
+        mapArea.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            scale *= delta;
+            if (scale < 0.3) scale = 0.3;
+            if (scale > 4) scale = 4;
+            updateTransform();
+        });
+
+        let initialPinchDist = 0;
+        let initialScale = 1;
+
+        mapArea.addEventListener('touchstart', (e) => {
+            if(e.target.closest('.control-btn')) return;
+
+            if (e.touches.length === 1) {
+                if(!isPickingLocation) {
+                    isDragging = true;
+                    startX = e.touches[0].clientX - pointX;
+                    startY = e.touches[0].clientY - pointY;
+                }
+            } else if (e.touches.length === 2) {
+                isDragging = false; 
+                initialPinchDist = getDist(e.touches);
+                initialScale = scale;
+            }
+        });
+
+        mapArea.addEventListener('touchmove', (e) => {
+            e.preventDefault(); 
+            if (e.touches.length === 1 && isDragging && !isPickingLocation) {
+                pointX = e.touches[0].clientX - startX;
+                pointY = e.touches[0].clientY - startY;
+                updateTransform();
+            } else if (e.touches.length === 2) {
+                const currentDist = getDist(e.touches);
+                if (initialPinchDist > 0) {
+                    const diff = currentDist / initialPinchDist;
+                    scale = initialScale * diff;
+                    updateTransform();
+                }
+            }
+        });
+
+        mapArea.addEventListener('touchend', (e) => {
+            if(isPickingLocation && !isDragging && e.changedTouches.length === 1) {
+                handleMapClick(e.changedTouches[0]);
+            }
+            isDragging = false;
+            initialPinchDist = 0;
+        });
+    }
+
+    function getDist(touches) {
+        return Math.hypot(
+            touches[0].clientX - touches[1].clientX,
+            touches[0].clientY - touches[1].clientY
+        );
+    }
+
+    // Run
+    init();
+
+</script>
+</body>
+</html>
