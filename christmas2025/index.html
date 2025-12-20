@@ -78,13 +78,14 @@
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            width: 70%; /* Expanded width: 70% width leaves 15% buffer on each side (30% total) */
+            width: 50%; /* 50% width buffer as requested */
             max-width: 600px; 
             height: 80px; 
             z-index: 300;
             display: none; /* Hidden by default */
-            touch-action: none; /* Prevent scroll */
-            pointer-events: auto;
+            /* We now allow pointer events on window, so this is just visual, 
+               but we keep auto to capture clicks if user targets it specifically */
+            pointer-events: none; 
         }
         
         #joystick-base {
@@ -112,13 +113,11 @@
             background: #d32f2f; /* Red Stick */
             border: 4px solid white;
             box-shadow: 4px 4px 0 #000;
-            cursor: grab;
             transition: transform 0.05s linear; /* Smooth visual update */
         }
         
-        #joystick-knob:active {
+        #joystick-knob.active {
             background-color: #f44336;
-            cursor: grabbing;
         }
 
         /* PAUSE MENU */
@@ -419,19 +418,28 @@
                 document.getElementById('tut-btn-2').addEventListener('click', () => this.advanceTutorial(3));
                 document.getElementById('tut-btn-go').addEventListener('click', () => this.endTutorialAndPlay());
 
-                // Audio
+                // Audio - Background
                 this.bgMusic = new Audio(CONFIG.AUDIO_SOURCE);
                 this.bgMusic.loop = false;
                 this.bgMusic.volume = 0.5;
                 
-                // PRELOAD SFX to avoid delay
-                this.sfxCollect = new Audio(CONFIG.AUDIO_COLLECT);
-                this.sfxCollect.preload = 'auto';
-                this.sfxCollect.load(); 
-
-                this.sfxCrash = new Audio(CONFIG.AUDIO_CRASH);
-                this.sfxCrash.preload = 'auto';
-                this.sfxCrash.load(); 
+                // Audio - SFX Pool System
+                this.poolSize = 5;
+                this.collectPool = [];
+                this.crashPool = [];
+                
+                // Create Pools
+                for(let i=0; i<this.poolSize; i++) {
+                    const c = new Audio(CONFIG.AUDIO_COLLECT);
+                    c.preload = 'auto';
+                    c.load();
+                    this.collectPool.push(c);
+                    
+                    const r = new Audio(CONFIG.AUDIO_CRASH);
+                    r.preload = 'auto';
+                    r.load();
+                    this.crashPool.push(r);
+                }
             },
 
             // --- TUTORIAL LOGIC ---
@@ -616,18 +624,28 @@
             },
 
             playCollectSound: function() {
-                if (this.sfxCollect) {
-                    const sfx = this.sfxCollect.cloneNode();
-                    sfx.volume = 1.0; 
-                    sfx.play().catch(e => {});
+                // Find first available sound in pool
+                const sound = this.collectPool.find(s => s.paused || s.ended);
+                if (sound) {
+                    sound.currentTime = 0;
+                    sound.volume = 1.0; 
+                    sound.play().catch(e => {});
+                } else {
+                    // Fallback: Restart first one
+                    this.collectPool[0].currentTime = 0;
+                    this.collectPool[0].play().catch(e=>{});
                 }
             },
 
             playCrashSound: function() {
-                if (this.sfxCrash) {
-                    const sfx = this.sfxCrash.cloneNode();
-                    sfx.volume = 1.0;
-                    sfx.play().catch(e => {});
+                const sound = this.crashPool.find(s => s.paused || s.ended);
+                if (sound) {
+                    sound.currentTime = 0;
+                    sound.volume = 1.0; 
+                    sound.play().catch(e => {});
+                } else {
+                    this.crashPool[0].currentTime = 0;
+                    this.crashPool[0].play().catch(e=>{});
                 }
             },
 
@@ -941,25 +959,46 @@
                     if (e.key === 'ArrowLeft' || e.key === 'a') {
                         this.setDirection(-1);
                         this.notifyTutorial('left');
-                        if(this.joystickKnob) this.joystickKnob.style.transform = `translateX(-30px)`;
+                        if(this.joystickKnob) this.joystickKnob.style.transform = `translate(-30px, 0px)`;
                     }
                     if (e.key === 'ArrowRight' || e.key === 'd') {
                         this.setDirection(1);
                         this.notifyTutorial('right');
-                        if(this.joystickKnob) this.joystickKnob.style.transform = `translateX(30px)`;
+                        if(this.joystickKnob) this.joystickKnob.style.transform = `translate(30px, 0px)`;
                     }
                 });
                 window.addEventListener('keyup', (e) => {
                     if (['ArrowLeft', 'a', 'ArrowRight', 'd'].includes(e.key)) {
                         this.setDirection(0);
-                        if(this.joystickKnob) this.joystickKnob.style.transform = `translateX(0px)`;
+                        if(this.joystickKnob) this.joystickKnob.style.transform = `translate(0px, 0px)`;
                     }
                 });
 
-                // JOYSTICK MOUSE/TOUCH LOGIC
+                // JOYSTICK TOUCH/MOUSE LOGIC (Global Listener)
+                this.touchStart = { x: 0, y: 0 };
+
                 const startDrag = (e) => {
+                    // Ignore if clicking on a button (like pause or start)
+                    const target = e.target;
+                    if (target.tagName === 'BUTTON' || target.closest('button')) return;
+
                     this.isDragging = true;
-                    this.updateJoystickMetrics(); // Recalculate just in case visibility changed
+                    // Support both Touch and Mouse
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    
+                    this.touchStart.x = clientX;
+                    this.touchStart.y = clientY;
+                    
+                    // Update metrics in case of resize
+                    this.updateJoystickMetrics(); 
+                    
+                    // Reset knob visually to center on new touch (Relative Logic)
+                    if(this.joystickKnob) {
+                        this.joystickKnob.style.transition = 'none'; // Instant snap
+                        this.joystickKnob.style.transform = `translate(0px, 0px)`;
+                        this.joystickKnob.classList.add('active');
+                    }
                 }
                 
                 const moveDrag = (e) => {
@@ -967,40 +1006,46 @@
                     if(e.cancelable) e.preventDefault(); // Stop scroll
                     
                     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                     
-                    // Calculate offset from center of base
-                    const rect = this.joystickArea.getBoundingClientRect();
-                    const centerX = rect.left + rect.width / 2;
+                    // Calculate delta from start point
+                    let deltaX = clientX - this.touchStart.x;
+                    let deltaY = clientY - this.touchStart.y;
                     
-                    let deltaX = clientX - centerX;
+                    // Box Clamp (Rectangular) instead of circular
+                    // Allow X to go full width, but clamp Y to avoid visual detachment from base
+                    deltaX = Math.max(-this.maxDistX, Math.min(this.maxDistX, deltaX));
+                    deltaY = Math.max(-this.maxDistY, Math.min(this.maxDistY, deltaY));
                     
-                    // Clamp movement
-                    if (deltaX < -this.maxDist) deltaX = -this.maxDist;
-                    if (deltaX > this.maxDist) deltaX = this.maxDist;
+                    // Update Knob Visual (X and Y axis)
+                    if(this.joystickKnob) {
+                        this.joystickKnob.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+                    }
                     
-                    // Update Knob Visual
-                    this.joystickKnob.style.transform = `translateX(${deltaX}px)`;
+                    // Update Game Input (-1 to 1) - Only X affects steering
+                    // Use clamped X for normalized input
+                    const normalizedX = deltaX / this.maxDistX;
+                    this.setDirection(normalizedX); 
                     
-                    // Update Game Input (-1 to 1)
-                    const normalized = deltaX / this.maxDist;
-                    this.setDirection(normalized); 
-                    
-                    // Tutorial triggers (threshold checking)
-                    if (normalized < -0.5) this.notifyTutorial('left');
-                    if (normalized > 0.5) this.notifyTutorial('right');
+                    // Tutorial triggers
+                    if (normalizedX < -0.5) this.notifyTutorial('left');
+                    if (normalizedX > 0.5) this.notifyTutorial('right');
                 }
                 
                 const endDrag = () => {
                     this.isDragging = false;
-                    this.joystickKnob.style.transform = `translateX(0px)`;
                     this.setDirection(0);
+                    if(this.joystickKnob) {
+                        this.joystickKnob.style.transition = 'transform 0.1s'; // Smooth return
+                        this.joystickKnob.style.transform = `translate(0px, 0px)`;
+                        this.joystickKnob.classList.remove('active');
+                    }
                 }
 
-                // Add Listeners
-                this.joystickArea.addEventListener('mousedown', startDrag);
-                this.joystickArea.addEventListener('touchstart', startDrag, {passive: false});
+                // Add Listeners to Window to catch drag anywhere
+                window.addEventListener('mousedown', startDrag);
+                window.addEventListener('touchstart', startDrag, {passive: false});
                 
-                // Track movement on window to allow dragging outside the small box
                 window.addEventListener('mousemove', moveDrag);
                 window.addEventListener('touchmove', moveDrag, {passive: false});
                 
@@ -1015,9 +1060,12 @@
             updateJoystickMetrics: function() {
                 if (this.joystickArea) {
                     // Half width of area minus half width of knob (30px)
-                    this.maxDist = (this.joystickArea.clientWidth / 2) - 30;
+                    this.maxDistX = (this.joystickArea.clientWidth / 2) - 30;
+                    // Limit Y travel to keep it visually attached to base
+                    this.maxDistY = 30; 
                 } else {
-                    this.maxDist = 40; // Fallback
+                    this.maxDistX = 40;
+                    this.maxDistY = 30;
                 }
             },
             
