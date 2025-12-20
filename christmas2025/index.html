@@ -72,47 +72,54 @@
         }
         #pause-btn:hover { background: #333; }
 
-        /* ARCADE CONTROLS - 8-BIT STYLE */
-        .arcade-btn {
+        /* JOYSTICK CONTROLS - 8-BIT STYLE */
+        #joystick-area {
             position: absolute;
-            bottom: 40px;
-            width: 85px;
-            height: 85px;
-            
-            background: #d32f2f; /* Red */
-            border: 4px solid #fff;
-            border-radius: 0; /* Square for 8-bit look */
-            
-            /* Hard Shadow matching other UI elements */
-            box-shadow: 8px 8px 0 #000;
-            
-            cursor: pointer;
-            z-index: 300; /* Raised above tutorial overlay (200) so they are clickable */
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%; /* Expanded width: 70% width leaves 15% buffer on each side (30% total) */
+            max-width: 600px; 
+            height: 80px; 
+            z-index: 300;
+            display: none; /* Hidden by default */
+            touch-action: none; /* Prevent scroll */
             pointer-events: auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.1s, box-shadow 0.1s;
-            -webkit-tap-highlight-color: transparent;
-            
-            /* Text Style */
-            color: white;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 30px;
-            text-shadow: 4px 4px 0 #000;
-            
-            /* Prevent text selection */
-            user-select: none;
+        }
+        
+        #joystick-base {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 4px solid white;
+            box-shadow: 6px 6px 0 #000;
         }
 
-        .arcade-btn:active, .arcade-btn.pressed {
-            transform: translate(6px, 6px); /* Diagonal press animation */
-            box-shadow: 2px 2px 0 #000; /* Reduced shadow */
-            background-color: #f44336; /* Lighter red */
+        /* Decoration lines on base */
+        #joystick-base::before {
+            content: ''; position: absolute;
+            top: 50%; left: 5%; right: 5%; height: 4px;
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-50%);
         }
 
-        .arcade-btn-left { left: 30px; }
-        .arcade-btn-right { right: 30px; }
+        #joystick-knob {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 60px; height: 60px;
+            margin-top: -30px; margin-left: -30px; /* Center alignment */
+            background: #d32f2f; /* Red Stick */
+            border: 4px solid white;
+            box-shadow: 4px 4px 0 #000;
+            cursor: grab;
+            transition: transform 0.05s linear; /* Smooth visual update */
+        }
+        
+        #joystick-knob:active {
+            background-color: #f44336;
+            cursor: grabbing;
+        }
 
         /* PAUSE MENU */
         #pause-menu {
@@ -121,7 +128,8 @@
             display: none;
             flex-direction: column;
             justify-content: center; align-items: center;
-            z-index: 60; pointer-events: auto;
+            z-index: 400; /* Increased to be ABOVE the joystick (300) */
+            pointer-events: auto;
             color: white;
         }
 
@@ -419,11 +427,11 @@
                 // PRELOAD SFX to avoid delay
                 this.sfxCollect = new Audio(CONFIG.AUDIO_COLLECT);
                 this.sfxCollect.preload = 'auto';
-                this.sfxCollect.load(); // Force load
+                this.sfxCollect.load(); 
 
                 this.sfxCrash = new Audio(CONFIG.AUDIO_CRASH);
                 this.sfxCrash.preload = 'auto';
-                this.sfxCrash.load(); // Force load
+                this.sfxCrash.load(); 
             },
 
             // --- TUTORIAL LOGIC ---
@@ -434,8 +442,8 @@
                 this.endScreen.style.display = 'none';
                 this.pauseBtn.style.display = 'none'; // Hide pause during tutorial
                 
-                // Hide arcade buttons initially for tutorial
-                document.querySelectorAll('.arcade-btn').forEach(b => b.style.display = 'none');
+                // Hide arcade joystick initially for tutorial
+                document.getElementById('joystick-area').style.display = 'none';
 
                 gameState.isTutorial = true;
                 gameState.tutorialStep = 1;
@@ -460,30 +468,27 @@
                 } else if (step === 2) {
                     document.getElementById('tut-step-2').style.display = 'flex';
                 } else if (step === 3) {
-                    // LEFT BUTTON PROMPT
+                    // LEFT JOYSTICK PROMPT
                     document.getElementById('tut-step-3').style.display = 'flex';
                     
-                    // Show Left Button
-                    const btnLeftEl = document.getElementById('btn-left');
-                    btnLeftEl.style.display = 'flex';
+                    // Show Joystick
+                    const joyEl = document.getElementById('joystick-area');
+                    joyEl.style.display = 'block';
                     
-                    // Position Arrow over Left Button
-                    const btnLeft = btnLeftEl.getBoundingClientRect();
-                    this.tutorialArrow.style.left = (btnLeft.left + 20) + 'px';
-                    this.tutorialArrow.style.top = (btnLeft.top - 60) + 'px';
+                    // Position Arrow over Joystick
+                    const joyRect = joyEl.getBoundingClientRect();
+                    this.tutorialArrow.style.left = (joyRect.left + joyRect.width/2 - 20) + 'px'; // Center arrow
+                    this.tutorialArrow.style.top = (joyRect.top - 60) + 'px';
                     this.tutorialArrow.style.display = 'block';
                 } else if (step === 4) {
-                    // RIGHT BUTTON PROMPT
+                    // RIGHT JOYSTICK PROMPT
                     document.getElementById('tut-step-4').style.display = 'flex';
+                    // Joystick remains visible
                     
-                    // Show Right Button
-                    const btnRightEl = document.getElementById('btn-right');
-                    btnRightEl.style.display = 'flex';
-                    
-                    // Position Arrow over Right Button
-                    const btnRight = btnRightEl.getBoundingClientRect();
-                    this.tutorialArrow.style.left = (btnRight.left + 20) + 'px';
-                    this.tutorialArrow.style.top = (btnRight.top - 60) + 'px';
+                    const joyEl = document.getElementById('joystick-area');
+                    const joyRect = joyEl.getBoundingClientRect();
+                    this.tutorialArrow.style.left = (joyRect.left + joyRect.width/2 - 20) + 'px';
+                    this.tutorialArrow.style.top = (joyRect.top - 60) + 'px';
                     this.tutorialArrow.style.display = 'block';
                 } else if (step === 5) {
                     // READY
@@ -491,15 +496,15 @@
                 }
             },
 
-            // Called by Player Controls when buttons are pressed during tutorial
+            // Called by Player Controls when joystick is moved
             handleTutorialInput: function(direction) {
                 if (!gameState.isTutorial) return;
 
                 if (gameState.tutorialStep === 3 && direction === 'left') {
-                    // Player successfully clicked Left
+                    // Player successfully steered Left
                     this.advanceTutorial(4);
                 } else if (gameState.tutorialStep === 4 && direction === 'right') {
-                    // Player successfully clicked Right
+                    // Player successfully steered Right
                     this.advanceTutorial(5);
                 }
             },
@@ -517,8 +522,8 @@
                 // Actual Gameplay Start
                 this.pauseBtn.style.display = 'flex';
                 
-                // Ensure buttons are visible
-                document.querySelectorAll('.arcade-btn').forEach(b => b.style.display = 'flex');
+                // Ensure joystick is visible
+                document.getElementById('joystick-area').style.display = 'block';
                 
                 gameState.isPlaying = true;
                 gameState.isPaused = false;
@@ -577,7 +582,7 @@
             endGame: function() {
                 gameState.isPlaying = false;
                 this.pauseBtn.style.display = 'none';
-                document.querySelectorAll('.arcade-btn').forEach(b => b.style.display = 'none');
+                document.getElementById('joystick-area').style.display = 'none';
                 
                 this.bgMusic.pause();
                 
@@ -612,7 +617,6 @@
 
             playCollectSound: function() {
                 if (this.sfxCollect) {
-                    // Clone node allows overlapping sounds and instant replay without cutting off or delay
                     const sfx = this.sfxCollect.cloneNode();
                     sfx.volume = 1.0; 
                     sfx.play().catch(e => {});
@@ -628,8 +632,6 @@
             },
 
             tick: function (time, timeDelta) {
-                // Update Snow even if not playing (for atmosphere)
-                // But update Logic only if playing
                 if (!gameState.isPlaying || gameState.isPaused) return;
 
                 gameState.timeRemaining -= (timeDelta / 1000);
@@ -705,10 +707,8 @@
             },
             
             tick: function(time, timeDelta) {
-                // In Tutorial: Need to render road but NOT update spawn timers or movement
                 if (gameState.isPaused) return;
                 
-                // Allow road generation even if not playing, so start screen looks populated
                 const playerZ = this.player.getAttribute('position').z;
 
                 if (this.ground) {
@@ -717,7 +717,6 @@
 
                 const spawnDistance = Math.max(400, CONFIG.PLAYER_SPEED * 15); 
                 
-                // 1. Road Generation (Always run this so we have road)
                 let safetyLoop = 0;
                 while (this.nextRoadZ > playerZ - spawnDistance && safetyLoop < 50) {
                     this.spawnRoadSegment(this.nextRoadZ);
@@ -725,10 +724,8 @@
                     safetyLoop++;
                 }
                 
-                // STOP HERE IF NOT PLAYING (No obstacles, no movement logic)
                 if (!gameState.isPlaying) return;
 
-                // 2. Entity Generation (Gifts, Obstacles, RAMPS) - TIME BASED
                 if (performance.now() > this.nextSpawnTime) {
                     let isRampLocation = false;
                     if (this.rampsSpawned === 0 && playerZ < -400) isRampLocation = true;
@@ -875,7 +872,6 @@
                     `;
                 } else {
                     el.classList.add('obstacle');
-                    // REMOVED 'sled' and 'gingerbread'
                     const types = ['snowman', 'wreath', 'candy'];
                     const type = types[Math.floor(Math.random() * types.length)];
 
@@ -889,7 +885,6 @@
                     } else if (type === 'wreath') {
                         el.innerHTML = `<a-torus position="0 1 0" radius="0.8" radius-tubular="0.2" color="#2e7d32" segments-tubular="8" segments-radial="6"></a-torus>`;
                     } else if (type === 'candy') {
-                        // RESTORED COMPLEX CANDY CANE SHAPE
                         el.innerHTML = `
                             <a-entity scale="1.5 1.5 1.5" position="0 0 0" rotation="0 -90 0">
                                 <a-box color="white" width="0.2" depth="0.2" height="0.4" position="0 0.2 0"></a-box>
@@ -932,61 +927,98 @@
                 this.gameManager = null;
                 this.frontWheels = null; 
 
-                const btnLeft = document.getElementById('btn-left');
-                const btnRight = document.getElementById('btn-right');
+                // Joystick Setup
+                this.joystickArea = document.getElementById('joystick-area');
+                this.joystickKnob = document.getElementById('joystick-knob');
+                this.isDragging = false;
+                
+                // Calculate max distance dynamically based on width
+                this.updateJoystickMetrics();
+                window.addEventListener('resize', () => this.updateJoystickMetrics());
 
-                // KEYBOARD CONTROLS
+                // KEYBOARD CONTROLS (Keep for desktop testing)
                 window.addEventListener('keydown', (e) => {
                     if (e.key === 'ArrowLeft' || e.key === 'a') {
                         this.setDirection(-1);
-                        if (btnLeft) btnLeft.classList.add('pressed');
                         this.notifyTutorial('left');
+                        if(this.joystickKnob) this.joystickKnob.style.transform = `translateX(-30px)`;
                     }
                     if (e.key === 'ArrowRight' || e.key === 'd') {
                         this.setDirection(1);
-                        if (btnRight) btnRight.classList.add('pressed');
                         this.notifyTutorial('right');
+                        if(this.joystickKnob) this.joystickKnob.style.transform = `translateX(30px)`;
                     }
                 });
                 window.addEventListener('keyup', (e) => {
-                    if (e.key === 'ArrowLeft' || e.key === 'a') {
-                        if (this.directionX === -1) this.setDirection(0);
-                        if (btnLeft) btnLeft.classList.remove('pressed');
-                    }
-                    if (e.key === 'ArrowRight' || e.key === 'd') {
-                        if (this.directionX === 1) this.setDirection(0);
-                        if (btnRight) btnRight.classList.remove('pressed');
+                    if (['ArrowLeft', 'a', 'ArrowRight', 'd'].includes(e.key)) {
+                        this.setDirection(0);
+                        if(this.joystickKnob) this.joystickKnob.style.transform = `translateX(0px)`;
                     }
                 });
 
-                // Helper to add pressed visual state
-                const pressBtn = (btn, dir, dirString) => {
-                    btn.classList.add('pressed');
-                    this.setDirection(dir);
-                    this.notifyTutorial(dirString);
-                };
-                const releaseBtn = (btn) => {
-                    btn.classList.remove('pressed');
+                // JOYSTICK MOUSE/TOUCH LOGIC
+                const startDrag = (e) => {
+                    this.isDragging = true;
+                    this.updateJoystickMetrics(); // Recalculate just in case visibility changed
+                }
+                
+                const moveDrag = (e) => {
+                    if (!this.isDragging) return;
+                    if(e.cancelable) e.preventDefault(); // Stop scroll
+                    
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    
+                    // Calculate offset from center of base
+                    const rect = this.joystickArea.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    
+                    let deltaX = clientX - centerX;
+                    
+                    // Clamp movement
+                    if (deltaX < -this.maxDist) deltaX = -this.maxDist;
+                    if (deltaX > this.maxDist) deltaX = this.maxDist;
+                    
+                    // Update Knob Visual
+                    this.joystickKnob.style.transform = `translateX(${deltaX}px)`;
+                    
+                    // Update Game Input (-1 to 1)
+                    const normalized = deltaX / this.maxDist;
+                    this.setDirection(normalized); 
+                    
+                    // Tutorial triggers (threshold checking)
+                    if (normalized < -0.5) this.notifyTutorial('left');
+                    if (normalized > 0.5) this.notifyTutorial('right');
+                }
+                
+                const endDrag = () => {
+                    this.isDragging = false;
+                    this.joystickKnob.style.transform = `translateX(0px)`;
                     this.setDirection(0);
-                };
+                }
 
-                // Mouse/Touch Events
-                if (btnLeft) {
-                    btnLeft.addEventListener('mousedown', () => pressBtn(btnLeft, -1, 'left'));
-                    btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); pressBtn(btnLeft, -1, 'left'); });
-                    btnLeft.addEventListener('mouseup', () => releaseBtn(btnLeft));
-                    btnLeft.addEventListener('touchend', () => releaseBtn(btnLeft));
-                }
-                if (btnRight) {
-                    btnRight.addEventListener('mousedown', () => pressBtn(btnRight, 1, 'right'));
-                    btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); pressBtn(btnRight, 1, 'right'); });
-                    btnRight.addEventListener('mouseup', () => releaseBtn(btnRight));
-                    btnRight.addEventListener('touchend', () => releaseBtn(btnRight));
-                }
+                // Add Listeners
+                this.joystickArea.addEventListener('mousedown', startDrag);
+                this.joystickArea.addEventListener('touchstart', startDrag, {passive: false});
+                
+                // Track movement on window to allow dragging outside the small box
+                window.addEventListener('mousemove', moveDrag);
+                window.addEventListener('touchmove', moveDrag, {passive: false});
+                
+                window.addEventListener('mouseup', endDrag);
+                window.addEventListener('touchend', endDrag);
             },
 
             setDirection: function(dir) {
                 this.directionX = dir;
+            },
+            
+            updateJoystickMetrics: function() {
+                if (this.joystickArea) {
+                    // Half width of area minus half width of knob (30px)
+                    this.maxDist = (this.joystickArea.clientWidth / 2) - 30;
+                } else {
+                    this.maxDist = 40; // Fallback
+                }
             },
             
             notifyTutorial: function(dirString) {
@@ -1012,7 +1044,9 @@
 
                 // --- STEERING ---
                 const steeringSpeed = 10 * dt; 
-                const targetSteer = this.directionX;
+                const targetSteer = this.directionX; // Now -1 to 1 float
+                
+                // Smoothly interpolate visual steering
                 if (this.visualSteering < targetSteer) {
                     this.visualSteering = Math.min(this.visualSteering + steeringSpeed, targetSteer);
                 } else if (this.visualSteering > targetSteer) {
@@ -1039,6 +1073,8 @@
                 }
 
                 pos.z -= currentSpeed * dt;
+                
+                // Use the analog input for smoother/variable speed turns
                 pos.x += this.directionX * CONFIG.LATERAL_SPEED * dt;
 
                 const roadCenterX = this.worldManager.getRoadCurve(pos.z);
@@ -1056,13 +1092,13 @@
 
                 visuals.setAttribute('rotation', {
                     x: pitch, 
-                    y: this.visualSteering * -10,  
+                    y: this.visualSteering * -25, // Increased rotation slightly for visual feedback  
                     z: this.visualSteering * -8   
                 });
 
                 if (!this.frontWheels) this.frontWheels = document.querySelectorAll('.front-wheel');
                 this.frontWheels.forEach(wheel => {
-                    wheel.setAttribute('rotation', { x: 0, y: this.visualSteering * -35, z: 0 });
+                    wheel.setAttribute('rotation', { x: 0, y: this.visualSteering * -45, z: 0 });
                 });
 
                 this.checkCollisions(pos);
@@ -1179,12 +1215,10 @@
             <i class="fas fa-pause"></i>
         </button>
 
-        <!-- ARCADE BUTTONS -->
-        <div id="btn-left" class="arcade-btn arcade-btn-left" style="display:none;">
-            <span>L</span>
-        </div>
-        <div id="btn-right" class="arcade-btn arcade-btn-right" style="display:none;">
-            <span>R</span>
+        <!-- JOYSTICK CONTROLS -->
+        <div id="joystick-area">
+            <div id="joystick-base"></div>
+            <div id="joystick-knob"></div>
         </div>
         
         <div id="damage-overlay"></div>
@@ -1197,7 +1231,7 @@
                 <p style="margin: 0;">Collect the gifts!</p>
                 <div class="pixel-gift"></div>
             </div>
-            <center><p style="font-size: 14px; margin-top:15px; color:#ddd">Keyboard Arrows or Buttons to Steer</p></center>
+            <center><p style="font-size: 14px; margin-top:15px; color:#ddd">Use Joystick to Steer</p></center>
             <button id="start-btn">INSERT COIN</button>
         </div>
 
@@ -1237,12 +1271,12 @@
 
             <!-- STEP 3: LEFT INPUT -->
             <div id="tut-step-3" class="tutorial-step">
-                <div class="tutorial-text">TAP LEFT BUTTON TO STEER LEFT</div>
+                <div class="tutorial-text">DRAG JOYSTICK LEFT TO STEER</div>
             </div>
 
             <!-- STEP 4: RIGHT INPUT -->
             <div id="tut-step-4" class="tutorial-step">
-                <div class="tutorial-text">TAP RIGHT BUTTON TO STEER RIGHT</div>
+                <div class="tutorial-text">DRAG JOYSTICK RIGHT TO STEER</div>
             </div>
 
             <!-- STEP 5: READY -->
@@ -1254,7 +1288,7 @@
         
         <i id="tutorial-arrow" class="fas fa-arrow-down"></i>
 
-        <div id="mobile-hint">Tap Buttons to Steer</div>
+        <div id="mobile-hint">Drag to Steer</div>
     </div>
 
     <!-- A-FRAME SCENE -->
