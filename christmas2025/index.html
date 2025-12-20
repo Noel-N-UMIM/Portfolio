@@ -418,19 +418,28 @@
                 document.getElementById('tut-btn-2').addEventListener('click', () => this.advanceTutorial(3));
                 document.getElementById('tut-btn-go').addEventListener('click', () => this.endTutorialAndPlay());
 
-                // Audio
+                // Audio - Background
                 this.bgMusic = new Audio(CONFIG.AUDIO_SOURCE);
                 this.bgMusic.loop = false;
                 this.bgMusic.volume = 0.5;
                 
-                // PRELOAD SFX to avoid delay
-                this.sfxCollect = new Audio(CONFIG.AUDIO_COLLECT);
-                this.sfxCollect.preload = 'auto';
-                this.sfxCollect.load(); // Force load
-
-                this.sfxCrash = new Audio(CONFIG.AUDIO_CRASH);
-                this.sfxCrash.preload = 'auto';
-                this.sfxCrash.load(); // Force load
+                // Audio - SFX Pool System
+                this.poolSize = 5;
+                this.collectPool = [];
+                this.crashPool = [];
+                
+                // Create Pools
+                for(let i=0; i<this.poolSize; i++) {
+                    const c = new Audio(CONFIG.AUDIO_COLLECT);
+                    c.preload = 'auto';
+                    c.load();
+                    this.collectPool.push(c);
+                    
+                    const r = new Audio(CONFIG.AUDIO_CRASH);
+                    r.preload = 'auto';
+                    r.load();
+                    this.crashPool.push(r);
+                }
             },
 
             // --- TUTORIAL LOGIC ---
@@ -615,25 +624,32 @@
             },
 
             playCollectSound: function() {
-                if (this.sfxCollect) {
-                    // Clone node allows overlapping sounds and instant replay without cutting off or delay
-                    const sfx = this.sfxCollect.cloneNode();
-                    sfx.volume = 1.0; 
-                    sfx.play().catch(e => {});
+                // Find first available sound in pool
+                const sound = this.collectPool.find(s => s.paused || s.ended);
+                if (sound) {
+                    sound.currentTime = 0;
+                    sound.volume = 1.0; 
+                    sound.play().catch(e => {});
+                } else {
+                    // Fallback: Restart first one
+                    this.collectPool[0].currentTime = 0;
+                    this.collectPool[0].play().catch(e=>{});
                 }
             },
 
             playCrashSound: function() {
-                if (this.sfxCrash) {
-                    const sfx = this.sfxCrash.cloneNode();
-                    sfx.volume = 1.0;
-                    sfx.play().catch(e => {});
+                const sound = this.crashPool.find(s => s.paused || s.ended);
+                if (sound) {
+                    sound.currentTime = 0;
+                    sound.volume = 1.0; 
+                    sound.play().catch(e => {});
+                } else {
+                    this.crashPool[0].currentTime = 0;
+                    this.crashPool[0].play().catch(e=>{});
                 }
             },
 
             tick: function (time, timeDelta) {
-                // Update Snow even if not playing (for atmosphere)
-                // But update Logic only if playing
                 if (!gameState.isPlaying || gameState.isPaused) return;
 
                 gameState.timeRemaining -= (timeDelta / 1000);
@@ -709,10 +725,8 @@
             },
             
             tick: function(time, timeDelta) {
-                // In Tutorial: Need to render road but NOT update spawn timers or movement
                 if (gameState.isPaused) return;
                 
-                // Allow road generation even if not playing, so start screen looks populated
                 const playerZ = this.player.getAttribute('position').z;
 
                 if (this.ground) {
@@ -721,7 +735,6 @@
 
                 const spawnDistance = Math.max(400, CONFIG.PLAYER_SPEED * 15); 
                 
-                // 1. Road Generation (Always run this so we have road)
                 let safetyLoop = 0;
                 while (this.nextRoadZ > playerZ - spawnDistance && safetyLoop < 50) {
                     this.spawnRoadSegment(this.nextRoadZ);
@@ -729,10 +742,8 @@
                     safetyLoop++;
                 }
                 
-                // STOP HERE IF NOT PLAYING (No obstacles, no movement logic)
                 if (!gameState.isPlaying) return;
 
-                // 2. Entity Generation (Gifts, Obstacles, RAMPS) - TIME BASED
                 if (performance.now() > this.nextSpawnTime) {
                     let isRampLocation = false;
                     if (this.rampsSpawned === 0 && playerZ < -400) isRampLocation = true;
