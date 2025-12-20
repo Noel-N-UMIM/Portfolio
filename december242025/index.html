@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DHS Day Planner: Dec 24, 2025</title>
-    <!-- GSAP for Animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -56,12 +54,12 @@
         /* Map Area */
         .map-area {
             position: relative;
-            background-color: #7da55f; /* Updated to match map grass green */
+            background-color: #7da55f;
             flex: 2;
             overflow: hidden;
             width: 100%;
             cursor: grab;
-            touch-action: none; /* Important for custom touch handling */
+            touch-action: none; 
         }
         
         .map-area.picking-location {
@@ -77,11 +75,9 @@
         #park-map {
             width: 100%;
             height: 100%;
-            /* No object-fit here, we handle transform manually */
             transform-origin: 0 0;
         }
 
-        /* This group wraps EVERYTHING that moves (map + markers) */
         #map-viewport-group {
             will-change: transform;
         }
@@ -98,7 +94,7 @@
             pointer-events: none;
         }
 
-        /* MARKERS - SVG Native Implementation */
+        /* MARKERS */
         .marker-group {
             cursor: pointer;
             transition: opacity 0.2s;
@@ -120,9 +116,9 @@
 
         .marker-group:hover .marker-circle, 
         .marker-group.active .marker-circle {
-            r: 28; /* Scale up slightly */
+            r: 28;
             stroke-width: 3;
-            stroke: #fff; /* White border on active to pop */
+            stroke: #fff;
             filter: drop-shadow(0px 6px 8px rgba(0,0,0,0.4));
         }
         
@@ -213,7 +209,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
             border: 1px solid #f1f5f9;
-            border-left: 4px solid #cbd5e1; /* Default border */
+            border-left: 4px solid #cbd5e1; 
             margin-bottom: 8px;
             background: white;
             position: relative;
@@ -236,8 +232,7 @@
         }
 
         .step.active {
-            background-color: #fff; /* Reset bg on active to show border clearly or mix? */
-            /* Let's make active stand out with a thicker border and shadow, keeping tint */
+            background-color: #fff;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transform: scale(1.02);
             z-index: 10;
@@ -272,7 +267,7 @@
         }
         
         .step-actions {
-            display: none; /* Hidden by default */
+            display: none;
             flex-direction: column;
             gap: 5px;
             justify-content: center;
@@ -413,6 +408,13 @@
         
         .control-btn:active { background: #f1f1f1; }
 
+        /* Media Query to Hide Controls on Mobile */
+        @media (max-width: 768px) {
+            .map-controls {
+                display: none !important;
+            }
+        }
+
         /* Desktop Layout */
         @media (min-width: 769px) {
             .container { flex-direction: row; }
@@ -432,29 +434,19 @@
 <div class="container">
     <div class="map-area" id="map-area">
         
-        <!-- Zoom Controls -->
         <div class="map-controls">
-            <button class="control-btn" onclick="zoomIn()"><i class="fa-solid fa-plus"></i></button>
-            <button class="control-btn" onclick="zoomOut()"><i class="fa-solid fa-minus"></i></button>
+            <button class="control-btn" onclick="zoomInBtn()"><i class="fa-solid fa-plus"></i></button>
+            <button class="control-btn" onclick="zoomOutBtn()"><i class="fa-solid fa-minus"></i></button>
             <button class="control-btn" onclick="resetView()"><i class="fa-solid fa-compress"></i></button>
         </div>
 
-        <!-- SVG Map -->
-        <!-- Logic Dimensions: 0 0 1000 1200 -->
         <svg id="park-map" viewBox="0 0 1000 1200">
             <g id="map-viewport-group">
-                <!-- 1. MAP IMAGE BACKGROUND -->
-                <!-- Ensure Map_clean.png is in the same folder -->
                 <image href="Map_clean.png" x="0" y="0" width="1000" height="1200" preserveAspectRatio="xMidYMid slice" />
 
-                <!-- Dynamic Path Line -->
                 <path id="path-line" class="walking-path-anim" d="" />
                 
-                <!-- MARKERS LAYER (Native SVG Group) -->
                 <g id="svg-markers-layer">
-                    <!-- Injected by JS -->
-                    
-                    <!-- User Dot (Native SVG) -->
                     <g id="svg-user-dot" transform="translate(0,0)" style="opacity:0;">
                         <circle cx="0" cy="0" r="12" class="user-dot-circle" />
                     </g>
@@ -474,16 +466,13 @@
             </div>
         </div>
         <div class="timeline" id="timeline-container">
-            <!-- Items via JS -->
-        </div>
-        <!-- Add Button (Visible in Edit Mode) -->
+            </div>
         <button class="add-step-btn" id="add-step-btn" onclick="openStepModal()">
             <i class="fa-solid fa-plus"></i> Add New Step
         </button>
     </div>
 </div>
 
-<!-- Edit/Add Modal -->
 <div class="modal-overlay" id="step-modal">
     <div class="modal">
         <div class="modal-header">
@@ -519,8 +508,6 @@
             </div>
             <div class="form-group">
                 <label>Icon (Font Awesome Unicode)</label>
-                <!-- For SVG text icons, we use the unicode character or handle text. 
-                     Here we'll keep the class name but JS will map to unicode for simplicity or use text content -->
                 <input type="text" id="inp-icon" class="form-control" value="f005" placeholder="Unicode (e.g. f005)">
                 <small style="color:#64748b">Enter the Unicode (e.g. f005 for star). <a href="https://fontawesome.com/search?o=r&m=free" target="_blank">Look up here</a></small>
             </div>
@@ -545,7 +532,6 @@
 
 <script>
     // --- 1. CONFIGURATION ---
-    // Note: Unicode values for FontAwesome Free Solid
     let itinerary = [
         { time: "8:00 AM", title: "Entrance", desc: "Tap in & head to Chinese Theater", note: "", icon: "\uf145", type: "transport", x: 440, y: 1050 },
         { time: "8:30 AM", title: "Runaway Railway", desc: "Early Entry. Ride Immediately.", note: "", icon: "\uf238", type: "show", x: 450, y: 640 },
@@ -576,7 +562,6 @@
     let dragSrcEl = null;
 
     // --- MANUAL CENTER OFFSET ---
-    // Positive Y moves center UP (focus lower), Negative Y moves center DOWN (focus higher)
     const CENTER_OFFSET_Y = 0; 
 
     function init() {
@@ -586,14 +571,11 @@
     }
 
     function renderTimeline() {
-        // Clear current timeline
         timelineContainer.innerHTML = '';
         
-        // Clear Markers (except user dot)
         const markers = svgMarkersLayer.querySelectorAll('.marker-group');
         markers.forEach(m => m.remove());
 
-        // Rebuild
         itinerary.forEach((step, index) => {
             // 1. Timeline Step
             const stepDiv = document.createElement('div');
@@ -642,7 +624,7 @@
             
             const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
             text.setAttribute("class", "marker-icon-text");
-            text.textContent = step.icon; // Unicode
+            text.textContent = step.icon; 
 
             g.appendChild(circle);
             g.appendChild(text);
@@ -663,7 +645,6 @@
     function activateStep(index) {
         if(index < 0 || index >= itinerary.length) return;
 
-        // UI Highlights
         document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
         const stepEls = document.querySelectorAll('.step');
         if(stepEls[index]) {
@@ -677,7 +658,6 @@
 
         const currentStep = itinerary[index];
         
-        // Logic: Entrance(0) or Exit(last) -> Reset View
         if (index === 0 || index === itinerary.length - 1) {
             const viewState = { x: pointX, y: pointY, s: scale };
             gsap.to(viewState, {
@@ -694,21 +674,18 @@
                 }
             });
         } else {
-            // Pan Camera + Auto Zoom Logic
             panTo(currentStep.x, currentStep.y, true);
         }
 
-        // Move User Dot
         gsap.to(svgUserDot, {
             attr: { transform: `translate(${currentStep.x}, ${currentStep.y})` },
             duration: 2.5,
-            ease: "back.out(0.6)", // Dampened overshoot
+            ease: "back.out(0.6)", 
             onUpdate: function() {
                 svgUserDot.style.opacity = 1;
             }
         });
 
-        // Draw Path
         if (index > 0) {
             const prevStep = itinerary[index - 1];
             drawPath(prevStep, currentStep);
@@ -721,14 +698,11 @@
         const containerW = mapArea.clientWidth;
         const containerH = mapArea.clientHeight;
 
-        // Target Zoom Level Logic
         let targetScale = scale;
-        // If autoZoom requested and we are zoomed out, zoom in to at least 1.2
         if (autoZoom && scale < 1.6) {
             targetScale = 2.5;
         }
 
-        // Calculate Target Position based on NEW targetScale
         const targetX = (containerW / 2) - (x * targetScale);
         const targetY = (containerH / 2) - (y * targetScale) + CENTER_OFFSET_Y;
 
@@ -742,7 +716,7 @@
             onUpdate: function() {
                 pointX = viewState.x;
                 pointY = viewState.y;
-                scale = viewState.s; // Animate scale too
+                scale = viewState.s; 
                 applyConstraints(); 
                 updateTransform(false); 
             }
@@ -771,7 +745,7 @@
         });
     }
 
-    // --- 5. EDITING LOGIC ---
+    // --- EDITING LOGIC ---
     function toggleEditMode() {
         isEditMode = !isEditMode;
         const btn = document.getElementById('edit-mode-btn');
@@ -789,7 +763,6 @@
         renderTimeline();
     }
     
-    // Drag & Drop
     function handleDragStart(e) {
         dragSrcEl = this;
         e.dataTransfer.effectAllowed = 'move';
@@ -813,7 +786,6 @@
         const dropIndex = parseInt(this.dataset.index);
         
         if (dragIndex !== dropIndex) {
-            // Swap in array
             const movedItem = itinerary.splice(dragIndex, 1)[0];
             itinerary.splice(dropIndex, 0, movedItem);
             renderTimeline();
@@ -844,7 +816,7 @@
             document.getElementById('inp-title').value = "";
             document.getElementById('inp-desc').value = "";
             document.getElementById('inp-note').value = "";
-            document.getElementById('inp-icon').value = "%uF005"; // Star default
+            document.getElementById('inp-icon').value = "%uF005"; 
             document.getElementById('inp-type').value = "show";
             document.getElementById('inp-x').value = 500;
             document.getElementById('inp-y').value = 600;
@@ -899,7 +871,6 @@
         openStepModal(index);
     }
     
-    // Location Picker Logic
     function startLocationPicker() {
         isPickingLocation = true;
         mapArea.classList.add('picking-location');
@@ -926,7 +897,7 @@
     }
 
 
-    // --- 6. ZOOM & PAN IMPLEMENTATION (With Bounds) ---
+    // --- 6. IMPROVED ZOOM & PAN (SMOOTH & CENTERED) ---
     let scale = 1;
     let pointX = 0;
     let pointY = 0;
@@ -970,15 +941,52 @@
         mapViewport.style.transform = transform;
     }
 
-    function zoomIn() {
-        scale *= 1.6;
+    // Logic to zoom TOWARDS a specific point (focal point)
+    function zoomTo(newScale, focalX, focalY) {
+        // Clamp scale
+        if (newScale < 0.3) newScale = 0.3;
+        if (newScale > 5) newScale = 5;
+
+        // Calculate world coordinates of the focal point before zoom
+        const worldX = (focalX - pointX) / scale;
+        const worldY = (focalY - pointY) / scale;
+
+        // Apply new scale
+        scale = newScale;
+
+        // Calculate new pointX/Y so that worldX/Y is still under focalX/Y
+        pointX = focalX - worldX * scale;
+        pointY = focalY - worldY * scale;
+
         updateTransform();
     }
+
+    // Button Zoom (Smooth GSAP to Center)
+    function animateZoom(targetScale) {
+        const containerW = mapArea.clientWidth;
+        const containerH = mapArea.clientHeight;
+        const cx = containerW / 2;
+        const cy = containerH / 2;
+
+        const viewState = { s: scale };
+
+        // We use a proxy object to animate 's' (scale), then call zoomTo on update
+        gsap.to(viewState, {
+            s: targetScale,
+            duration: 0.5,
+            ease: "power2.out",
+            onUpdate: function() {
+                zoomTo(viewState.s, cx, cy);
+            }
+        });
+    }
+
+    function zoomInBtn() {
+        animateZoom(scale * 1.3); // Reduced from 1.6 for smoother feel
+    }
     
-    function zoomOut() {
-        scale /= 6;
-        if(scale < 0.3) scale = 0.3;
-        updateTransform();
+    function zoomOutBtn() {
+        animateZoom(scale / 1.3);
     }
     
     function resetView() {
@@ -989,6 +997,7 @@
     }
 
     function initZoomPan() {
+        // --- MOUSE EVENTS ---
         mapArea.addEventListener('click', (e) => {
             if (isPickingLocation) {
                 handleMapClick(e);
@@ -1018,17 +1027,29 @@
             mapArea.style.cursor = isPickingLocation ? 'crosshair' : 'grab';
         });
 
+        // Mouse Wheel: Zoom towards cursor
         mapArea.addEventListener('wheel', (e) => {
             e.preventDefault();
-            const delta = e.deltaY > 0 ? 0.9 : 1.1;
-            scale *= delta;
-            if (scale < 0.3) scale = 0.3;
-            if (scale > 4) scale = 4;
-            updateTransform();
-        });
+            const rect = mapArea.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            // Standardizing delta
+            const delta = e.deltaY > 0 ? 0.9 : 1.1; 
+            zoomTo(scale * delta, mouseX, mouseY);
+        }, { passive: false });
 
-        let initialPinchDist = 0;
+
+        // --- TOUCH EVENTS (Correct Pinch Zoom) ---
+        let initialDist = 0;
         let initialScale = 1;
+        
+        // Track the center of the pinch for focal zoom
+        let startPinchX = 0;
+        let startPinchY = 0;
+        // Track initial Map Position (pointX/Y) to calculate drag delta
+        let startMapX = 0;
+        let startMapY = 0;
 
         mapArea.addEventListener('touchstart', (e) => {
             if(e.target.closest('.control-btn')) return;
@@ -1041,33 +1062,77 @@
                 }
             } else if (e.touches.length === 2) {
                 isDragging = false; 
-                initialPinchDist = getDist(e.touches);
+                
+                // 1. Distance
+                initialDist = getDist(e.touches);
                 initialScale = scale;
+
+                // 2. Midpoint (Focal Point) relative to Container
+                const rect = mapArea.getBoundingClientRect();
+                const p1 = e.touches[0];
+                const p2 = e.touches[1];
+                
+                startPinchX = ((p1.clientX + p2.clientX) / 2) - rect.left;
+                startPinchY = ((p1.clientY + p2.clientY) / 2) - rect.top;
+
+                // 3. Map Pos
+                startMapX = pointX;
+                startMapY = pointY;
             }
-        });
+        }, { passive: false });
 
         mapArea.addEventListener('touchmove', (e) => {
             e.preventDefault(); 
+            
+            // 1. Single Finger Drag
             if (e.touches.length === 1 && isDragging && !isPickingLocation) {
                 pointX = e.touches[0].clientX - startX;
                 pointY = e.touches[0].clientY - startY;
                 updateTransform();
-            } else if (e.touches.length === 2) {
+            } 
+            // 2. Two Finger Pinch (Zoom + Pan)
+            else if (e.touches.length === 2) {
                 const currentDist = getDist(e.touches);
-                if (initialPinchDist > 0) {
-                    const diff = currentDist / initialPinchDist;
-                    scale = initialScale * diff;
+                if (initialDist > 0) {
+                    // Calculate New Scale
+                    const scaleFactor = currentDist / initialDist;
+                    const newScale = initialScale * scaleFactor;
+
+                    // Calculate New Center (Fingers might have moved while pinching)
+                    const rect = mapArea.getBoundingClientRect();
+                    const p1 = e.touches[0];
+                    const p2 = e.touches[1];
+                    const currentPinchX = ((p1.clientX + p2.clientX) / 2) - rect.left;
+                    const currentPinchY = ((p1.clientY + p2.clientY) / 2) - rect.top;
+
+                    // Execute Zoom Math logic manually here so we can add the Pan delta
+                    
+                    // A. Calculate where the original pinch center IS in world coords
+                    // (Using initial state of this interaction)
+                    const worldPinchX = (startPinchX - startMapX) / initialScale;
+                    const worldPinchY = (startPinchY - startMapY) / initialScale;
+
+                    // B. Limit Scale
+                    let clampedScale = newScale;
+                    if(clampedScale < 0.3) clampedScale = 0.3;
+                    if(clampedScale > 5) clampedScale = 5;
+                    scale = clampedScale;
+
+                    // C. Calculate new Top/Left based on keeping that world point under the CURRENT finger center
+                    pointX = currentPinchX - (worldPinchX * scale);
+                    pointY = currentPinchY - (worldPinchY * scale);
+
                     updateTransform();
                 }
             }
-        });
+        }, { passive: false });
 
         mapArea.addEventListener('touchend', (e) => {
             if(isPickingLocation && !isDragging && e.changedTouches.length === 1) {
                 handleMapClick(e.changedTouches[0]);
             }
             isDragging = false;
-            initialPinchDist = 0;
+            initialDist = 0;
         });
     }
 
