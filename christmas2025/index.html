@@ -1168,7 +1168,15 @@
                 const interactables = document.querySelectorAll('.obstacle, .collectible');
                 interactables.forEach(el => {
                     const pos = el.getAttribute('position');
-                    if (Math.abs(pos.z - playerPos.z) < 1.5) {
+                    
+                    // Modified collision logic: Check if object is slightly ahead of player (Front bumper)
+                    // The player moves in -Z direction.
+                    // Objects ahead have smaller Z values (more negative).
+                    // pos.z - playerPos.z will be negative if object is ahead.
+                    const distZ = pos.z - playerPos.z;
+                    
+                    // Check if object is between roughly 2.2 units ahead and 0.5 units behind center
+                    if (distZ > -2.2 && distZ < 0.5) {
                         if (Math.abs(pos.x - playerPos.x) < 1.3) {
                             if (playerPos.y - pos.y > 1.2) return; 
                             this.handleCollision(el);
