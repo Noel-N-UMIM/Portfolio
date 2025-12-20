@@ -87,7 +87,7 @@
             box-shadow: 8px 8px 0 #000;
             
             cursor: pointer;
-            z-index: 100;
+            z-index: 300; /* Raised above tutorial overlay (200) so they are clickable */
             pointer-events: auto;
             display: flex;
             justify-content: center;
@@ -326,8 +326,9 @@
             color: #ffeb3b;
             text-shadow: 4px 4px 0 #000;
             animation: pointBounce 0.6s infinite alternate;
-            z-index: 201;
+            z-index: 301; /* Ensure arrow is above buttons */
             display: none; /* Controlled by JS */
+            pointer-events: none; /* Ensure clicks pass through to button */
         }
         @keyframes pointBounce {
             from { transform: translateY(0); }
@@ -344,7 +345,7 @@
         // CONFIGURATION
         // ==========================================
         const CONFIG = {
-            GAME_DURATION: 100,           // Seconds
+            GAME_DURATION: 90,           // Seconds
             PLAYER_SPEED: 15,            // Speed
             LATERAL_SPEED: 15,           // Steering speed
             ROAD_WIDTH: 10,              // Slightly wider road
@@ -364,10 +365,10 @@
             
             // SPAWN SETTINGS
             // SPAWN_DISTANCE removed - reverting to time based
-            GIFT_PERCENTAGE: 40,         // Percentage of objects that are Gifts
+            GIFT_PERCENTAGE: 35,         // Percentage of objects that are Gifts
             
-            OBSTACLE_SPAWN_RATE: 430,    // Milliseconds between spawns (Controls density)
-            CURVE_INTENSITY: 15          // Max amplitude of the winding road
+            OBSTACLE_SPAWN_RATE: 450,    // Milliseconds between spawns (Controls density)
+            CURVE_INTENSITY: 13          // Max amplitude of the winding road
         };
 
         // GLOBAL STATE
