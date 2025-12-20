@@ -28,7 +28,8 @@
             padding: 0;
             background-color: var(--bg-color);
             color: var(--text-dark);
-            height: 100vh;
+            /* Use dvh to account for mobile browser UI bars */
+            height: 100dvh; 
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -754,7 +755,7 @@
         gsap.to(svgUserDot, {
             attr: { transform: `translate(${currentStep.x}, ${currentStep.y})` },
             duration: 2.5,
-            ease: "back.out(1.7)",
+            ease: "back.out(0.6)", // DAMPENED OVERSHOOT
             onUpdate: function() {
                 svgUserDot.style.opacity = 1;
             }
