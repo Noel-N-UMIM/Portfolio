@@ -84,6 +84,7 @@
         @media (min-width: 769px) { .container { flex-direction: row; } .sidebar { width: 350px; flex: none; height: 100%; border-right: 1px solid #e2e8f0; border-top: none; } .sidebar.collapsed { width: 60px; } .map-area { flex: 1; height: 100%; } }
         @media (max-width: 768px) {
             .header-add-btn { display: inline-block; }
+            .sidebar.collapsed .header-add-btn { display: none; }
             .sidebar-add-btn { display: none; }
         }
     </style>
@@ -104,8 +105,8 @@
         <div class="sidebar-header">
             <h1 style="margin:0; font-size:15.5px;"><i class="fa-solid fa-calendar-day"></i> Itinerary</h1>
             <div class="header-controls">
-                <button class="header-add-btn" onclick="addNewStep()"><i class="fa-solid fa-plus"></i> Add</button>
-                <button class="btn-sm" onclick="toggleSidebar()" id="toggle-sidebar-btn"><i class="fa-solid fa-minus"></i></button>
+                <button class="header-add-btn" onclick="addNewStep()"><i class="fa-solid fa-plus"></i> Add Item/Note</button>
+                <button class="btn-sm" onclick="toggleSidebar()" id="toggle-sidebar-btn"><i class="fa-solid fa-arrow-left"></i></button>
             </div>
         </div>
         <div class="timeline" id="timeline-container"></div>
@@ -425,7 +426,8 @@
         sidebar.classList.toggle('collapsed');
         const btn = document.getElementById('toggle-sidebar-btn');
         const isCollapsed = sidebar.classList.contains('collapsed');
-        btn.innerHTML = isCollapsed ? '<i class="fa-solid fa-chevron-up"></i>' : '<i class="fa-solid fa-minus"></i>';
+        // ARROW LOGIC: Open (visible) = Arrow Left (to close/back). Collapsed = Chevron Up (to open).
+        btn.innerHTML = isCollapsed ? '<i class="fa-solid fa-chevron-up"></i>' : '<i class="fa-solid fa-arrow-left"></i>';
     }
     
     function addNewStep() {
