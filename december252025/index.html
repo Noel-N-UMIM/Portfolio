@@ -675,8 +675,33 @@
 
     function getDist(touches) { return Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY); }
 
-    function zoomInBtn() { scale *= 1.3; centerOnDot(); }
-    function zoomOutBtn() { scale /= 1.3; centerOnDot(); }
+    function zoomInBtn() { smoothZoom(1.3); }
+    function zoomOutBtn() { smoothZoom(1/1.3); }
+    
+    function smoothZoom(factor) {
+        const w = mapArea.clientWidth;
+        const h = mapArea.clientHeight;
+        const targetScale = Math.min(Math.max(scale * factor, 0.2), 4);
+        const ratio = targetScale / scale;
+        const targetPointX = pointX * ratio + (w/2) * (1 - ratio);
+        const targetPointY = pointY * ratio + (h/2) * (1 - ratio);
+        
+        const anim = { s: scale, x: pointX, y: pointY };
+        gsap.to(anim, {
+            s: targetScale,
+            x: targetPointX,
+            y: targetPointY,
+            duration: 0.4,
+            ease: "power2.out",
+            onUpdate: () => {
+                scale = anim.s;
+                pointX = anim.x;
+                pointY = anim.y;
+                updateTransform();
+            }
+        });
+    }
+    
     init();
 </script>
 </body>
