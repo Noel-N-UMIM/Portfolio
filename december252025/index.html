@@ -65,15 +65,15 @@
         .marker-group.type-meal .marker-circle { fill: var(--color-meal); stroke: var(--border-meal); }
         .marker-group.type-transport .marker-circle { fill: var(--color-transport); stroke: var(--border-transport); }
         .marker-group.type-show .marker-circle { fill: var(--color-show); stroke: var(--border-show); }
-        .marker-group.active .marker-circle { r: 28; stroke-width: 3; stroke: #fff; }
-        .marker-icon-text { font-family: "Font Awesome 6 Free"; font-weight: 900; text-anchor: middle; dominant-baseline: central; fill: var(--text-dark); font-size: 20px; pointer-events: none; }
+        .marker-group.active .marker-circle { r: 24; stroke-width: 3; stroke: #fff; }
+        .marker-icon-text { font-family: "Font Awesome 6 Free"; font-weight: 900; text-anchor: middle; dominant-baseline: central; fill: var(--text-dark); font-size: 16px; pointer-events: none; }
         .duration-tag { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .duration-bg { fill: rgba(30, 41, 59, 0.9); stroke: white; stroke-width: 1; }
         .duration-text { fill: white; font-size: 13px; font-weight: 700; text-anchor: middle; dominant-baseline: central; font-family: sans-serif; }
         .user-dot-circle { fill: var(--path-color); stroke: white; stroke-width: 3; filter: drop-shadow(0px 0px 10px var(--path-color)); }
         .walking-path-anim { fill: none; stroke: var(--path-color); stroke-width: 6; stroke-dasharray: 12; stroke-linecap: round; opacity: 0; pointer-events: none; }
         .map-controls { position: absolute; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 50; }
-        .control-btn { width: 40px; height: 40px; background: white; border-radius: 50%; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-size: 1.2rem; cursor: pointer; }
+        .control-btn { width: 40px; height: 40px; background: white; border-radius: 50%; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
         .sidebar-add-btn { text-align: center; padding: 10px; background: #f1f5f9; border-top: 1px solid #e2e8f0; }
         .btn-add { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: 600; width: 100%; }
         @media (min-width: 769px) { .container { flex-direction: row; } .sidebar { width: 350px; flex: none; height: 100%; border-right: 1px solid #e2e8f0; border-top: none; } .sidebar.collapsed { width: 60px; } .map-area { flex: 1; height: 100%; } }
@@ -93,7 +93,7 @@
     </div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h1 style="margin:0; font-size:16.5px;"><i class="fa-solid fa-calendar-day"></i> Itinerary</h1>
+            <h1 style="margin:0; font-size:15.5px;"><i class="fa-solid fa-calendar-day"></i> Itinerary</h1>
             <button class="btn-sm" onclick="toggleSidebar()" id="toggle-sidebar-btn"><i class="fa-solid fa-minus"></i></button>
         </div>
         <div class="timeline" id="timeline-container"></div>
@@ -531,7 +531,7 @@
                 const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 g.setAttribute("class", `marker-group type-${step.type}`);
                 g.setAttribute("transform", `translate(${step.x}, ${step.y})`);
-                g.innerHTML = `<circle r="22" class="marker-circle" /><text class="marker-icon-text">&#x${step.icon};</text>`;
+                g.innerHTML = `<circle r="18" class="marker-circle" /><text class="marker-icon-text">&#x${step.icon};</text>`;
                 
                 // Enhanced Map Overlay Logic
                 // 1. Create label content with Title + Duration
