@@ -76,7 +76,16 @@
         .control-btn { width: 40px; height: 40px; background: white; border-radius: 50%; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
         .sidebar-add-btn { text-align: center; padding: 10px; background: #f1f5f9; border-top: 1px solid #e2e8f0; }
         .btn-add { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: 600; width: 100%; }
+        
+        .header-controls { display: flex; gap: 10px; align-items: center; }
+        .header-add-btn { display: none; background: transparent; border: none; font-size: 0.9rem; color: white; }
+        .header-add-btn:hover { color: var(--primary); }
+        
         @media (min-width: 769px) { .container { flex-direction: row; } .sidebar { width: 350px; flex: none; height: 100%; border-right: 1px solid #e2e8f0; border-top: none; } .sidebar.collapsed { width: 60px; } .map-area { flex: 1; height: 100%; } }
+        @media (max-width: 768px) {
+            .header-add-btn { display: inline-block; }
+            .sidebar-add-btn { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -94,7 +103,10 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h1 style="margin:0; font-size:15.5px;"><i class="fa-solid fa-calendar-day"></i> Itinerary</h1>
-            <button class="btn-sm" onclick="toggleSidebar()" id="toggle-sidebar-btn"><i class="fa-solid fa-minus"></i></button>
+            <div class="header-controls">
+                <button class="header-add-btn" onclick="addNewStep()"><i class="fa-solid fa-plus"></i> Add</button>
+                <button class="btn-sm" onclick="toggleSidebar()" id="toggle-sidebar-btn"><i class="fa-solid fa-minus"></i></button>
+            </div>
         </div>
         <div class="timeline" id="timeline-container"></div>
         <div class="sidebar-add-btn"><button class="btn-add" onclick="addNewStep()"><i class="fa-solid fa-plus"></i> Add Note/Step</button></div>
@@ -591,6 +603,13 @@
     function centerOnDot() { const w = mapArea.clientWidth, h = mapArea.clientHeight; pointX = (w/2) - (userDotPos.x * scale); pointY = (h/2) - (userDotPos.y * scale); updateTransform(); }
     function updateTransform() { mapViewport.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`; }
     
+    function getCenter(touches) {
+        return {
+            x: (touches[0].clientX + touches[1].clientX) / 2,
+            y: (touches[0].clientY + touches[1].clientY) / 2
+        };
+    }
+
     // Updated initZoomPan with TOUCH support
     function initZoomPan() {
         // Mouse
@@ -602,6 +621,8 @@
         // Touch
         let initialPinchDist = 0;
         let initialScale = 1;
+        let pinchCenterMapX = 0;
+        let pinchCenterMapY = 0;
         
         mapArea.addEventListener('touchstart', e => {
             if(e.target.closest('.control-btn')) return;
@@ -613,6 +634,15 @@
                  isDrag = false;
                  initialPinchDist = getDist(e.touches);
                  initialScale = scale;
+                 
+                 // Calculate pinch center in map coordinates
+                 const center = getCenter(e.touches);
+                 const rect = mapArea.getBoundingClientRect(); // Get relative to container
+                 const relCenterX = center.x - rect.left;
+                 const relCenterY = center.y - rect.top;
+                 
+                 pinchCenterMapX = (relCenterX - pointX) / scale;
+                 pinchCenterMapY = (relCenterY - pointY) / scale;
             }
         }, {passive: false});
 
@@ -624,8 +654,18 @@
                 updateTransform();
             } else if (e.touches.length === 2) {
                 const dist = getDist(e.touches);
-                const ratio = dist / initialPinchDist;
-                scale = Math.min(Math.max(initialScale * ratio, 0.5), 4);
+                const newScale = Math.min(Math.max(initialScale * (dist / initialPinchDist), 0.5), 4);
+                
+                const center = getCenter(e.touches);
+                const rect = mapArea.getBoundingClientRect();
+                const relCenterX = center.x - rect.left;
+                const relCenterY = center.y - rect.top;
+                
+                // Calculate new pointX/Y so that pinchCenterMapX/Y is under the new center
+                pointX = relCenterX - (pinchCenterMapX * newScale);
+                pointY = relCenterY - (pinchCenterMapY * newScale);
+                scale = newScale;
+                
                 updateTransform();
             }
         }, {passive: false});
