@@ -140,6 +140,28 @@
             font-size: 24px;
         }
 
+        /* Duration Label (Hidden by default) */
+        .duration-tag {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .duration-bg {
+            fill: rgba(30, 41, 59, 0.9); /* Dark blue-grey */
+            stroke: white;
+            stroke-width: 1;
+        }
+        
+        .duration-text {
+            fill: white;
+            font-size: 13px;
+            font-weight: 700;
+            text-anchor: middle;
+            dominant-baseline: central;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
         /* User Location Dot */
         .user-dot-circle {
             fill: var(--path-color);
@@ -398,22 +420,23 @@
 
 <script>
     // --- 1. CONFIGURATION ---
+    // Added 'duration' property based on provided document data
     let itinerary = [
-        { time: "8:00 AM", title: "Entrance", desc: "Tap in & head to Chinese Theater", note: "", icon: "\uf145", type: "transport", x: 440, y: 1050 },
-        { time: "8:30 AM", title: "Runaway Railway", desc: "Early Entry. Ride Immediately.", note: "", icon: "\uf238", type: "show", x: 450, y: 640 },
-        { time: "9:15 AM", title: "Star Tours", desc: "LL: Tap & Book next LL.", note: "", icon: "\uf197", type: "ll", x: 160, y: 620 },
-        { time: "9:45 AM", title: "Smugglers Run", desc: "Standby Queue.", note: "", icon: "\uf135", type: "show", x: 260, y: 180 },
-        { time: "11:15 AM", title: "Backlot Express", desc: "Mobile Order Pickup.", note: "", icon: "\uf805", type: "meal", x: 140, y: 700 },
-        { time: "12:00 PM", title: "Indy Stunt Show", desc: "Watch the show.", note: "", icon: "\uf8c0", type: "show", x: 200, y: 830 },
-        { time: "12:45 PM", title: "Rise of Resistance", desc: "LL Single Pass.", note: "", icon: "\uf0e7", type: "ll", x: 180, y: 350 },
-        { time: "1:45 PM", title: "Toy Story Mania", desc: "LL Multi Pass.", note: "", icon: "\uf140", type: "ll", x: 550, y: 380 },
-        { time: "2:40 PM", title: "Little Mermaid", desc: "Animation Courtyard.", note: "", icon: "\uf001", type: "show", x: 600, y: 620 },
-        { time: "3:05 PM", title: "Slinky Dog Dash", desc: "LL Multi Pass.", note: "", icon: "\uf6d3", type: "ll", x: 680, y: 240 },
-        { time: "3:35 PM", title: "Exit Park", desc: "Minnie Van to Dinner.", note: "", icon: "\uf52b", type: "transport", x: 300, y: 1100 },
-        { time: "6:30 PM", title: "Begin Return to the Park", desc: "Commute to Hollywood Studios.", note: "", icon: "\uf145", type: "transport", x: 440, y: 1050 },
-        { time: "7:00 PM", title: "Enjoy Sunset Blvd", desc: "Enjoy the nightime lighting and ambiance", note: "", icon: "\uf185", type: "show", x: 580, y: 850 },
-        { time: "7:50 PM", title: "Villains: Unfairly Ever After", desc: "A silly show before the finale", note: "", icon: "\uf6d5", type: "show", x: 920, y: 920 },
-        { time: "8:10 PM", title: "Fantasmic!", desc: "Get in line and enjoy the final show for the evening.", note: "", icon: "\uf6e8", type: "show", x: 700, y: 1000 }
+        { time: "8:00 AM", title: "Entrance", desc: "Tap in & head to Chinese Theater", note: "", icon: "\uf145", type: "transport", x: 440, y: 1050, duration: "" },
+        { time: "8:30 AM", title: "Runaway Railway", desc: "Early Entry. Ride Immediately.", note: "", icon: "\uf238", type: "show", x: 450, y: 640, duration: "25 mins" },
+        { time: "9:15 AM", title: "Star Tours", desc: "LL: Tap & Book next LL.", note: "", icon: "\uf197", type: "ll", x: 160, y: 620, duration: "~20 mins" },
+        { time: "9:45 AM", title: "Smugglers Run", desc: "Standby Queue.", note: "", icon: "\uf135", type: "show", x: 260, y: 180, duration: "20 mins" },
+        { time: "11:15 AM", title: "Backlot Express", desc: "Mobile Order Pickup.", note: "", icon: "\uf805", type: "meal", x: 140, y: 700, duration: "35 mins" },
+        { time: "12:00 PM", title: "Indy Stunt Show", desc: "Watch the show.", note: "", icon: "\uf8c0", type: "show", x: 200, y: 830, duration: "30 mins" },
+        { time: "12:45 PM", title: "Rise of Resistance", desc: "LL Single Pass.", note: "", icon: "\uf0e7", type: "ll", x: 180, y: 350, duration: "~50 mins" },
+        { time: "1:45 PM", title: "Toy Story Mania", desc: "LL Multi Pass.", note: "", icon: "\uf140", type: "ll", x: 550, y: 380, duration: "30 mins" },
+        { time: "2:40 PM", title: "Little Mermaid", desc: "Animation Courtyard.", note: "", icon: "\uf001", type: "show", x: 600, y: 620, duration: "~20 mins" },
+        { time: "3:05 PM", title: "Slinky Dog Dash", desc: "LL Multi Pass.", note: "", icon: "\uf6d3", type: "ll", x: 680, y: 240, duration: "~30 mins" },
+        { time: "3:35 PM", title: "Exit Park", desc: "Minnie Van to Dinner.", note: "", icon: "\uf52b", type: "transport", x: 300, y: 1100, duration: "" },
+        { time: "6:30 PM", title: "Begin Return to the Park", desc: "Commute to Hollywood Studios.", note: "", icon: "\uf145", type: "transport", x: 440, y: 1050, duration: "" },
+        { time: "7:00 PM", title: "Enjoy Sunset Blvd", desc: "Enjoy the nightime lighting and ambiance", note: "", icon: "\uf185", type: "show", x: 580, y: 850, duration: "" },
+        { time: "7:50 PM", title: "Villains: Unfairly Ever After", desc: "A silly show before the finale", note: "", icon: "\uf6d5", type: "show", x: 920, y: 920, duration: "18 mins" },
+        { time: "8:10 PM", title: "Fantasmic!", desc: "Get in line and enjoy the final show for the evening.", note: "", icon: "\uf6e8", type: "show", x: 700, y: 1000, duration: "30 mins" }
     ];
 
     const timelineContainer = document.getElementById('timeline-container');
@@ -426,7 +449,7 @@
     
     // --- MANUAL CENTER OFFSET ---
     const CENTER_OFFSET_Y = 500; 
-    const CENTER_OFFSET_x = 400; 
+    const CENTER_OFFSET_X = 400;
 
     function init() {
         if(itinerary.length > 0) {
@@ -481,6 +504,7 @@
                 <div class="step-content">
                     <h3>${step.title}</h3>
                     <p>${step.desc}</p>
+                    ${step.duration ? `<small style="color:var(--text-light);"><i class="fa-regular fa-clock"></i> ${step.duration}</small><br>` : ''}
                     ${step.note ? `<small style="color:var(--accent); font-weight:bold;">${step.note}</small>` : ''}
                 </div>
             `;
@@ -496,13 +520,43 @@
             g.setAttribute("class", `marker-group type-${step.type || 'show'}`);
             g.setAttribute("transform", `translate(${step.x}, ${step.y})`);
             
+            // Icon Circle
             const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             circle.setAttribute("r", "22");
             circle.setAttribute("class", "marker-circle");
             
+            // Icon Text
             const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
             text.setAttribute("class", "marker-icon-text");
             text.textContent = step.icon; 
+
+            // Duration Label (Group)
+            if (step.duration) {
+                const labelG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                labelG.setAttribute("class", "duration-tag");
+                labelG.setAttribute("transform", "translate(0, -45)"); // Position above marker
+
+                // Background Pill
+                const bg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                const width = step.duration.length * 8 + 20; // Auto-width approx
+                bg.setAttribute("class", "duration-bg");
+                bg.setAttribute("x", -width/2);
+                bg.setAttribute("y", -12);
+                bg.setAttribute("width", width);
+                bg.setAttribute("height", 24);
+                bg.setAttribute("rx", 12); // Rounded corners
+
+                // Text
+                const lblText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                lblText.setAttribute("class", "duration-text");
+                lblText.textContent = step.duration;
+
+                labelG.appendChild(bg);
+                labelG.appendChild(lblText);
+                g.appendChild(labelG);
+                
+                step.durationLabel = labelG; // Store ref
+            }
 
             g.appendChild(circle);
             g.appendChild(text);
@@ -534,6 +588,16 @@
         const markers = svgMarkersLayer.querySelectorAll('.marker-group');
         markers.forEach(el => el.classList.remove('active'));
         if(itinerary[index].markerEl) itinerary[index].markerEl.classList.add('active');
+
+        // Show Duration Label for active step, hide others
+        itinerary.forEach((s, i) => {
+            if(s.durationLabel) {
+                gsap.to(s.durationLabel, { 
+                    opacity: (i === index) ? 1 : 0, 
+                    duration: 0.3 
+                });
+            }
+        });
 
         const currentStep = itinerary[index];
         
@@ -579,7 +643,7 @@
 
                 // Calculate PointX/Y so that userDotPos is in the center
                 // Formula: Center = Point + (Dot * Scale)  =>  Point = Center - (Dot * Scale)
-                pointX = (containerW / 2) - (userDotPos.x * scale);+ CENTER_OFFSET_x;
+                pointX = (containerW / 2) - (userDotPos.x * scale) + CENTER_OFFSET_X;
                 pointY = (containerH / 2) - (userDotPos.y * scale) + CENTER_OFFSET_Y;
 
                 // D. Apply Constraints & Transform
@@ -634,9 +698,9 @@
     let userDotPos = { x: 0, y: 0 };
     let activeStepIndex = 0;
     let cameraTween = null;
-
-// Configuration for Touch
-    const TOUCH_PAN_SPEED = 2.0; // Increase to make panning faster, decrease for slower/ Increase (> 1.0): The map moves faster than your finger.Decrease (< 1.0): The map moves slower than your finger.
+    
+    // Configuration for Touch
+    const TOUCH_PAN_SPEED = 3.0; // Increase to make panning faster, decrease for slower
     let touchStartRaw = { x: 0, y: 0 };
     let touchStartMap = { x: 0, y: 0 };
 
@@ -791,8 +855,13 @@
 
             if (e.touches.length === 1) {
                 isDragging = true;
-                startX = e.touches[0].clientX - pointX;
-                startY = e.touches[0].clientY - pointY;
+                
+                // NEW TOUCH LOGIC (Using Delta for Speed Control)
+                touchStartRaw.x = e.touches[0].clientX;
+                touchStartRaw.y = e.touches[0].clientY;
+                touchStartMap.x = pointX;
+                touchStartMap.y = pointY;
+                
             } else if (e.touches.length === 2) {
                 isDragging = false; 
                 
@@ -819,8 +888,13 @@
             
             // 1. Single Finger Drag
             if (e.touches.length === 1 && isDragging) {
-                pointX = e.touches[0].clientX - startX;
-                pointY = e.touches[0].clientY - startY;
+                // Apply Speed Multiplier to Delta
+                const deltaX = e.touches[0].clientX - touchStartRaw.x;
+                const deltaY = e.touches[0].clientY - touchStartRaw.y;
+                
+                pointX = touchStartMap.x + (deltaX * TOUCH_PAN_SPEED);
+                pointY = touchStartMap.y + (deltaY * TOUCH_PAN_SPEED);
+                
                 updateTransform();
             } 
             // 2. Two Finger Pinch (Zoom + Pan)
@@ -879,4 +953,3 @@
 </script>
 </body>
 </html>
-
