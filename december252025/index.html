@@ -20,7 +20,7 @@
         .sidebar.collapsed .timeline, .sidebar.collapsed .sidebar-add-btn { display: none; }
         .sidebar.collapsed .sidebar-header { justify-content: center; padding: 15px 5px; }
         .sidebar.collapsed .sidebar-header h1 { display: none; }
-        .sidebar-header { padding: 15px 20px; background: #1e293b; color: white; min-height: 50px; display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-header { padding: 10px 15px; background: #1e293b; color: white; min-height: 40px; display: flex; justify-content: space-between; align-items: center; }
         .btn-sm { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
         .timeline { padding: 10px 15px; flex-grow: 1; overflow-y: auto; }
         .step { display: flex; flex-direction: column; gap: 4px; padding: 8px 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; background: white; border: 1px solid #f1f5f9; border-left: 4px solid #cbd5e1; transition: all 0.2s; position: relative; }
@@ -93,7 +93,7 @@
     </div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h1 style="margin:0; font-size:1.2rem;"><i class="fa-solid fa-calendar-day"></i> Itinerary</h1>
+            <h1 style="margin:0; font-size:16.5px;"><i class="fa-solid fa-calendar-day"></i> Itinerary</h1>
             <button class="btn-sm" onclick="toggleSidebar()" id="toggle-sidebar-btn"><i class="fa-solid fa-minus"></i></button>
         </div>
         <div class="timeline" id="timeline-container"></div>
@@ -573,14 +573,15 @@
             const targetScale = scale < 2.0 ? 1.5 : scale;
             const target = itinerary[index];
             const animState = { x: userDotPos.x, y: userDotPos.y, s: scale };
-            gsap.to(animState, { x: target.x, y: target.y, s: targetScale, duration: 2.5, ease: "power2.inOut", onUpdate: () => { userDotPos.x = animState.x; userDotPos.y = animState.y; scale = animState.s; updateDot(); centerOnDot(); } });
+            // Smoother Animation: Reduced duration to 1.5s and used power2.out
+            gsap.to(animState, { x: target.x, y: target.y, s: targetScale, duration: 1.5, ease: "power2.out", onUpdate: () => { userDotPos.x = animState.x; userDotPos.y = animState.y; scale = animState.s; updateDot(); centerOnDot(); } });
             
             if(index === activeStepIndex + 1 && itinerary[index-1] && itinerary[index-1].x !== null) {
                 const prev = itinerary[index-1];
                 const d = `M ${prev.x} ${prev.y} Q ${(prev.x+target.x)/2} ${(prev.y+target.y)/2 - 50} ${target.x} ${target.y}`;
                 pathLine.setAttribute('d', d); pathLine.style.opacity = 1;
                 const len = pathLine.getTotalLength(); pathLine.style.strokeDasharray = len; pathLine.style.strokeDashoffset = len;
-                gsap.to(pathLine, {strokeDashoffset: 0, duration: 2});
+                gsap.to(pathLine, {strokeDashoffset: 0, duration: 1.5});
             } else { gsap.to(pathLine, { opacity: 0, duration: 0.3 }); }
         } else { gsap.to(pathLine, { opacity: 0, duration: 0.3 }); }
         activeStepIndex = index;
@@ -589,12 +590,51 @@
     function updateDot() { svgUserDot.setAttribute("transform", `translate(${userDotPos.x}, ${userDotPos.y})`); svgUserDot.style.opacity = 1; }
     function centerOnDot() { const w = mapArea.clientWidth, h = mapArea.clientHeight; pointX = (w/2) - (userDotPos.x * scale); pointY = (h/2) - (userDotPos.y * scale); updateTransform(); }
     function updateTransform() { mapViewport.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`; }
+    
+    // Updated initZoomPan with TOUCH support
     function initZoomPan() {
+        // Mouse
         let isDrag = false, startX, startY;
         mapArea.onmousedown = e => { if(e.target.closest('.control-btn')) return; isDrag=true; startX=e.clientX-pointX; startY=e.clientY-pointY; };
         window.onmousemove = e => { if(isDrag) { pointX=e.clientX-startX; pointY=e.clientY-startY; updateTransform(); }};
         window.onmouseup = () => isDrag=false;
+
+        // Touch
+        let initialPinchDist = 0;
+        let initialScale = 1;
+        
+        mapArea.addEventListener('touchstart', e => {
+            if(e.target.closest('.control-btn')) return;
+            if(e.touches.length === 1) {
+                 isDrag = true;
+                 startX = e.touches[0].clientX - pointX;
+                 startY = e.touches[0].clientY - pointY;
+            } else if (e.touches.length === 2) {
+                 isDrag = false;
+                 initialPinchDist = getDist(e.touches);
+                 initialScale = scale;
+            }
+        }, {passive: false});
+
+        mapArea.addEventListener('touchmove', e => {
+            e.preventDefault();
+            if(e.touches.length === 1 && isDrag) {
+                pointX = e.touches[0].clientX - startX;
+                pointY = e.touches[0].clientY - startY;
+                updateTransform();
+            } else if (e.touches.length === 2) {
+                const dist = getDist(e.touches);
+                const ratio = dist / initialPinchDist;
+                scale = Math.min(Math.max(initialScale * ratio, 0.5), 4);
+                updateTransform();
+            }
+        }, {passive: false});
+        
+        mapArea.addEventListener('touchend', () => { isDrag = false; });
     }
+
+    function getDist(touches) { return Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY); }
+
     function zoomInBtn() { scale *= 1.3; centerOnDot(); }
     function zoomOutBtn() { scale /= 1.3; centerOnDot(); }
     init();
