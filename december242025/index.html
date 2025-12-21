@@ -409,7 +409,7 @@
         { time: "1:45 PM", title: "Toy Story Mania", desc: "LL Multi Pass.", note: "", icon: "\uf140", type: "ll", x: 550, y: 380 },
         { time: "2:40 PM", title: "Little Mermaid", desc: "Animation Courtyard.", note: "", icon: "\uf001", type: "show", x: 600, y: 620 },
         { time: "3:05 PM", title: "Slinky Dog Dash", desc: "LL Multi Pass.", note: "", icon: "\uf6d3", type: "ll", x: 680, y: 240 },
-        { time: "3:35 PM", title: "Exit Park", desc: "Back to Ft. Wilderness for Dinner.", note: "", icon: "\uf52b", type: "transport", x: 300, y: 1100 },
+        { time: "3:35 PM", title: "Exit Park", desc: "Minnie Van to Dinner.", note: "", icon: "\uf52b", type: "transport", x: 300, y: 1100 },
         { time: "6:30 PM", title: "Begin Return to the Park", desc: "Commute to Hollywood Studios.", note: "", icon: "\uf145", type: "transport", x: 440, y: 1050 },
         { time: "7:00 PM", title: "Enjoy Sunset Blvd", desc: "Enjoy the nightime lighting and ambiance", note: "", icon: "\uf185", type: "show", x: 580, y: 850 },
         { time: "7:50 PM", title: "Villains: Unfairly Ever After", desc: "A silly show before the finale", note: "", icon: "\uf6d5", type: "show", x: 920, y: 920 },
@@ -426,7 +426,7 @@
     
     // --- MANUAL CENTER OFFSET ---
     const CENTER_OFFSET_Y = 500; 
-    const CENTER_OFFSET_X = 400;
+    const CENTER_OFFSET_x = 400; 
 
     function init() {
         if(itinerary.length > 0) {
@@ -579,7 +579,7 @@
 
                 // Calculate PointX/Y so that userDotPos is in the center
                 // Formula: Center = Point + (Dot * Scale)  =>  Point = Center - (Dot * Scale)
-                pointX = (containerW / 2) - (userDotPos.x * scale) + CENTER_OFFSET_X; 
+                pointX = (containerW / 2) - (userDotPos.x * scale);+ CENTER_OFFSET_x;
                 pointY = (containerH / 2) - (userDotPos.y * scale) + CENTER_OFFSET_Y;
 
                 // D. Apply Constraints & Transform
@@ -588,13 +588,18 @@
             }
         });
 
-        // 4. Draw Path
-        if (index > 0) {
-            const prevStep = itinerary[index - 1];
+        // 4. Draw Path Logic
+        // Only draw if moving to the immediate next step in sequence
+        if (index === activeStepIndex + 1) {
+            const prevStep = itinerary[index - 1]; // activeStepIndex should match index-1 here
             drawPath(prevStep, currentStep);
         } else {
-            pathLine.style.opacity = 0;
+            // If going back, skipping, or staying, hide the path
+            gsap.to(pathLine, { opacity: 0, duration: 0.3 });
         }
+        
+        // Update global state
+        activeStepIndex = index;
     }
 
     function drawPath(start, end) {
@@ -627,7 +632,13 @@
     
     // NEW GLOBALS
     let userDotPos = { x: 0, y: 0 };
+    let activeStepIndex = 0;
     let cameraTween = null;
+
+// Configuration for Touch
+    const TOUCH_PAN_SPEED = 1.0; // Increase to make panning faster, decrease for slower/ Increase (> 1.0): The map moves faster than your finger.Decrease (< 1.0): The map moves slower than your finger.
+    let touchStartRaw = { x: 0, y: 0 };
+    let touchStartMap = { x: 0, y: 0 };
 
     let isDragging = false;
     let startX = 0;
