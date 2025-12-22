@@ -27,7 +27,6 @@
         .step:hover { transform: translateX(2px); }
         .step.active { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: #fff; z-index: 10; }
         
-        /* New Step Structure */
         .step-header { display: flex; justify-content: space-between; align-items: baseline; width: 100%; margin-bottom: 2px; }
         .step-title { font-weight: 700; color: var(--text-dark); font-size: 0.95rem; margin: 0; line-height: 1.2; }
         .step-duration { font-size: 0.75rem; color: #94a3b8; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; white-space: nowrap; margin-left: 8px; }
@@ -43,12 +42,10 @@
         .step-time:hover { color: var(--primary); border-bottom-color: var(--primary); }
         .step-note { font-size: 0.75rem; color: var(--text-light); font-style: italic; }
 
-        /* Hidden State */
         .step.is-hidden { opacity: 0.4; filter: grayscale(100%); background: #f1f5f9; border-left-color: #cbd5e1; }
         .step.is-hidden:hover { transform: none; }
         .step.is-hidden .step-time, .step.is-hidden .step-title { text-decoration: line-through; color: #94a3b8; }
         
-        /* SOLID COLORS - NO OPACITY */
         .step.type-ll { background: #f0f9ff; border-left-color: var(--border-ll); }
         .step.type-meal { background: #f0fdf4; border-left-color: var(--border-meal); }
         .step.type-show { background: #faf5ff; border-left-color: var(--border-show); }
@@ -78,7 +75,7 @@
         .btn-add { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: 600; width: 100%; }
         
         .header-controls { display: flex; gap: 10px; align-items: center; }
-        .header-add-btn { display: none; background: transparent; border: none; font-size: 0.9rem; color: white; }
+        .header-add-btn { display: none; background: transparent; border: none; font-size: 0.9rem; color: white; cursor: pointer; }
         .header-add-btn:hover { color: var(--primary); }
         
         @media (min-width: 769px) { .container { flex-direction: row; } .sidebar { width: 350px; flex: none; height: 100%; border-right: 1px solid #e2e8f0; border-top: none; } .sidebar.collapsed { width: 60px; } .map-area { flex: 1; height: 100%; } }
@@ -86,6 +83,7 @@
             .header-add-btn { display: inline-block; }
             .sidebar.collapsed .header-add-btn { display: none; }
             .sidebar-add-btn { display: none; }
+            .sidebar.expanded { position: absolute; top: 0; bottom: 0; width: 100%; height: 100%; z-index: 60; }
         }
     </style>
 </head>
@@ -106,13 +104,16 @@
             <h1 style="margin:0; font-size:15.5px;"><i class="fa-solid fa-calendar-day"></i> Itinerary</h1>
             <div class="header-controls">
                 <button class="header-add-btn" onclick="addNewStep()"><i class="fa-solid fa-plus"></i> Add Item/Note</button>
+                <button class="btn-sm" onclick="toggleExpand()" id="expand-sidebar-btn"><i class="fa-solid fa-expand"></i></button>
                 <button class="btn-sm" onclick="toggleSidebar()" id="toggle-sidebar-btn"><i class="fa-solid fa-arrow-left"></i></button>
             </div>
         </div>
         <div class="timeline" id="timeline-container"></div>
         <div class="sidebar-add-btn"><button class="btn-add" onclick="addNewStep()"><i class="fa-solid fa-plus"></i> Add Note/Step</button></div>
     </div>
-</div><script>
+</div>
+<script>
+
     let itinerary = [
     {
         "time": "7:15",
@@ -445,6 +446,9 @@
         "y": 776
     }
 ];
+    const repoData = {" Custom Event":{"dur":"","icon":"fa-pen-to-square","type":"show","land":"Park Wide"},"Be Our Guest Restaurant":{"dur":"~90 mins","icon":"fa-rose","type":"meal","land":"Fantasyland"},"Cinderella's Royal Table":{"dur":"~90 mins","icon":"fa-crown","type":"meal","land":"Fantasyland"},"The Crystal Palace":{"dur":"~75 mins","icon":"fa-paw","type":"meal","land":"Main Street"},"Liberty Tree Tavern":{"dur":"~75 mins","icon":"fa-bell","type":"meal","land":"Liberty Square"},"The Plaza Restaurant":{"dur":"~60 mins","icon":"fa-utensils","type":"meal","land":"Main Street"},"Columbia Harbour House":{"dur":"~45 mins","icon":"fa-fish","type":"meal","land":"Liberty Square"},"Pecos Bill Tall Tale Inn":{"dur":"~45 mins","icon":"fa-hat-cowboy","type":"meal","land":"Frontierland"},"Cosmic Ray's Starlight Café":{"dur":"~45 mins","icon":"fa-burger","type":"meal","land":"Tomorrowland"},"Pinocchio Village Haus":{"dur":"~45 mins","icon":"fa-pizza-slice","type":"meal","land":"Fantasyland"},"Casey's Corner":{"dur":"~30 mins","icon":"fa-hotdog","type":"meal","land":"Main Street"},"Aloha Isle (Dole Whip)":{"dur":"~15 mins","icon":"fa-ice-cream","type":"meal","land":"Adventureland"},"Sleepy Hollow":{"dur":"~15 mins","icon":"fa-cookie","type":"meal","land":"Liberty Square"},"Gaston's Tavern":{"dur":"~20 mins","icon":"fa-mug-hot","type":"meal","land":"Fantasyland"},"Storybook Treats":{"dur":"~15 mins","icon":"fa-ice-cream","type":"meal","land":"Fantasyland"},"Main Street Confectionery":{"dur":"~20 mins","icon":"fa-candy-cane","type":"meal","land":"Main Street"},"Disney World Railroad":{"dur":"~20 mins","icon":"fa-train","type":"show","land":"Main Street"},"Jungle Cruise":{"dur":"~10 mins","icon":"fa-ship","type":"show","land":"Adventureland"},"Pirates of the Caribbean":{"dur":"~9 mins","icon":"fa-skull-crossbones","type":"show","land":"Adventureland"},"Swiss Family Treehouse":{"dur":"~15 mins","icon":"fa-tree","type":"show","land":"Adventureland"},"Enchanted Tiki Room":{"dur":"~10 mins","icon":"fa-feather","type":"show","land":"Adventureland"},"Tiana's Bayou Adventure":{"dur":"~12 mins","icon":"fa-frog","type":"show","land":"Frontierland"},"Country Bear Jamboree":{"dur":"~11 mins","icon":"fa-music","type":"show","land":"Frontierland"},"Haunted Mansion":{"dur":"~10 mins","icon":"fa-ghost","type":"show","land":"Liberty Square"},"Liberty Square Riverboat":{"dur":"~20 mins","icon":"fa-anchor","type":"show","land":"Liberty Square"},"Hall of Presidents":{"dur":"~25 mins","icon":"fa-landmark","type":"show","land":"Liberty Square"},"it's a small world":{"dur":"~14 mins","icon":"fa-earth-americas","type":"show","land":"Fantasyland"},"Peter Pan's Flight":{"dur":"~3 mins","icon":"fa-sailboat","type":"show","land":"Fantasyland"},"Seven Dwarfs Mine Train":{"dur":"~3 mins","icon":"fa-gem","type":"show","land":"Fantasyland"},"Prince Charming Carrousel":{"dur":"~2 mins","icon":"fa-horse","type":"show","land":"Fantasyland"},"Winnie the Pooh":{"dur":"~4 mins","icon":"fa-jar","type":"show","land":"Fantasyland"},"Mad Tea Party":{"dur":"~2 mins","icon":"fa-mug-hot","type":"show","land":"Fantasyland"},"Dumbo":{"dur":"~2 mins","icon":"fa-elephant","type":"show","land":"Fantasyland"},"Little Mermaid":{"dur":"~7 mins","icon":"fa-fish","type":"show","land":"Fantasyland"},"The Barnstormer":{"dur":"~1 min","icon":"fa-plane","type":"show","land":"Fantasyland"},"Mickey's PhilharMagic":{"dur":"~12 mins","icon":"fa-glasses","type":"show","land":"Fantasyland"},"Space Mountain":{"dur":"~3 mins","icon":"fa-rocket","type":"show","land":"Tomorrowland"},"TRON Lightcycle / Run":{"dur":"~2 mins","icon":"fa-motorcycle","type":"show","land":"Tomorrowland"},"Tomorrowland Speedway":{"dur":"~5 mins","icon":"fa-car","type":"show","land":"Tomorrowland"},"PeopleMover":{"dur":"~10 mins","icon":"fa-train-subway","type":"show","land":"Tomorrowland"},"Buzz Lightyear":{"dur":"~5 mins","icon":"fa-bullseye","type":"show","land":"Tomorrowland"},"Carousel of Progress":{"dur":"~21 mins","icon":"fa-clock","type":"show","land":"Tomorrowland"},"Monsters Inc Laugh Floor":{"dur":"~15 mins","icon":"fa-microphone","type":"show","land":"Tomorrowland"},"Happily Ever After":{"dur":"~18 mins","icon":"fa-fire","type":"show","land":"Park Wide"},"Festival of Fantasy":{"dur":"~15 mins","icon":"fa-dragon","type":"show","land":"Park Wide"}};
+    const CENTER_OFFSET_Y = 500; 
+    const CENTER_OFFSET_X = 400;
     const timelineContainer = document.getElementById('timeline-container');
     const svgMarkersLayer = document.getElementById('svg-markers-layer');
     const mapViewport = document.getElementById('map-viewport-group');
@@ -464,18 +468,65 @@
     
     function toggleSidebar() {
         sidebar.classList.toggle('collapsed');
+        // Reset expanded state if collapsing
+        if(sidebar.classList.contains('collapsed')) {
+            sidebar.classList.remove('expanded');
+            updateExpandIcon();
+        }
+        
         const btn = document.getElementById('toggle-sidebar-btn');
         const isCollapsed = sidebar.classList.contains('collapsed');
-        // ARROW LOGIC: Open (visible) = Arrow Left (to close/back). Collapsed = Chevron Up (to open).
         btn.innerHTML = isCollapsed ? '<i class="fa-solid fa-chevron-up"></i>' : '<i class="fa-solid fa-arrow-left"></i>';
     }
     
+    function toggleExpand() {
+        sidebar.classList.toggle('expanded');
+        updateExpandIcon();
+        // If expanding, ensure sidebar is not collapsed
+        if(sidebar.classList.contains('expanded') && sidebar.classList.contains('collapsed')) {
+            toggleSidebar();
+        }
+    }
+    
+    function updateExpandIcon() {
+        const expandBtn = document.getElementById('expand-sidebar-btn');
+        if(expandBtn) {
+            const isExpanded = sidebar.classList.contains('expanded');
+            expandBtn.innerHTML = isExpanded ? '<i class="fa-solid fa-compress"></i>' : '<i class="fa-solid fa-expand"></i>';
+        }
+    }
+    
     function addNewStep() {
-        const time = prompt("Enter time (e.g. 2:00 PM):"); if(!time) return;
-        const title = prompt("Enter title (e.g. Snack Break):"); if(!title) return;
-        itinerary.push({ time: time, title: title, desc: "Custom Note", type: "show", duration: "", icon: "f249", x: null, y: null });
-        renderTimeline();
-        setTimeout(() => activateStep(itinerary.length - 1), 100);
+        const choice = prompt("Enter '1' to choose from list, or '2' for custom note:");
+        if (choice === '1') {
+            const keys = Object.keys(repoData).filter(k => k !== " Custom Event");
+            const selection = prompt("Type exact name from: " + keys.slice(0, 5).join(", ") + "...");
+            if (selection && repoData[selection]) {
+                const item = repoData[selection];
+                const time = prompt("Enter time (e.g. 2:00 PM):");
+                if (time) {
+                    itinerary.push({ 
+                        time: time, 
+                        title: selection, 
+                        desc: "Added from list", 
+                        type: item.type, 
+                        duration: item.dur, 
+                        icon: "f005", 
+                        x: 400, y: 500 
+                    });
+                    renderTimeline();
+                    setTimeout(() => activateStep(itinerary.length - 1), 100);
+                }
+            } else {
+                alert("Item not found or invalid selection.");
+            }
+        } else if (choice === '2') {
+            const time = prompt("Enter time (e.g. 2:00 PM):"); if(!time) return;
+            const title = prompt("Enter title (e.g. Snack Break):"); if(!title) return;
+            itinerary.push({ time: time, title: title, desc: "Custom Note", type: "show", duration: "", icon: "f249", x: null, y: null });
+            renderTimeline();
+            setTimeout(() => activateStep(itinerary.length - 1), 100);
+        }
     }
 
     function updateStepTime(index) {
@@ -511,14 +562,11 @@
                     
                     if(dy !== 0) {
                         if (i === newIndex) {
-                            // Active Mover: Gold BG, Shadow, Pop Up
                             const tl = gsap.timeline();
-                            // Phase 1: Move to position (Maintain solid gold/shadow/scale throughout)
                             tl.fromTo(newEl, 
                                 { y: dy, backgroundColor: highlightColor, scale: 1.02, zIndex: 100, boxShadow: "0 8px 24px rgba(0,0,0,0.3)" }, 
                                 { y: 0, duration: 0.8, ease: "power2.inOut" } 
                             )
-                            // Phase 2: Fade out AFTER settled
                             .to(newEl, { 
                                 backgroundColor: typeColors[itinerary[i].type] || "#ffffff", 
                                 scale: 1, 
@@ -526,11 +574,10 @@
                                 zIndex: 1, 
                                 duration: 0.6, 
                                 clearProps: "all" 
-                            }, "+=0.1"); // Small delay to ensure user sees it settled
+                            }, "+=0.1"); 
                             
                             newEl.scrollIntoView({behavior: 'smooth', block: 'nearest'});
                         } else if (i === index) {
-                            // Standard shuffle for other items
                             gsap.fromTo(newEl, { y: dy, zIndex: 1 }, { y: 0, zIndex: 1, duration: 0.8, ease: "power2.inOut" });
                         }
                     }
@@ -587,24 +634,25 @@
                 g.setAttribute("transform", `translate(${step.x}, ${step.y})`);
                 g.innerHTML = `<circle r="18" class="marker-circle" /><text class="marker-icon-text">&#x${step.icon};</text>`;
                 
-                // Enhanced Map Overlay Logic
-                // 1. Create label content with Title + Duration
                 const labelG = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 labelG.setAttribute("class", "duration-tag");
-                labelG.setAttribute("transform", "translate(0, -50)"); // Shift up slightly more
+                labelG.setAttribute("transform", "translate(0, -50)"); 
                 
                 const labelText = step.duration ? `${step.title} • ${step.duration}` : step.title;
-                const textWidth = labelText.length * 7.5 + 20; // Approximate width based on char count
+                const textWidth = labelText.length * 7.5 + 20; 
                 
                 labelG.innerHTML = `<rect class="duration-bg" x="${-textWidth/2}" y="-15" width="${textWidth}" height="30" rx="15" /><text class="duration-text" y="1">${labelText}</text>`;
                 g.appendChild(labelG); 
                 step.durationLabel = labelG; 
 
-                // Set initial visibility
                 if (step.hidden) g.style.opacity = 0; 
                 if (step.hidden) g.style.pointerEvents = 'none';
 
-                g.onclick = (e) => { e.stopPropagation(); activateStep(index); };
+                g.onclick = (e) => { 
+                    e.stopPropagation(); 
+                    activateStep(index);
+                    if (sidebar.classList.contains('collapsed')) sidebar.classList.remove('collapsed');
+                };
                 svgMarkersLayer.appendChild(g); step.marker = g;
             }
             step.el = div; 
@@ -613,21 +661,26 @@
 
     function activateStep(index) {
         document.querySelectorAll('.step').forEach(e => e.classList.remove('active'));
-        document.querySelectorAll('.marker-group').forEach(e => e.classList.remove('active'));
+        document.querySelectorAll('.marker-group').forEach(e => {
+            e.classList.remove('active');
+            const associatedStep = itinerary.find(it => it.marker === e);
+            if(associatedStep && !associatedStep.hidden) gsap.to(e, {opacity: 1});
+        });
+
         if(itinerary[index].el) { itinerary[index].el.classList.add('active'); itinerary[index].el.scrollIntoView({behavior:'smooth', block:'center'}); }
         if(itinerary[index].marker) {
             const m = itinerary[index].marker;
             m.classList.add('active');
-            // Z-INDEX FIX: Move active marker to end of SVG container to render on top
             if(m.parentNode) m.parentNode.appendChild(m);
         }
-        itinerary.forEach((s, i) => { if(s.durationLabel) gsap.to(s.durationLabel, { opacity: (i === index) ? 1 : 0, duration: 0.3 }); });
+        
+        document.querySelectorAll('.duration-tag').forEach(tag => gsap.to(tag, {opacity: 0, duration: 0.2}));
+        if(itinerary[index].durationLabel) gsap.to(itinerary[index].durationLabel, { opacity: 1, duration: 0.3 });
         
         if(itinerary[index].x !== null) {
             const targetScale = scale < 2.0 ? 1.5 : scale;
             const target = itinerary[index];
             const animState = { x: userDotPos.x, y: userDotPos.y, s: scale };
-            // Smoother Animation: Reduced duration to 1.5s and used power2.out
             gsap.to(animState, { x: target.x, y: target.y, s: targetScale, duration: 1.5, ease: "power2.out", onUpdate: () => { userDotPos.x = animState.x; userDotPos.y = animState.y; scale = animState.s; updateDot(); centerOnDot(); } });
             
             if(index === activeStepIndex + 1 && itinerary[index-1] && itinerary[index-1].x !== null) {
@@ -642,7 +695,14 @@
     }
 
     function updateDot() { svgUserDot.setAttribute("transform", `translate(${userDotPos.x}, ${userDotPos.y})`); svgUserDot.style.opacity = 1; }
-    function centerOnDot() { const w = mapArea.clientWidth, h = mapArea.clientHeight; pointX = (w/2) - (userDotPos.x * scale); pointY = (h/2) - (userDotPos.y * scale); updateTransform(); }
+    
+    function centerOnDot() { 
+        const w = mapArea.clientWidth, h = mapArea.clientHeight; 
+        pointX = (w/2) - (userDotPos.x * scale); 
+        pointY = (h/2) - (userDotPos.y * scale); 
+        updateTransform(); 
+    }
+    
     function updateTransform() { mapViewport.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`; }
     
     function getCenter(touches) {
@@ -652,15 +712,12 @@
         };
     }
 
-    // Updated initZoomPan with TOUCH support
     function initZoomPan() {
-        // Mouse
         let isDrag = false, startX, startY;
         mapArea.onmousedown = e => { if(e.target.closest('.control-btn')) return; isDrag=true; startX=e.clientX-pointX; startY=e.clientY-pointY; };
         window.onmousemove = e => { if(isDrag) { pointX=e.clientX-startX; pointY=e.clientY-startY; updateTransform(); }};
         window.onmouseup = () => isDrag=false;
 
-        // Touch
         let initialPinchDist = 0;
         let initialScale = 1;
         let pinchCenterMapX = 0;
@@ -677,9 +734,8 @@
                  initialPinchDist = getDist(e.touches);
                  initialScale = scale;
                  
-                 // Calculate pinch center in map coordinates
                  const center = getCenter(e.touches);
-                 const rect = mapArea.getBoundingClientRect(); // Get relative to container
+                 const rect = mapArea.getBoundingClientRect(); 
                  const relCenterX = center.x - rect.left;
                  const relCenterY = center.y - rect.top;
                  
@@ -703,7 +759,6 @@
                 const relCenterX = center.x - rect.left;
                 const relCenterY = center.y - rect.top;
                 
-                // Calculate new pointX/Y so that pinchCenterMapX/Y is under the new center
                 pointX = relCenterX - (pinchCenterMapX * newScale);
                 pointY = relCenterY - (pinchCenterMapY * newScale);
                 scale = newScale;
@@ -745,6 +800,7 @@
     }
     
     init();
+        
 </script>
 </body>
 </html>
