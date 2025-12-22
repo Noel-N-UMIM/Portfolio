@@ -42,7 +42,7 @@
         .step-note { font-size: 0.75rem; color: var(--text-light); font-style: italic; }
 
         /* Editing Mode */
-        body.is-editing .step-time { border-bottom: 1px dashed var(--primary); color: var(--primary); pointer-events: auto; }
+        body.is-editing .step-time { border-bottom: 2px dashed var(--primary); color: var(--primary); pointer-events: auto; }
         body:not(.is-editing) .step-time { pointer-events: none; } /* Disable click when not editing */
 
         .step.is-hidden { opacity: 0.4; filter: grayscale(100%); background: #f1f5f9; border-left-color: #cbd5e1; }
@@ -74,8 +74,8 @@
         .walking-path-anim { fill: none; stroke: var(--path-color); stroke-width: 6; stroke-dasharray: 12; stroke-linecap: round; opacity: 0; pointer-events: none; }
         .map-controls { position: absolute; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 50; }
         .control-btn { width: 40px; height: 40px; background: white; border-radius: 50%; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
-        .sidebar-add-btn { text-align: center; padding: 10px; background: #f1f5f9; border-top: 1px solid #e2e8f0; }
-        .btn-add { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: 600; width: 100%; }
+        /* HIDE THE ADD BUTTON FROM FOOTER */
+        .sidebar-add-btn { display: none; }
         
         .header-controls { display: flex; gap: 10px; align-items: center; }
         .header-edit-btn { display: none; background: transparent; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; padding: 4px 8px; font-size: 0.8rem; color: white; cursor: pointer; }
@@ -86,9 +86,10 @@
         @media (max-width: 768px) {
             .header-edit-btn { display: inline-block; }
             .sidebar.collapsed .header-edit-btn { display: none; }
-            .sidebar.collapsed #expand-sidebar-btn { display: none; } /* Hide expand btn when collapsed */
-            .sidebar-add-btn { display: block; } /* Revert add button to bottom for mobile to allow edit button in header */
+            .sidebar.collapsed #expand-sidebar-btn { display: none; }
             .sidebar.expanded { position: absolute; top: 0; bottom: 0; width: 100%; height: 100%; z-index: 60; }
+            /* Prevent accidentally clicking time on mobile */
+            .step-time { pointer-events: none; }
         }
     </style>
 </head>
@@ -114,7 +115,6 @@
             </div>
         </div>
         <div class="timeline" id="timeline-container"></div>
-        <div class="sidebar-add-btn"><button class="btn-add" onclick="addNewStep()"><i class="fa-solid fa-plus"></i> Add Note/Step</button></div>
     </div>
 </div>
 <script>
@@ -133,7 +133,7 @@
     {
         "time": "7:30-8 AM",
         "title": "Early Entry",
-        "desc": "Goal: Peter Pan or Winnie the Pooh - usually high wait times",
+        "desc": "Goal: Tiana's Bayou Adventure, Peter Pan, or Winnie the Pooh - usually high wait times",
         "type": "show",
         "duration": "~ 30 mins",
         "icon": "f005",
@@ -452,8 +452,8 @@
     }
 ];
     const repoData = {" Custom Event":{"dur":"","icon":"fa-pen-to-square","type":"show","land":"Park Wide"},"Be Our Guest Restaurant":{"dur":"~90 mins","icon":"fa-rose","type":"meal","land":"Fantasyland"},"Cinderella's Royal Table":{"dur":"~90 mins","icon":"fa-crown","type":"meal","land":"Fantasyland"},"The Crystal Palace":{"dur":"~75 mins","icon":"fa-paw","type":"meal","land":"Main Street"},"Liberty Tree Tavern":{"dur":"~75 mins","icon":"fa-bell","type":"meal","land":"Liberty Square"},"The Plaza Restaurant":{"dur":"~60 mins","icon":"fa-utensils","type":"meal","land":"Main Street"},"Columbia Harbour House":{"dur":"~45 mins","icon":"fa-fish","type":"meal","land":"Liberty Square"},"Pecos Bill Tall Tale Inn":{"dur":"~45 mins","icon":"fa-hat-cowboy","type":"meal","land":"Frontierland"},"Cosmic Ray's Starlight Café":{"dur":"~45 mins","icon":"fa-burger","type":"meal","land":"Tomorrowland"},"Pinocchio Village Haus":{"dur":"~45 mins","icon":"fa-pizza-slice","type":"meal","land":"Fantasyland"},"Casey's Corner":{"dur":"~30 mins","icon":"fa-hotdog","type":"meal","land":"Main Street"},"Aloha Isle (Dole Whip)":{"dur":"~15 mins","icon":"fa-ice-cream","type":"meal","land":"Adventureland"},"Sleepy Hollow":{"dur":"~15 mins","icon":"fa-cookie","type":"meal","land":"Liberty Square"},"Gaston's Tavern":{"dur":"~20 mins","icon":"fa-mug-hot","type":"meal","land":"Fantasyland"},"Storybook Treats":{"dur":"~15 mins","icon":"fa-ice-cream","type":"meal","land":"Fantasyland"},"Main Street Confectionery":{"dur":"~20 mins","icon":"fa-candy-cane","type":"meal","land":"Main Street"},"Disney World Railroad":{"dur":"~20 mins","icon":"fa-train","type":"show","land":"Main Street"},"Jungle Cruise":{"dur":"~10 mins","icon":"fa-ship","type":"show","land":"Adventureland"},"Pirates of the Caribbean":{"dur":"~9 mins","icon":"fa-skull-crossbones","type":"show","land":"Adventureland"},"Swiss Family Treehouse":{"dur":"~15 mins","icon":"fa-tree","type":"show","land":"Adventureland"},"Enchanted Tiki Room":{"dur":"~10 mins","icon":"fa-feather","type":"show","land":"Adventureland"},"Tiana's Bayou Adventure":{"dur":"~12 mins","icon":"fa-frog","type":"show","land":"Frontierland"},"Country Bear Jamboree":{"dur":"~11 mins","icon":"fa-music","type":"show","land":"Frontierland"},"Haunted Mansion":{"dur":"~10 mins","icon":"fa-ghost","type":"show","land":"Liberty Square"},"Liberty Square Riverboat":{"dur":"~20 mins","icon":"fa-anchor","type":"show","land":"Liberty Square"},"Hall of Presidents":{"dur":"~25 mins","icon":"fa-landmark","type":"show","land":"Liberty Square"},"it's a small world":{"dur":"~14 mins","icon":"fa-earth-americas","type":"show","land":"Fantasyland"},"Peter Pan's Flight":{"dur":"~3 mins","icon":"fa-sailboat","type":"show","land":"Fantasyland"},"Seven Dwarfs Mine Train":{"dur":"~3 mins","icon":"fa-gem","type":"show","land":"Fantasyland"},"Prince Charming Carrousel":{"dur":"~2 mins","icon":"fa-horse","type":"show","land":"Fantasyland"},"Winnie the Pooh":{"dur":"~4 mins","icon":"fa-jar","type":"show","land":"Fantasyland"},"Mad Tea Party":{"dur":"~2 mins","icon":"fa-mug-hot","type":"show","land":"Fantasyland"},"Dumbo":{"dur":"~2 mins","icon":"fa-elephant","type":"show","land":"Fantasyland"},"Little Mermaid":{"dur":"~7 mins","icon":"fa-fish","type":"show","land":"Fantasyland"},"The Barnstormer":{"dur":"~1 min","icon":"fa-plane","type":"show","land":"Fantasyland"},"Mickey's PhilharMagic":{"dur":"~12 mins","icon":"fa-glasses","type":"show","land":"Fantasyland"},"Space Mountain":{"dur":"~3 mins","icon":"fa-rocket","type":"show","land":"Tomorrowland"},"TRON Lightcycle / Run":{"dur":"~2 mins","icon":"fa-motorcycle","type":"show","land":"Tomorrowland"},"Tomorrowland Speedway":{"dur":"~5 mins","icon":"fa-car","type":"show","land":"Tomorrowland"},"PeopleMover":{"dur":"~10 mins","icon":"fa-train-subway","type":"show","land":"Tomorrowland"},"Buzz Lightyear":{"dur":"~5 mins","icon":"fa-bullseye","type":"show","land":"Tomorrowland"},"Carousel of Progress":{"dur":"~21 mins","icon":"fa-clock","type":"show","land":"Tomorrowland"},"Monsters Inc Laugh Floor":{"dur":"~15 mins","icon":"fa-microphone","type":"show","land":"Tomorrowland"},"Happily Ever After":{"dur":"~18 mins","icon":"fa-fire","type":"show","land":"Park Wide"},"Festival of Fantasy":{"dur":"~15 mins","icon":"fa-dragon","type":"show","land":"Park Wide"}};
-    const CENTER_OFFSET_Y = 190; 
-    const CENTER_OFFSET_X = 200;
+    const CENTER_OFFSET_Y = 200; 
+    const CENTER_OFFSET_X = 190;
     const timelineContainer = document.getElementById('timeline-container');
     const svgMarkersLayer = document.getElementById('svg-markers-layer');
     const mapViewport = document.getElementById('map-viewport-group');
@@ -515,38 +515,7 @@
         }
     }
     
-    function addNewStep() {
-        const choice = prompt("Enter '1' to choose from list, or '2' for custom note:");
-        if (choice === '1') {
-            const keys = Object.keys(repoData).filter(k => k !== " Custom Event");
-            const selection = prompt("Type exact name from: " + keys.slice(0, 5).join(", ") + "...");
-            if (selection && repoData[selection]) {
-                const item = repoData[selection];
-                const time = prompt("Enter time (e.g. 2:00 PM):");
-                if (time) {
-                    itinerary.push({ 
-                        time: time, 
-                        title: selection, 
-                        desc: "Added from list", 
-                        type: item.type, 
-                        duration: item.dur, 
-                        icon: "f005", 
-                        x: 400, y: 500 
-                    });
-                    renderTimeline();
-                    setTimeout(() => activateStep(itinerary.length - 1), 100);
-                }
-            } else {
-                alert("Item not found or invalid selection.");
-            }
-        } else if (choice === '2') {
-            const time = prompt("Enter time (e.g. 2:00 PM):"); if(!time) return;
-            const title = prompt("Enter title (e.g. Snack Break):"); if(!title) return;
-            itinerary.push({ time: time, title: title, desc: "Custom Note", type: "show", duration: "", icon: "f249", x: null, y: null });
-            renderTimeline();
-            setTimeout(() => activateStep(itinerary.length - 1), 100);
-        }
-    }
+    // addNewStep removed from interface but function kept if needed later
 
     function updateStepTime(index) {
         if (!isEditing) return; // Guard clause
@@ -633,7 +602,8 @@
             
             const eyeIconClass = step.hidden ? 'fa-eye-slash' : 'fa-eye';
             
-            div.innerHTML = `<div class="step-header"><h3 class="step-title">${step.title}</h3><small class="step-duration">${step.duration}</small></div><div class="step-body"><div class="reorder-controls"><button class="btn-icon up"><i class="fa-solid fa-chevron-up"></i></button><button class="btn-icon down"><i class="fa-solid fa-chevron-down"></i></button><button class="btn-icon toggle-vis" title="Toggle Visibility"><i class="fa-solid ${eyeIconClass}"></i></button></div><div class="time-group"><div class="step-time" title="Click to edit">${step.time}</div><div class="step-note">${step.desc}</div></div><div class="step-icon-wrapper"><i class="fa-solid">&#x${step.icon};</i></div></div>`;
+            // REMOVED onclick from step-time div
+            div.innerHTML = `<div class="step-header"><h3 class="step-title">${step.title}</h3><small class="step-duration">${step.duration}</small></div><div class="step-body"><div class="reorder-controls"><button class="btn-icon up"><i class="fa-solid fa-chevron-up"></i></button><button class="btn-icon down"><i class="fa-solid fa-chevron-down"></i></button><button class="btn-icon toggle-vis" title="Toggle Visibility"><i class="fa-solid ${eyeIconClass}"></i></button></div><div class="time-group"><div class="step-time">${step.time}</div><div class="step-note">${step.desc}</div></div><div class="step-icon-wrapper"><i class="fa-solid">&#x${step.icon};</i></div></div>`;
             
             div.onclick = () => activateStep(index);
             
@@ -645,7 +615,15 @@
             downBtn.onclick = (e) => { e.stopPropagation(); moveStep(index, 1); };
             visBtn.onclick = (e) => { e.stopPropagation(); toggleVisibility(index); };
             
-            div.querySelector('.step-time').onclick = (e) => { e.stopPropagation(); updateStepTime(index); };
+            // Desktop click-to-edit listener (if needed) can go here, but disabled for mobile via CSS
+            const timeEl = div.querySelector('.step-time');
+            timeEl.onclick = (e) => {
+                // Only allow click on desktop where pointer-events is auto
+                // Or if we want strict consistency, only header button triggers edit
+                e.stopPropagation();
+                updateStepTime(index); 
+            };
+
             timelineContainer.appendChild(div);
             
             if(step.x !== null && step.y !== null) {
@@ -698,7 +676,7 @@
         if(itinerary[index].durationLabel) gsap.to(itinerary[index].durationLabel, { opacity: 1, duration: 0.3 });
         
         if(itinerary[index].x !== null) {
-            const targetScale = scale < 2.0 ? 2.0 : scale;
+            const targetScale = scale < 2.0 ? 1.5 : scale;
             const target = itinerary[index];
             const animState = { x: userDotPos.x, y: userDotPos.y, s: scale };
             gsap.to(animState, { x: target.x, y: target.y, s: targetScale, duration: 1.5, ease: "power2.out", onUpdate: () => { userDotPos.x = animState.x; userDotPos.y = animState.y; scale = animState.s; updateDot(); centerOnDot(); } });
