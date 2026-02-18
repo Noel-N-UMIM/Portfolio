@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Media Projects | Noel Nuñez</title>
+    
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* -----------------------------------------------------------
+           CSS VARIABLES & RESET (Matching your existing theme)
+        ----------------------------------------------------------- */
+        :root {
+            --bg-color: #121212;
+            --section-bg: #1a1a1a;
+            --card-bg: #222222;
+            --text-color: #e0e0e0;
+            --accent-color: rgb(0, 188, 212); /* Cyan */
+            --heading-font: 'Poppins', sans-serif;
+            --body-font: 'Open Sans', sans-serif;
+            --transition-speed: 0.3s;
+            --container-width: 1200px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--body-font);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--heading-font);
+            color: #ffffff;
+        }
+
+        /* -----------------------------------------------------------
+           HEADER
+        ----------------------------------------------------------- */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            background-color: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .brand {
+            font-family: var(--heading-font);
+            font-weight: 700;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            color: #fff;
+            text-decoration: none;
+        }
+        
+        .brand span {
+            color: var(--accent-color);
+        }
+
+        /* -----------------------------------------------------------
+           MAIN TITLE & FILTER SECTION
+        ----------------------------------------------------------- */
+        .hero-section {
+            padding: 80px 20px 40px;
+            text-align: center;
+            max-width: var(--container-width);
+            margin: 0 auto;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .hero-section p {
+            color: #aaa;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-size: 1.1rem;
+        }
+
+        /* Filter Controls */
+        .filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 50px;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: var(--heading-font);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #000;
+            font-weight: 600;
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Dropdown Styling */
+        .mobile-filter-wrapper {
+            display: none; /* Hidden on Desktop */
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .mobile-filter-select {
+            width: 100%;
+            padding: 12px 20px;
+            background-color: var(--section-bg);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            border-radius: 50px;
+            font-family: var(--heading-font);
+            font-size: 1rem;
+            appearance: none; /* Remove default arrow */
+            cursor: pointer;
+            outline: none;
+        }
+
+        .mobile-filter-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.2);
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-color);
+            pointer-events: none;
+        }
+
+        /* -----------------------------------------------------------
+           PROJECT GRID
+        ----------------------------------------------------------- */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 20px 100px;
+        }
+
+        /* Project Card */
+        .project-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.05);
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .project-card.hide {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        /* Image Area */
+        .card-image {
+            height: 250px;
+            width: 100%;
+            background-color: #333;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .project-card:hover .card-image img {
+            transform: scale(1.1);
+        }
+
+        /* Category Tag (Top Right) */
+        .card-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            color: var(--accent-color);
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 5; /* Ensure above overlay */
+        }
+
+        /* Content Area */
+        .card-content {
+            padding: 25px;
+            position: relative;
+            background-color: var(--card-bg);
+            z-index: 10;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .card-title::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--accent-color);
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out;
+        }
+
+        .project-card:hover .card-title::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        .card-short-desc {
+            font-size: 0.95rem;
+            color: #aaa;
+            margin-bottom: 0;
+        }
+
+        /* -----------------------------------------------------------
+           NEW HOVER OVERLAY (ON TOP OF IMAGE)
+        ----------------------------------------------------------- */
+        .details-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85); /* Dark transparent overlay */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 4; /* Above image, below tag */
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(3px);
+        }
+
+        .project-card:hover .details-overlay {
+            opacity: 1;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #fff;
+            margin-bottom: 8px;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover .detail-item {
+            transform: translateY(0);
+        }
+
+        .detail-item i {
+            color: var(--accent-color);
+            width: 20px;
+            text-align: center;
+        }
+
+        .view-project-btn {
+            display: inline-block;
+            margin-top: 15px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+            transform: translateY(20px);
+            transition: transform 0.3s ease 0.1s, color 0.3s;
+        }
+        
+        .project-card:hover .view-project-btn {
+            transform: translateY(0);
+        }
+        
+        .view-project-btn:hover {
+            color: var(--accent-color);
+        }
+
+        /* -----------------------------------------------------------
+           RESPONSIVE
+        ----------------------------------------------------------- */
+        @media (max-width: 768px) {
+            .hero-section h1 { font-size: 2rem; }
+            .projects-grid { grid-template-columns: 1fr; }
+            .filter-btn { display: none; }
+            .mobile-filter-wrapper { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- STICKY HEADER -->
+    <header class="sticky-header">
+        <div class="header-content">
+            <a href="#" class="brand">
+                NOEL NUÑEZ <span>|</span> PORTFOLIO
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO & FILTER -->
+        <section class="hero-section">
+            <h1>Interactive Media Projects</h1>
+            <p>A collection of immersive experiences, prototypes, and experiments.</p>
+            
+            <div class="filter-container">
+                <!-- Desktop Buttons -->
+                <button class="filter-btn active" data-filter="all">All Projects</button>
+                <button class="filter-btn" data-filter="ar">Augmented Reality</button>
+                <button class="filter-btn" data-filter="vr">Virtual Reality</button>
+                <button class="filter-btn" data-filter="physical">Physical Computing</button>
+                <button class="filter-btn" data-filter="prototype">Prototype</button>
+
+                <!-- Mobile Dropdown -->
+                <div class="mobile-filter-wrapper">
+                    <select id="mobile-filter-select" class="mobile-filter-select">
+                        <option value="all">All Projects</option>
+                        <option value="ar">Augmented Reality</option>
+                        <option value="vr">Virtual Reality</option>
+                        <option value="physical">Physical Computing</option>
+                        <option value="prototype">Prototype</option>
+                    </select>
+                    <div class="select-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJECTS GRID -->
+        <section class="projects-grid">
+
+            <!-- CARD 1: VR (Cuban Freedom Flights) -->
+            <article class="project-card" data-category="vr">
+                <div class="card-image">
+                    <img src="img/freedom_thumb.jpg" alt="Freedom Flights VR">
+                    <span class="card-tag">VR</span>
+                    
+                    <!-- Hover Details Overlay (Moved inside image) -->
+                    <div class="details-overlay">
+                        <div class="detail-item">
+                            <i class="fa-solid fa-code"></i> Unity Engine / C#
+                        </div>
+                        <div class="detail-item">
+                            <i class="fa-solid fa-glasses"></i> Oculus Quest 
+                        </div>
+                        <div class="detail-item">
+                            <i class="fa-solid fa-info-circle"></i> Educational Simulation
+                        </div>
+                        <a href="index.html" class="view-project-btn">View Case Study <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">The Cuban Freedom Flights</h3>
+                    <p class="card-short-desc">A Virtual Reality animated documentary.</p>
+                </div>
+            </article>
+          
+            <!-- CARD 2: VR (Thermae) -->
+            <article class="project-card" data-category="vr">
+                <div class="card-image">
+                    <img src="img/thermae-thumb.jpg" alt="Roman Bathhouse VR">
+                    <span class="card-tag">VR</span>
+                    
+                    <!-- Hover Details Overlay (Moved inside image) -->
+                    <div class="details-overlay">
+                        <div class="detail-item">
+                            <i class="fa-solid fa-code"></i> Unity Engine / C#
+                        </div>
+                        <div class="detail-item">
+                            <i class="fa-solid fa-glasses"></i> Oculus Quest
+                        </div>
+                        <div class="detail-item">
+                            <i class="fa-solid fa-info-circle"></i> Educational Simulation
+                        </div>
+                        <a href="index.html" class="view-project-btn">View Case Study <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Thermae: Roman Bath</h3>
+                    <p class="card-short-desc">A historical reconstruction of a Roman Bathhouse.</p>
+                </div>
+            </article>
+            <!-- CARD 2: AR -->
+            <article class="project-card" data-category="ar">
+                <div class="card-image">
+                    <img src="img/arctic_thumb.png" alt="Arctic AR">
+                    <span class="card-tag">AR</span>
+
+                    <div class="details-overlay">
+                        <div class="detail-item">
+                            <i class="fa-solid fa-mobile-screen"></i> Android
+                        </div>
+                        <div class="detail-item">
+                            <i class="fa-solid fa-location-dot"></i> Plane Detection
+                        </div>
+                        <a href="#" class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Beary's Arctic Adventure</h3>
+                    <p class="card-short-desc">Educational AR app.</p>
+                </div>
+            </article>
+
+            <!-- CARD 3: Physical Computing -->
+            <article class="project-card" data-category="physical">
+                <div class="card-image">
+                    <img src="img/Banner_Optimized.jpg" alt="Physical Computing Project">
+                    <span class="card-tag">Physical Computing</span>
+
+                    <div class="details-overlay">
+                        <div class="detail-item">
+                            <i class="fa-solid fa-microchip"></i> Arduino Uno
+                        </div>
+                        <div class="detail-item">
+                            <i class="fa-solid fa-music"></i> MIDI Control
+                        </div>
+                        <a href="#" class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Praxinoscope/Zoetrope Animation</h3>
+                    <p class="card-short-desc">Animation brought into the physical world through 3d printing.</p>
+                </div>
+            </article>
+            <!-- CARD 3: Physical Computing -->
+            <article class="project-card" data-category="physical">
+                <div class="card-image">
+                    <img src="img/Joy_Banner.jpg" alt="Physical Computing Project">
+                    <span class="card-tag">Physical Computing</span>
+
+                    <div class="details-overlay">
+                        <div class="detail-item">
+                            <i class="fa-solid fa-microchip"></i> Adafruit Circuit microcontoller
+                        </div>
+                        <!--<div class="detail-item">
+                            <i class="fa-solid fa-music"></i> MIDI Control
+                        </div>-->
+                        <a href="#" class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Joyful Light Sclupture</h3>
+                    <p class="card-short-desc">A 3D sculpture brought to life with light (and code).</p>
+                </div>
+            </article>
+            <!-- CARD 4: Prototype -->
+            <article class="project-card" data-category="prototype">
+                <div class="card-image">
+                    <img src="img/starlight_thumb.jpg" alt="App Prototype">
+                    <span class="card-tag">Prototype</span>
+
+                    <div class="details-overlay">
+                        <div class="detail-item">
+                            <i class="fa-brands fa-figma"></i> Unity
+                        </div>
+                        <div class="detail-item">
+                            <i class="fa-solid fa-users"></i> User Testing
+                        </div>
+                        <a href="#" class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Starlight Park</h3>
+                    <p class="card-short-desc">A high-fidelity prototype for an immersive park.</p>
+                </div>
+            </article>
+
+            <!-- CARD 5: VR 
+            <article class="project-card" data-category="vr">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1622979135228-5b1ed3172080?auto=format&fit=crop&q=80&w=1000" alt="Space VR">
+                    <span class="card-tag">VR</span>
+
+                    <div class="details-overlay">
+                        <div class="detail-item">
+                            <i class="fa-brands fa-unity"></i> Unity 3D
+                        </div>
+                        <div class="detail-item">
+                            <i class="fa-solid fa-gamepad"></i> Simulation
+                        </div>
+                        <a href="#" class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Mars Rover Sim</h3>
+                    <p class="card-short-desc">Explore the Martian surface in first-person.</p>
+                </div>
+            </article>-->
+
+             <!-- CARD 6: Physical Computing 
+             <article class="project-card" data-category="physical">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1563968743333-044cef8004c3?auto=format&fit=crop&q=80&w=1000" alt="Interactive Light">
+                    <span class="card-tag">Physical Computing</span>
+
+                    <div class="details-overlay">
+                        <div class="detail-item">
+                            <i class="fa-solid fa-video"></i> Computer Vision
+                        </div>
+                        <div class="detail-item">
+                            <i class="fa-regular fa-lightbulb"></i> Addressable LEDs
+                        </div>
+                        <a href="#" class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Reactive Wall</h3>
+                    <p class="card-short-desc">LED installation responding to motion.</p>
+                </div>
+            </article>-->
+
+        </section>
+    </main>
+
+    <footer style="text-align: center; padding: 40px; border-top: 1px solid rgba(255,255,255,0.1); color: #666; font-size: 0.9rem;">
+        <p>&copy; 2026 Noel Nuñez. All Rights Reserved.</p>
+    </footer>
+
+    <!-- JAVASCRIPT FOR FILTERING -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const mobileSelect = document.getElementById('mobile-filter-select');
+            const projectCards = document.querySelectorAll('.project-card');
+
+            // Shared Filtering Logic
+            function filterProjects(filterValue) {
+                projectCards.forEach(card => {
+                    const category = card.getAttribute('data-category');
+                    
+                    if (filterValue === 'all' || filterValue === category) {
+                        // Show element
+                        card.classList.remove('hide');
+                        // Reset animation
+                        card.style.animation = 'none';
+                        card.offsetHeight; /* trigger reflow */
+                        card.style.animation = 'fadeIn 0.5s ease forwards';
+                    } else {
+                        // Hide element
+                        card.classList.add('hide');
+                    }
+                });
+            }
+
+            // Button Event Listeners
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Update Active State
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const filterValue = btn.getAttribute('data-filter');
+                    
+                    // Sync Mobile Select
+                    if(mobileSelect) mobileSelect.value = filterValue;
+
+                    // Execute Filter
+                    filterProjects(filterValue);
+                });
+            });
+
+            // Mobile Dropdown Event Listener
+            if (mobileSelect) {
+                mobileSelect.addEventListener('change', (e) => {
+                    const filterValue = e.target.value;
+
+                    // Sync Desktop Buttons
+                    filterBtns.forEach(btn => {
+                        if (btn.getAttribute('data-filter') === filterValue) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    });
+
+                    // Execute Filter
+                    filterProjects(filterValue);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
