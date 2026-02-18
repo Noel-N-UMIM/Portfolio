@@ -199,6 +199,13 @@
             transform: scale(1);
         }
 
+        /* Update to ensure anchor cards display correctly */
+        a.project-card {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
         .project-card.hide {
             display: none;
         }
@@ -348,6 +355,7 @@
             transition: color 0.3s;
             transform: translateY(20px);
             transition: transform 0.3s ease 0.1s, color 0.3s;
+            cursor: pointer;
         }
         
         .project-card:hover .view-project-btn {
@@ -412,12 +420,12 @@
         <section class="projects-grid">
 
             <!-- CARD 1: VR (Cuban Freedom Flights) -->
-            <article class="project-card" data-category="vr">
+            <a href="/CubanFreedomFlights/" class="project-card" data-category="vr">
                 <div class="card-image">
                     <img src="img/freedom_thumb.jpg" alt="Freedom Flights VR">
                     <span class="card-tag">VR</span>
                     
-                    <!-- Hover Details Overlay (Moved inside image) -->
+                    <!-- Hover Details Overlay -->
                     <div class="details-overlay">
                         <div class="detail-item">
                             <i class="fa-solid fa-code"></i> Unity Engine / C#
@@ -428,22 +436,22 @@
                         <div class="detail-item">
                             <i class="fa-solid fa-info-circle"></i> Educational Simulation
                         </div>
-                        <a href="noelnunez.com/CubanFreedomFlights/" class="view-project-btn">View Case Study <i class="fa-solid fa-arrow-right"></i></a>
+                        <span class="view-project-btn">View Case Study <i class="fa-solid fa-arrow-right"></i></span>
                     </div>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">The Cuban Freedom Flights</h3>
                     <p class="card-short-desc">A Virtual Reality animated documentary.</p>
                 </div>
-            </article>
+            </a>
           
             <!-- CARD 2: VR (Thermae) -->
-            <article class="project-card" data-category="vr">
+            <a href="/Thermae/" class="project-card" data-category="vr">
                 <div class="card-image">
                     <img src="img/thermae-thumb.jpg" alt="Roman Bathhouse VR">
                     <span class="card-tag">VR</span>
                     
-                    <!-- Hover Details Overlay (Moved inside image) -->
+                    <!-- Hover Details Overlay -->
                     <div class="details-overlay">
                         <div class="detail-item">
                             <i class="fa-solid fa-code"></i> Unity Engine / C#
@@ -454,16 +462,17 @@
                         <div class="detail-item">
                             <i class="fa-solid fa-info-circle"></i> Educational Simulation
                         </div>
-                        <a href="noelnunez.com/Thermae/" class="view-project-btn">View Case Study <i class="fa-solid fa-arrow-right"></i></a>
+                        <span class="view-project-btn">View Case Study <i class="fa-solid fa-arrow-right"></i></span>
                     </div>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Thermae: Roman Bath</h3>
                     <p class="card-short-desc">A historical reconstruction of a Roman Bathhouse.</p>
                 </div>
-            </article>
-            <!-- CARD 2: AR -->
-            <article class="project-card" data-category="ar">
+            </a>
+
+            <!-- CARD 3: AR -->
+            <a href="Arctic" class="project-card" data-category="ar">
                 <div class="card-image">
                     <img src="img/arctic_thumb.png" alt="Arctic AR">
                     <span class="card-tag">AR</span>
@@ -475,17 +484,17 @@
                         <div class="detail-item">
                             <i class="fa-solid fa-location-dot"></i> Plane Detection
                         </div>
-                        <a href="noelnunez.com/Arctic/" class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></a>
+                        <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
                     </div>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Beary's Arctic Adventure</h3>
                     <p class="card-short-desc">Educational AR app.</p>
                 </div>
-            </article>
+            </a>
 
-            <!-- CARD 3: Physical Computing -->
-            <article class="project-card" data-category="physical">
+            <!-- CARD 4: Physical Computing (Zoetrope) -->
+            <a href="/Zoetrope/" class="project-card" data-category="physical">
                 <div class="card-image">
                     <img src="img/Banner_Optimized.jpg" alt="Physical Computing Project">
                     <span class="card-tag">Physical Computing</span>
@@ -497,16 +506,17 @@
                         <div class="detail-item">
                             <i class="fa-solid fa-music"></i> MIDI Control
                         </div>
-                        <a href="noelnunez.com/Zoetrope/" class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></a>
+                        <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
                     </div>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Praxinoscope/Zoetrope Animation</h3>
                     <p class="card-short-desc">Animation brought into the physical world through 3d printing.</p>
                 </div>
-            </article>
-            <!-- CARD 3: Physical Computing -->
-            <article class="project-card" data-category="physical">
+            </a>
+
+            <!-- CARD 5: Physical Computing (Joy) -->
+            <a href="/Joy/" class="project-card" data-category="physical">
                 <div class="card-image">
                     <img src="img/Joy_Banner.jpg" alt="Physical Computing Project">
                     <span class="card-tag">Physical Computing</span>
@@ -518,16 +528,17 @@
                         <!--<div class="detail-item">
                             <i class="fa-solid fa-music"></i> MIDI Control
                         </div>-->
-                        <a href="noelnunez.com/Joy/" class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></a>
+                        <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
                     </div>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Joyful Light Sclupture</h3>
                     <p class="card-short-desc">A 3D sculpture brought to life with light (and code).</p>
                 </div>
-            </article>
-            <!-- CARD 4: Prototype -->
-            <article class="project-card" data-category="prototype">
+            </a>
+
+            <!-- CARD 6: Prototype (Starlight Park) -->
+            <a href="/Starlight_Park/" class="project-card" data-category="prototype">
                 <div class="card-image">
                     <img src="img/starlight_thumb.jpg" alt="App Prototype">
                     <span class="card-tag">Prototype</span>
@@ -539,14 +550,14 @@
                         <div class="detail-item">
                             <i class="fa-solid fa-users"></i> User Testing
                         </div>
-                        <a href="noelnunez.com/Starlight_Park/" class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></a>
+                        <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
                     </div>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Starlight Park</h3>
                     <p class="card-short-desc">A high-fidelity prototype for an immersive park.</p>
                 </div>
-            </article>
+            </a>
 
             <!-- CARD 5: VR 
             <article class="project-card" data-category="vr">
@@ -663,5 +674,4 @@
         });
     </script>
 </body>
-
 </html>
