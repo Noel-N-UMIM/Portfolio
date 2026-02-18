@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blissful Joy | Interactive Design Project</title>
+    
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FONT AWESOME (Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* -----------------------------------------------------------
+           CSS VARIABLES & RESET
+        ----------------------------------------------------------- */
+        :root {
+            --bg-color: #121212;
+            --section-bg: #1a1a1a;
+            --text-color: #e0e0e0;
+            --accent-color: #ffca28; /* Warm Amber for "Joy" */
+            --heading-font: 'Poppins', sans-serif;
+            --body-font: 'Open Sans', sans-serif;
+            --transition-speed: 0.3s;
+            --container-width: 1100px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--body-font);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* -----------------------------------------------------------
+           TYPOGRAPHY
+        ----------------------------------------------------------- */
+        h1, h2, h3, h4 {
+            font-family: var(--heading-font);
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-size: 2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        section:hover h2::after {
+            width: 100px;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+            font-size: 1.05rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition-speed);
+        }
+
+        /* -----------------------------------------------------------
+           LAYOUT COMPONENTS
+        ----------------------------------------------------------- */
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 80px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        section:nth-child(even) {
+            background-color: var(--section-bg);
+        }
+
+        /* -----------------------------------------------------------
+           HEADER & NAVIGATION
+        ----------------------------------------------------------- */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            background-color: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-family: var(--heading-font);
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+        
+        .brand span {
+            color: var(--accent-color);
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+        }
+
+        .back-btn:hover {
+            background-color: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        /* -----------------------------------------------------------
+           HERO SECTION
+        ----------------------------------------------------------- */
+        .hero {
+            height: 90vh;
+            /* Using the high-res wide banner from the blog */
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('https://blogger.googleusercontent.com/img/a/AVvXsEj_0C3WA3uOk59zO0k8830zUqvEq4yWMjv8Y0zUXY_DECeeevGfbLmQB-FBFRm1V214BhKntQVgNIBFU7jzjmIybQi8-zLEJuCXVBOqOkTK9vb1zILdbTU6Mp90Wc7YH-4XzmhrNrftbdPsiC0xrpsx3Itwrtd5OJ8ZmNEQBggYkNkNhJghguUMGkcYxQ=s1500');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding: 0;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 20px;
+            animation: fadeIn 1.5s ease-out;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            opacity: 0.7;
+        }
+
+        /* -----------------------------------------------------------
+           GRID & IMAGES
+        ----------------------------------------------------------- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* Utility: Single Focus Image */
+        .gallery-grid.single-focus {
+            display: flex;
+            justify-content: center;
+            grid-template-columns: none;
+        }
+
+        .gallery-grid.single-focus .gallery-item {
+            max-width: 700px;
+            width: 100%;
+        }
+        
+        .gallery-grid.single-focus .gallery-item img {
+            height: auto;
+            max-height: 600px;
+        }
+
+        /* Standard Gallery Item */
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+
+        /* -----------------------------------------------------------
+           META SECTION
+        ----------------------------------------------------------- */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-top: 30px;
+            padding: 40px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .meta-col h4 {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .meta-col p, .meta-col ul {
+            font-size: 0.95rem;
+            color: #ccc;
+            list-style: none;
+        }
+
+        /* -----------------------------------------------------------
+           LIGHTBOX
+        ----------------------------------------------------------- */
+        #lightbox {
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        #lightbox.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #lightbox-img {
+            max-width: 90%;
+            max-height: 85vh;
+            border: 2px solid #333;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            border-radius: 4px;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        #lightbox.active #lightbox-img {
+            transform: scale(1);
+        }
+
+        .lb-btn {
+            position: absolute;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 20px;
+            transition: color 0.2s;
+            z-index: 1001;
+        }
+
+        .lb-btn:hover {
+            color: var(--accent-color);
+        }
+
+        #lb-close { top: 20px; right: 20px; }
+        #lb-prev { left: 20px; top: 50%; transform: translateY(-50%); }
+        #lb-next { right: 20px; top: 50%; transform: translateY(-50%); }
+
+        /* -----------------------------------------------------------
+           ANIMATIONS & UTILITIES
+        ----------------------------------------------------------- */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, visibility;
+        }
+
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
+            40% { transform: translateY(-10px) translateX(-50%); }
+            60% { transform: translateY(-5px) translateX(-50%); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .divider-icon {
+            text-align: center;
+            margin: 40px 0;
+            color: rgba(255,255,255,0.1);
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .header-content { flex-direction: column; gap: 10px; }
+            .hero { background-attachment: scroll; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- STICKY HEADER -->
+    <header class="sticky-header">
+        <div class="container header-content">
+            <div class="brand">
+                NOEL NUÑEZ <span>|</span> INTERACTIVE
+            </div>
+            <a href="#" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Back to Projects
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO SECTION -->
+        <section id="hero" class="hero">
+            <div class="hero-content">
+                <p class="hero-subtitle">Physical Computing Project 1</p>
+                <h1>Blissful Joy</h1>
+                <p>An interactive light sculpture exploring emotion through Adafruit Circuit Playground.</p>
+            </div>
+            <div class="scroll-indicator">
+                <i class="fa-solid fa-chevron-down fa-2x" style="color: #fff;"></i>
+            </div>
+        </section>
+
+        <!-- INTRO / OVERVIEW -->
+        <section id="overview" class="fade-in-section">
+            <div class="container">
+                <h2>Project Overview</h2>
+                <p>
+                    For this first assignment in Physical Computing, the class was tasked with creating an art piece that represents a specific emotion.
+                </p>
+                <p>
+                    Additionally, we were challenged to use the <strong>Adafruit Circuit microcontroller</strong> to design an animated light pattern and to program at least three different modes (on, animate, off) for the controller using a button to switch the inputs.
+                </p>
+            </div>
+        </section>
+
+        <!-- IDEATION -->
+        <section id="ideation" class="fade-in-section">
+            <div class="container">
+                <div class="divider-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                <h2>Ideation & Concept</h2>
+                <p>
+                    The main idea for my project actually came from a class exercise. Everyone in the class was paired with another student and we gave each other three emotions to choose from. I was given the option of representing: <em>Mischievousness</em>, <em>Frantic Happiness</em>, or <em>Blissful Joy</em>.
+                </p>
+                <p>
+                    I chose <strong>"Blissful Joy"</strong> as my emotion. My original concept called for an interactive art piece with a window for light to shine through, envisioning a geodesic sphere container to cast interesting shadows.
+                </p>
+                
+                <div class="gallery-grid">
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEjp12BlZlfjhY9wZs0N1yrqJUWEath7kq2RvUcsr_JI80XpRx_wvf4MhIl1OO9VVL2uaAqTqidmI27XiusBO_-FWuLPLrZUdbx_YfWV0Hc5x8_E1LLABVSASxkwIAPRenB-qp-9GC773qYtH0FLGcjmKoCAehJM2M1kHpLuUr16d0j5y-CRpNbledZYrw=s1023">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjp12BlZlfjhY9wZs0N1yrqJUWEath7kq2RvUcsr_JI80XpRx_wvf4MhIl1OO9VVL2uaAqTqidmI27XiusBO_-FWuLPLrZUdbx_YfWV0Hc5x8_E1LLABVSASxkwIAPRenB-qp-9GC773qYtH0FLGcjmKoCAehJM2M1kHpLuUr16d0j5y-CRpNbledZYrw=s1023" alt="Interactive Concept Sketch">
+                        <div class="gallery-caption"><i class="fa-solid fa-magnifying-glass-plus"></i> Concept Sketch</div>
+                    </div>
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEjhFWChcDvkgJaEzv33-FcZOd72aykc9JuER5rMFg6GQIHZUoIoIOow-T9pTB2GFRlR_ZWlITSKDMlaATYjndoXT7UEh6WJrH-ZzeTg5EGWzKJSuxOlbQxYwrHeDf5DLsRAOJQCnvy56HTMQrL7pFnGCT_37wZDIaOq9TKND3fY3pB4gX0cbt1zpn3oNw=s1716">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjhFWChcDvkgJaEzv33-FcZOd72aykc9JuER5rMFg6GQIHZUoIoIOow-T9pTB2GFRlR_ZWlITSKDMlaATYjndoXT7UEh6WJrH-ZzeTg5EGWzKJSuxOlbQxYwrHeDf5DLsRAOJQCnvy56HTMQrL7pFnGCT_37wZDIaOq9TKND3fY3pB4gX0cbt1zpn3oNw=s1716" alt="Spherical Inspiration">
+                        <div class="gallery-caption"><i class="fa-solid fa-image"></i> Sphere Form Inspiration</div>
+                    </div>
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEhbX6xhTtDCkjGuPAQzYgJZPRvfQkmghee9nt22ZWZVcY9dSn53-K-SU4OtW5LeTSTI7s-ILhf0sXbStednnbdNK6nP4ZncWo5my49aMFEnBDpR6kiZe_k2-mG3n8bfnoP1itJHWldYRvX03kNJgwyyfzegQFxRfOUNuiWgWoRThIJwvXtjrF45KMbZsA=s474">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEhbX6xhTtDCkjGuPAQzYgJZPRvfQkmghee9nt22ZWZVcY9dSn53-K-SU4OtW5LeTSTI7s-ILhf0sXbStednnbdNK6nP4ZncWo5my49aMFEnBDpR6kiZe_k2-mG3n8bfnoP1itJHWldYRvX03kNJgwyyfzegQFxRfOUNuiWgWoRThIJwvXtjrF45KMbZsA=s474" alt="Geodesic Dome Reference">
+                        <div class="gallery-caption"><i class="fa-solid fa-image"></i> Geodesic Reference</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHALLENGES -->
+        <section id="challenges" class="fade-in-section">
+            <div class="container">
+                <h2>The "Why Did I Do This?" Phase</h2>
+                <p>
+                    I thought a geodesic sphere would make the final piece more dynamic and visually engaging. I scoured the web to figure out how to design one and created a template to use in the Cricut.
+                </p>
+                <p>
+                   However, things took a turn for the worse. I got very disoriented when putting the sphere together, and ended up with a squished, oval-like shape. There were simply too many pieces to keep track of, and time was running out.
+                </p>
+                
+                <div class="gallery-grid">
+                     <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEgGNTENxtmTMMgXCzV5503Phap0iI8xm49xKYQjM4s_P6R53SLC9SxLA_ux2qLQzGb5reX_rkBU6t5Z7e8d0bjpjDvEgNpjKENDACoEnd3E45tLZVYV1jwpT6qWmBiCIlWQvNHWYtLK5IlgsAH-qBjmqoW6scZnkd4D5CFFoNDHv2UJ02QRzQLzELTn8w=s2016">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEgGNTENxtmTMMgXCzV5503Phap0iI8xm49xKYQjM4s_P6R53SLC9SxLA_ux2qLQzGb5reX_rkBU6t5Z7e8d0bjpjDvEgNpjKENDACoEnd3E45tLZVYV1jwpT6qWmBiCIlWQvNHWYtLK5IlgsAH-qBjmqoW6scZnkd4D5CFFoNDHv2UJ02QRzQLzELTn8w=s2016" alt="Cricut Cutout Pieces">
+                        <div class="gallery-caption"><i class="fa-solid fa-scissors"></i> The Many Pieces</div>
+                    </div>
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEh27y3P_HY5BtdjThGU_mYuH9DhSOnOwyoRzZgG8xf11LdQCy_0d9jukssJkZ5sbtrTBXWQfh4toj4bDjJ0qiBT6h7zlp4hrdM4Vz0j9aSyB7ql6WvZkP86Ren4kslNi5FRRmg8jIlVVaEpBWKVN0ShFp1c-7I_ejcKNKeg1O4ttCTTVFmiLr8GD1XRmw=s2016">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEh27y3P_HY5BtdjThGU_mYuH9DhSOnOwyoRzZgG8xf11LdQCy_0d9jukssJkZ5sbtrTBXWQfh4toj4bDjJ0qiBT6h7zlp4hrdM4Vz0j9aSyB7ql6WvZkP86Ren4kslNi5FRRmg8jIlVVaEpBWKVN0ShFp1c-7I_ejcKNKeg1O4ttCTTVFmiLr8GD1XRmw=s2016" alt="The Squished Sphere">
+                        <div class="gallery-caption"><i class="fa-solid fa-triangle-exclamation"></i> The "Squished" Sphere</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SOLUTION / PIVOT -->
+        <section id="solution" class="fade-in-section">
+            <div class="container">
+                <div class="divider-icon"><i class="fa-solid fa-arrow-rotate-right"></i></div>
+                <h2>Adjust | Simplify | Forward</h2>
+                <p>
+                    With the project due in two days, I had to pivot. The mantra became: <strong>Adjust, Simplify, Keep Moving Forward.</strong>
+                </p>
+                <p>
+                    I abandoned the complex sphere for a cleaner, geometric box design that still allowed light to play beautifully through internal diffusion. This allowed me to focus on the wiring and the code.
+                </p>
+                <div class="gallery-grid">
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEh3qBRmwnPCZIsbn4FFZ-tJp8Bn8o3fm0U8hMkUZA5yKD-RS4hOPgiQtA-rWgJkzWdWrtVTpv6GBDSiLzpJg4qd-Ua-YsYZ2HRJFEdjzYWc5AEMH9TYXOMPAiaiRtZrOiE4SPaIfZ6JbMNjccQJ0EgeaOnPxYLkX4ZFG7NQX0yahTgnpc4JWUK-qTqfGA=s595">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEh3qBRmwnPCZIsbn4FFZ-tJp8Bn8o3fm0U8hMkUZA5yKD-RS4hOPgiQtA-rWgJkzWdWrtVTpv6GBDSiLzpJg4qd-Ua-YsYZ2HRJFEdjzYWc5AEMH9TYXOMPAiaiRtZrOiE4SPaIfZ6JbMNjccQJ0EgeaOnPxYLkX4ZFG7NQX0yahTgnpc4JWUK-qTqfGA=s595" alt="Simplified Box Design">
+                    </div>
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEhueQLOqoGyNxBFXoy0F5kq3yBQbFp-ICjrWA3uv7aikQPlbrbPLuCGEVR0LQioi_BgYAc_S2rt3FsImAFg-XasXSCOmV4KXfup3yEYIJessKQlYU4HHBFkoQ40x_3fEkPrGGlYivsXdZePQGp5i1lkoMuZgC4kLAZCzt7_pAn3kgH8IJEnmSpE9lFYDA=s1896" alt="Wiring Internal Components">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEhueQLOqoGyNxBFXoy0F5kq3yBQbFp-ICjrWA3uv7aikQPlbrbPLuCGEVR0LQioi_BgYAc_S2rt3FsImAFg-XasXSCOmV4KXfup3yEYIJessKQlYU4HHBFkoQ40x_3fEkPrGGlYivsXdZePQGp5i1lkoMuZgC4kLAZCzt7_pAn3kgH8IJEnmSpE9lFYDA=s1896" alt="Wiring Components">
+                    </div>
+                     <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEhxwwqQ0eXGeaVEcn3b_Cmbs-a57tItK_spO-kp-Hxr4IbVVZjXMzpXHRYUUpNW3vqna27-kpEdLbQ9cmatDdqSERteQ0D5fX7MLavA4gPN0CAWpb4W8jujPoeZ_djy7Mn7Zd4_-_y80gZVdFy3XjuFe3JCKXe7vU-v-7elbAd8bXs53ncqMu2XLy97mg=s2016">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEhxwwqQ0eXGeaVEcn3b_Cmbs-a57tItK_spO-kp-Hxr4IbVVZjXMzpXHRYUUpNW3vqna27-kpEdLbQ9cmatDdqSERteQ0D5fX7MLavA4gPN0CAWpb4W8jujPoeZ_djy7Mn7Zd4_-_y80gZVdFy3XjuFe3JCKXe7vU-v-7elbAd8bXs53ncqMu2XLy97mg=s2016" alt="Close up of wiring">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CODE SECTION -->
+        <section id="code" class="fade-in-section">
+             <div class="container">
+                <div class="divider-icon"><i class="fa-solid fa-code"></i></div>
+                <h2>The Code</h2>
+                <p>
+                    I used <strong>Microsoft MakeCode</strong> to develop the light patterns. The block-based environment allowed me to visualize the Circuit Playground's neopixel output and iterate quickly on the "Blissful Joy" color palette.
+                </p>
+                <div class="gallery-grid no-stretch">
+                     <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEgiOLEQi9C9Qu4ZpYQKjO28D5CU0VEBG-3k3IEhBQDdf1kyaVKjn3j-ueifF3fQILqu8cS927OWWKrczzEg8lnKGQoKdOtkwnCxyoqwfLiH92WPyITqelO84BVFsLGZUnksF41cTVyM4E3tM5l2CqbhzSnBNYkJo2KB_nQpjQ8_i3pnY0jytia9oRVRcA=s1915">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEgiOLEQi9C9Qu4ZpYQKjO28D5CU0VEBG-3k3IEhBQDdf1kyaVKjn3j-ueifF3fQILqu8cS927OWWKrczzEg8lnKGQoKdOtkwnCxyoqwfLiH92WPyITqelO84BVFsLGZUnksF41cTVyM4E3tM5l2CqbhzSnBNYkJo2KB_nQpjQ8_i3pnY0jytia9oRVRcA=s1915" alt="MakeCode Block Logic">
+                    </div>
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEjAVp1Wrk6Og7Gp_SY53m0dj1AbX3UDiyWaxtxSSVA73hbmaH3YLM7jqG_LaHY6ywfYZD_j8jqcw_D07KegW0WC_z4OX0WFDKe5R0nbm3cQHLSttd4i9rniMw0DOeVVMwrSNGr1mshktyCXltukXs--pV7lbU-kzHwFEhRxtAcHEk5G4zTZzPs9XmAsdw=s1237">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjAVp1Wrk6Og7Gp_SY53m0dj1AbX3UDiyWaxtxSSVA73hbmaH3YLM7jqG_LaHY6ywfYZD_j8jqcw_D07KegW0WC_z4OX0WFDKe5R0nbm3cQHLSttd4i9rniMw0DOeVVMwrSNGr1mshktyCXltukXs--pV7lbU-kzHwFEhRxtAcHEk5G4zTZzPs9XmAsdw=s1237" alt="Simulator View">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINAL PIECE -->
+        <section id="final" class="fade-in-section">
+            <div class="container">
+                <h2>Final Piece</h2>
+                <p>
+                    The main idea stayed the same: I wanted to have a projection of JOY. The final piece is a testament to flexibility—it may not be the geodesic dome I planned, but it successfully captures the emotion through vibrant, controlled light.
+                </p>
+                <div class="gallery-grid">
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEiYtDWI3ahsUZ2iHjTjqbJBVJUWcI35tgIm2hPEsC0O8p3_X58V9nHozjeB2ciaUbc57TnyQmmDKeZ_W1Qn5IQ4O1zI49vgIjU1_vSA8hCKjzhY98ye0FwR1alFeQCCRN6sBOcnoPMMETWaakiKm9FrqsNRx20aW0rUCYJNNYxUiP7zhQh5V-hLkIrw6w=s1788">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEiYtDWI3ahsUZ2iHjTjqbJBVJUWcI35tgIm2hPEsC0O8p3_X58V9nHozjeB2ciaUbc57TnyQmmDKeZ_W1Qn5IQ4O1zI49vgIjU1_vSA8hCKjzhY98ye0FwR1alFeQCCRN6sBOcnoPMMETWaakiKm9FrqsNRx20aW0rUCYJNNYxUiP7zhQh5V-hLkIrw6w=s1788" alt="Final Box Lit Up Blue">
+                    </div>
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEhI5vJFki1KiIYKMNko2kUZZrlT2Lv9izzPMKoueWCUqflWav9Lxx-kcAFCfIRrN8xb84mPXUiB5vcA8UkBdLL9TR-hDn8f-wA57k9PbCQ5htNVtnN2JaUH-42M6KS2lKqdKhyP2ZNnMNOsMv4UlbnD2ttfmvx3rXko4JUQ-F_c_V8qCGmH0CA4iwakVg=s1800">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEhI5vJFki1KiIYKMNko2kUZZrlT2Lv9izzPMKoueWCUqflWav9Lxx-kcAFCfIRrN8xb84mPXUiB5vcA8UkBdLL9TR-hDn8f-wA57k9PbCQ5htNVtnN2JaUH-42M6KS2lKqdKhyP2ZNnMNOsMv4UlbnD2ttfmvx3rXko4JUQ-F_c_V8qCGmH0CA4iwakVg=s1800" alt="Final Box Lit Up Red">
+                    </div>
+                     <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEjsu2cC1LP6Vf64SR1uyOdXmA0P4aICWJWSUhQuNLeBLMHFr3LRZrPL_vNQv6AkWH2XwfCjMfsyGFyIrLdNqDOmFP-ZVHkjefqKyoMCN7Yfemk_-fUX3KfGGkuJqhbRlOwEjwe6Qi09gr6g3VsIkoAHz57k9PbCQ5htNVtnN2JaUH-42M6KS2lKqdKhyP2ZNnMNOsMv4UlbnD2ttfmvx3rXko4JUQ-F_c_V8qCGmH0CA4iwakVg=s500">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjsu2cC1LP6Vf64SR1uyOdXmA0P4aICWJWSUhQuNLeBLMHFr3LRZrPL_vNQv6AkWH2XwfCjMfsyGFyIrLdNqDOmFP-ZVHkjefqKyoMCN7Yfemk_-fUX3KfGGkuJqhbRlOwEjwe6Qi09gr6g3VsIkoAHz57k-ui8c3_iSqaeOmqZcvVWxIT69N4Ccuwq5g=s500" alt="Final Box Side View">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- META DATA SECTION -->
+        <section id="meta" class="fade-in-section">
+            <div class="container">
+                <div class="meta-grid">
+                    <div class="meta-col">
+                        <h4><i class="fa-solid fa-user"></i> My Role</h4>
+                        <p>Maker</p>
+                        <p>Programmer</p>
+                    </div>
+                    <div class="meta-col">
+                        <h4><i class="fa-solid fa-graduation-cap"></i> Lesson Learned</h4>
+                        <p>Pivot and adjust to the realities of development. Things may not go as envisioned, but a positive mindset leads to meaningful results.</p>
+                    </div>
+                    <div class="meta-col">
+                        <h4><i class="fa-regular fa-calendar"></i> Timeline</h4>
+                        <p>March 2022</p>
+                        <p>Duration: 1 Week</p>
+                    </div>
+                    <div class="meta-col">
+                        <h4><i class="fa-solid fa-microchip"></i> Technology</h4>
+                        <ul>
+                            <li>Adafruit Circuit Playground</li>
+                            <li>Microsoft MakeCode</li>
+                            <li>Cricut / Laser Cutting</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+<!-- RELATED PROJECTS -->
+       <!-- <section id="related" class="fade-in-section">
+            <div class="container">
+                <div class="divider-icon"><i class="fa-solid fa-layer-group"></i></div>
+                <h2>Explore More Projects</h2>
+                <div class="gallery-grid">-->
+                    <!-- Project 1 -->
+                    <!--<a href="#" class="gallery-item">
+                        <img src="https://placehold.co/600x400/333333/ff9800?text=AR+Sculpture" alt="AR Project">
+                        <div class="gallery-caption">
+                            <h4>AR Sculpture</h4>
+                            <p style="margin:0; font-size: 0.9rem;">Vuforia & Unity</p>
+                        </div>
+                    </a>-->
+                    
+                    <!-- Project 2 -->
+                  <!--  <a href="#" class="gallery-item">
+                        <img src="https://placehold.co/600x400/333333/ff9800?text=Audio+Reactive" alt="Audio Project">
+                        <div class="gallery-caption">
+                            <h4>Audio Reactive</h4>
+                            <p style="margin:0; font-size: 0.9rem;">TouchDesigner</p>
+                        </div>
+                    </a>-->
+
+                    <!-- Project 3 -->
+                    <!--<a href="#" class="gallery-item">
+                        <img src="https://placehold.co/600x400/333333/ff9800?text=Projection+Mapping" alt="Mapping Project">
+                        <div class="gallery-caption">
+                            <h4>Projection Mapping</h4>
+                            <p style="margin:0; font-size: 0.9rem;">MadMapper</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>-->
+    </main>
+
+    <!-- FOOTER -->
+    <footer style="text-align: center; padding: 40px; border-top: 1px solid rgba(255,255,255,0.1); color: #666; font-size: 0.9rem;">
+        <p>&copy; 2022 Noel Nuñez. All Rights Reserved.</p>
+    </footer>
+
+    <!-- LIGHTBOX OVERLAY -->
+    <div id="lightbox">
+        <button id="lb-close" class="lb-btn" title="Close"><i class="fa-solid fa-xmark"></i></button>
+        <button id="lb-prev" class="lb-btn" title="Previous Image"><i class="fa-solid fa-chevron-left"></i></button>
+        <button id="lb-next" class="lb-btn" title="Next Image"><i class="fa-solid fa-chevron-right"></i></button>
+        <img id="lightbox-img" src="" alt="Expanded View">
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            /* -----------------------------------------------------------
+               SCROLL ANIMATION (INTERSECTION OBSERVER)
+            ----------------------------------------------------------- */
+            const observerOptions = {
+                root: null,
+                threshold: 0.15,
+                rootMargin: "0px"
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target); // Run once
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in-section').forEach(section => {
+                observer.observe(section);
+            });
+
+            /* -----------------------------------------------------------
+               LIGHTBOX LOGIC
+            ----------------------------------------------------------- */
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const triggers = document.querySelectorAll('.lightbox-trigger');
+            const closeBtn = document.getElementById('lb-close');
+            const prevBtn = document.getElementById('lb-prev');
+            const nextBtn = document.getElementById('lb-next');
+
+            let galleryImages = [];
+            let currentIndex = 0;
+
+            // Collect all gallery image sources
+            triggers.forEach((trigger, index) => {
+                const src = trigger.getAttribute('data-src') || trigger.querySelector('img').src;
+                galleryImages.push(src);
+                
+                trigger.addEventListener('click', () => {
+                    openLightbox(index);
+                });
+            });
+
+            function openLightbox(index) {
+                currentIndex = index;
+                updateImage();
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+
+            function updateImage() {
+                lightboxImg.style.opacity = '0.5';
+                setTimeout(() => {
+                    lightboxImg.src = galleryImages[currentIndex];
+                    lightboxImg.style.opacity = '1';
+                }, 200);
+            }
+
+            function nextImage() {
+                currentIndex = (currentIndex + 1) % galleryImages.length;
+                updateImage();
+            }
+
+            function prevImage() {
+                currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+                updateImage();
+            }
+
+            closeBtn.addEventListener('click', closeLightbox);
+            nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); });
+            prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); });
+
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) closeLightbox();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (!lightbox.classList.contains('active')) return;
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowRight') nextImage();
+                if (e.key === 'ArrowLeft') prevImage();
+            });
+        });
+    </script>
+</body>
+</html>
