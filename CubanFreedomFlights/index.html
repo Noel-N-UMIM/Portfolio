@@ -1,420 +1,1054 @@
-<!--https://www.youtube.com/watch?v=oU3IhuZscPo -------  Teaches how to add background image   -->
-<!--ZigZag Layout Tutorial --  https://www.w3schools.com/howto/howto_css_zig_zag_layout.asp  -->
-<!-- Simple Lightbox  https://simplelightbox.com/------------>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cuban Freedom Flights: A Mixed Reality Experience | Capstone Project</title>
     
-    <!-- custom css file link  -->
-    <link rel="stylesheet" href="../dist/simple-lightbox.css?v2.14.0" />
-    <link rel="stylesheet" href="../css/styles_Project_templates.css">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Alata&family=Josefin+Sans:wght@600;700&family=Sen:wght@700&family=Montserrat:wght@800&family=Poppins:wght@400;500&display=swap&family=Alice&display=swap" rel="stylesheet"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-      body {
-          font-family: 'Raleway', sans-serif;
-          font-size: 20px;
-          line-height: 34px;
-      }
+        /* -----------------------------------------------------------
+           CSS VARIABLES & RESET (Vintage/Archival Theme)
+        ----------------------------------------------------------- */
+        :root {
+            --bg-color: #1a1a1a; /* Deep Charcoal */
+            --section-bg: #242424; /* Slightly lighter charcoal */
+            --text-color: #e0e0e0;
+            --accent-color: #d4af37; /* Vintage Gold */
+            --secondary-accent: #c0392b; /* Faded Red for highlights */
+            /* Updated Font Variables */
+            --heading-font: 'Poppins', sans-serif;
+            --body-font: 'Open Sans', sans-serif;
+            --transition-speed: 0.3s;
+            --container-width: 1100px;
+        }
 
-      * {
-          box-sizing: border-box;
-      }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-      .container .gallery1 a img {
-          float: left;
-          width: 25%;
-          height: auto;
-          border: 4px solid #ffffff00;
-          -webkit-transition: -webkit-transform .15s ease;
-          -moz-transition: -moz-transform .15s ease;
-          -o-transition: -o-transform .15s ease;
-          -ms-transition: -ms-transform .15s ease;
-          transition: transform .15s ease;
-          position: relative;
-      }
-      .gallery-margin{
-        margin: 40px 20px 40px 20px;
-      }
-      .container .gallery2 a img {
-          float: left;
-          width: 25%;
-          height: auto;
-          border: 4px solid #ffffff00;
-          -webkit-transition: -webkit-transform .15s ease;
-          -moz-transition: -moz-transform .15s ease;
-          -o-transition: -o-transform .15s ease;
-          -ms-transition: -ms-transform .15s ease;
-          transition: transform .15s ease;
-          position: relative;
-      }
-      .container .gallery3 a img {
-          float: left;
-          width: 25%;
-          height: auto;
-          border: 4px solid #ffffff00;
-          -webkit-transition: -webkit-transform .15s ease;
-          -moz-transition: -moz-transform .15s ease;
-          -o-transition: -o-transform .15s ease;
-          -ms-transition: -ms-transform .15s ease;
-          transition: transform .15s ease;
-          position: relative;
-      }
-      .container .gallery4 a img {
-          float: left;
-          width: 25%;
-          height: auto;
-          border: 4px solid #ffffff00;
-          -webkit-transition: -webkit-transform .15s ease;
-          -moz-transition: -moz-transform .15s ease;
-          -o-transition: -o-transform .15s ease;
-          -ms-transition: -ms-transform .15s ease;
-          transition: transform .15s ease;
-          position: relative;
-      }
-      .container .gallery5 a img {
-          float: left;
-          width: 25%;
-          height: auto;
-          border: 4px solid #ffffff00;
-          -webkit-transition: -webkit-transform .15s ease;
-          -moz-transition: -moz-transform .15s ease;
-          -o-transition: -o-transform .15s ease;
-          -ms-transition: -ms-transform .15s ease;
-          transition: transform .15s ease;
-          position: relative;
-      }
-      .container .gallery6 a img {
-          float: left;
-          width: 25%;
-          height: auto;
-          border: 4px solid #ffffff00;
-          -webkit-transition: -webkit-transform .15s ease;
-          -moz-transition: -moz-transform .15s ease;
-          -o-transition: -o-transform .15s ease;
-          -ms-transition: -ms-transform .15s ease;
-          transition: transform .15s ease;
-          position: relative;
-      }
+        html {
+            scroll-behavior: smooth;
+        }
 
-      .clear {
-          clear: both;
-      }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--body-font);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
 
-      a {
-          color: #009688;
-          text-decoration: none;
-      }
+        /* -----------------------------------------------------------
+           TYPOGRAPHY
+        ----------------------------------------------------------- */
+        h1, h2, h3, h4 {
+            font-family: var(--heading-font);
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
 
-      a:hover {
-          color: #01695f;
-          text-decoration: none;
-      }
-  </style>
-   
- <title>Noel Nunez Cuban Freedom Flights</title>
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-size: 2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        section:hover h2::after {
+            width: 100px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--accent-color);
+            margin-top: 1.5rem;
+            font-weight: 600;
+        }
+        
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+            font-size: 1.05rem;
+            color: #d1d1d1;
+        }
+
+        .highlight-text {
+            font-size: 1.25rem;
+            font-style: italic;
+            color: #fff;
+            border-left: 3px solid var(--accent-color);
+            padding-left: 20px;
+            margin: 30px 0;
+        }
+
+        strong {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition-speed);
+        }
+
+        ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
+            padding-left: 10px;
+        }
+
+        ul li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+
+        ul li::before {
+            content: '➤'; 
+            color: var(--accent-color);
+            font-size: 0.8rem;
+            position: absolute;
+            left: 0;
+            top: 4px;
+        }
+
+        /* -----------------------------------------------------------
+           LAYOUT COMPONENTS
+        ----------------------------------------------------------- */
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        section {
+            padding: 40px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        section:nth-child(even) {
+            background-color: var(--section-bg);
+        }
+
+        /* -----------------------------------------------------------
+           HEADER
+        ----------------------------------------------------------- */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            background-color: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-family: var(--heading-font);
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+        
+        .brand span {
+            color: var(--accent-color);
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        .back-btn:hover {
+            background-color: var(--accent-color);
+            color: #000;
+            border-color: var(--accent-color);
+        }
+
+        /* -----------------------------------------------------------
+           HERO SECTION
+        ----------------------------------------------------------- */
+        .hero {
+            height: 90vh;
+            background: #1a1a1a; /* Fallback color */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding: 0;
+            overflow: hidden; /* Ensures video doesn't spill out */
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(26, 26, 26, 1));
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            padding: 20px;
+            animation: fadeIn 1.5s ease-out;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-subtitle {
+            font-family: var(--heading-font);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            display: inline-block;
+            padding: 8px 24px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            opacity: 0.7;
+            z-index: 2;
+        }
+
+        /* -----------------------------------------------------------
+           GRIDS & CARDS
+        ----------------------------------------------------------- */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .info-card {
+            background: rgba(255,255,255,0.03); 
+            padding: 30px;
+            border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.2); 
+            transition: transform 0.3s, border-color 0.3s;
+            height: 100%;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            background-clip: padding-box; 
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .info-card.has-img::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75); 
+            transition: background var(--transition-speed);
+            z-index: -1;
+        }
+
+        .info-card.has-img:hover::before {
+            background: rgba(0, 0, 0, 0.6); 
+        }
+
+        .info-card > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+        }
+
+        .icon-large {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        /* -----------------------------------------------------------
+           GALLERY
+        ----------------------------------------------------------- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.1);
+            height: 100%;
+            min-height: 250px;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+            opacity: 0.8;
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+
+        /* -----------------------------------------------------------
+           QUOTES (User Testing)
+        ----------------------------------------------------------- */
+        .quote-box {
+            border-left: 4px solid var(--accent-color);
+            background: rgba(255,255,255,0.03);
+            padding: 20px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .quote-box p {
+            margin-bottom: 0;
+            color: #fff;
+        }
+
+        /* -----------------------------------------------------------
+           VIDEO & EMBED CONTAINERS
+        ----------------------------------------------------------- */
+        .video-container, .embed-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            background: #000;
+            border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .video-container iframe, .embed-container iframe, 
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Constrained wrapper for process videos */
+        .process-video-wrapper {
+            max-width: 800px;
+            margin: 0 auto 60px auto;
+            text-align: center;
+        }
+
+        .process-video-wrapper h3 {
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+
+        /* -----------------------------------------------------------
+           LIGHTBOX
+        ----------------------------------------------------------- */
+        #lightbox {
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.98);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        #lightbox.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #lightbox-img {
+            max-width: 90%;
+            max-height: 85vh;
+            border: 1px solid var(--accent-color);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        #lightbox.active #lightbox-img {
+            transform: scale(1);
+        }
+
+        .lb-btn {
+            position: absolute;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 20px;
+            transition: color 0.2s;
+            z-index: 1001;
+        }
+
+        .lb-btn:hover {
+            color: var(--accent-color);
+        }
+
+        #lb-close { top: 20px; right: 20px; }        #lb-prev { left: 20px; top: 50%; transform: translateY(-50%); }
+        #lb-next { right: 20px; top: 50%; transform: translateY(-50%); }
+
+        /* -----------------------------------------------------------
+           ANIMATIONS & UTILITIES
+        ----------------------------------------------------------- */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, visibility;
+        }
+
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
+            40% { transform: translateY(-10px) translateX(-50%); }
+            60% { transform: translateY(-5px) translateX(-50%); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .divider-icon {
+            text-align: center;
+            margin: 40px 0;
+            color: rgba(255,255,255,0.1);
+            font-size: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.5rem; }
+            .grid-3, .grid-2 { grid-template-columns: 1fr; }
+            .header-content { flex-direction: column; gap: 10px; }
+        }
+    </style>
 </head>
 <body>
-<!-- -------------------Navigation -------------------------- -->
-<nav>
-    <!-- -------Small Nav Menu start--------------->
-    <div class="menu-small">
-    <div class="navContainer">
-    <div class="navbar">
-        <div class="logo"><a href="#home"><img src="../img/logo.png"></a></div>
-        <div class="dropdown">
-            <button class="dropbtn">Portfolio
-              <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown-content">
-             <!-- <a href="Animation.html">Art</a>-->
-            <a href="../interaction.html">Interaction Design</a>
-            <a href="../storyboard.html">Storyboards</a>
-            <a href="../animation.html">Animation</a>
-            <!--<a href="index.html">UI/UX</a>-->
-            <!--<a href="index.html">Interactive Media</a>-->
+
+    <header class="sticky-header">
+        <div class="container header-content">
+            <div class="brand">
+                NOEL NUÑEZ <span>|</span> INTERACTION DESIGN
             </div>
-          </div> 
-        <a href="../home.html#about">About</a>
-        <a href="https://interactivedesigndevelopment.blogspot.com/">Blog</a>
+            <a href="#" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Back to Projects
+            </a>
+        </div>
+    </header>
 
-      </div>
-    </div>
-</div>
-<!-- -------Small Nav Menu End--------------->
-<!-- -------Large Nav Menu Start--------------->
-<div class="menu-large">
-    <div class="navContainer">
-    <div class="navbar">
-        <div class="logo"><a href="../home.html"><img src="../img/logo.png"></a></div>
-        <a href="../home.html">Home</a>
-          <a href="../interaction.html">Interaction Design</a>
-          <a href="../storyboard.html">Storyboards</a>
-          <a href="../animation.html">Animation</a>
-          <a href="../home.html#about">About</a>
-        <a href="https://interactivedesigndevelopment.blogspot.com/">Blog</a>
+    <main>
+        <section id="hero" class="hero" style="padding: 0;">
+            <video autoplay muted loop playsinline class="hero-video">
+                <source src="img/Banner Video Silent.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            
+            <div class="hero-overlay"></div>
 
-      </div>
-    </div>
-</div>
-<!-- -------Large Nav Menu End--------------->
-      </nav>
-
-</div>
-
-<div class="logo_container">
-        
-</div>
-</nav>
-<!-- -------------------Banner Area -------------------------- -->
-<div id="home"></div>
- <div class="banner-image">
-     <div class="banner-text">The Cuban Freedom Flights</div>
-     <div class="banner-subheading">A Mixed Reality Experience</div>
- </div>
- </div>
-
- </header>
-
- <!-- -------------------Main Body -------------------------- -->
-<body>
-
-
-    <div class="wrapper_projects">    <!-- This is BG image of paper, goes to top of page--> 
-    <div class="container_projects"> <!-- This is linear gradient over bg, goes to top of page-->
-        <!--<div class= "section_projects"> <!-- This is main area for content, padding on all corners, max width 1000px-->
-        <!--<div class="projects_inner_shield"> <!-- Used to keep video and embedded content within specified width of 720px max-->
-            <div class="inner_shield">
-                <br>
-<!-- -------------------Top Video -------------------------- -->
-    <div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/1083323575?h=b353924874&title=0&byline=0&portrait=0" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
-    <br>
-
-<!-- -------------------About the Project -------------------------- -->
-<h2><b>ABOUT THE PROJECT</b></h2> 
-<h4>The "Cuban Freedom Flights" is a mixed reality virtual experience that invites you to embark on a journey through time, exploring a pivotal chapter in Cuban-American history. The remarkable stories and events surrounding "Los vuelos de la libertad" are brought to life with immersive and interactive galleries, animation, and historical context.    
- </h4><br>
-
-
- <!-- -------------------My Role (no image on right) -------------------------- 
- <h3><b>My Role</b> <div class= "role"><div class = "padding_role">Interaction Design | VR Development | Spatial Audio Design | Animation | Deployment</div></div>
- <h3><b>Collaborators</b></h3><div class= "role"><div class = "padding_role">Clay Ewing | Capstone Professor</div></div>
- <h3><b>Timeline</b></h3><div class= "role"><div class = "padding_role">August 2023 - May 2024</div></div>
- <h3><b>Technology</b></h3><div class= "role"><div class = "padding_role">Unity | Maya | Adobe Premiere | Photoshop | Meta Quest Pro | C#</div></div> -->
-
- <!-- -------------------My Role With image on Right -------------------------- -->
- <div class="row">
-  <div class="column-right">
-
-    <!--<img src="img/CubanFreedomFlights/gifs/Gallery.gif" alt="Explore Captivating Stories" style= "max-width: 350px; height: 0, auto;">-->
-    <img src="../img/CubanFreedomFlights/15_stories.jpg" alt="Explore Immersive Galleries" style= "max-width: 350px; height: 0, auto;">
-    </div>
-
-<div class="column-left">
-  <h3><b>My Role</b> <div class= "role"><div class = "padding_role">Interaction Design | VR Development | Spatial Audio Design | Animation | Deployment</div></div>
-    <h3><b>Collaborators</b></h3><div class= "role"><div class = "padding_role">Clay Ewing | Capstone Professor</div></div>
-    <h3><b>Timeline</b></h3><div class= "role"><div class = "padding_role">August 2023 - May 2024</div></div>
-    <h3><b>Technology</b></h3><div class= "role"><div class = "padding_role">Unity | Maya | Adobe Premiere | Photoshop | Meta Quest Pro | C#</div></div>
-
-  </div>
-</div>
-      <!-- --------------------Zig_Zag Section--------------------------  --> 
-<!-- The Gallery Section -->
-
-<div class="inner_shield">
-  <div class="row">
-    <div class="column-right">
-
-      <!--<img src="img/CubanFreedomFlights/gifs/Gallery.gif" alt="Explore Captivating Stories" style= "max-width: 350px; height: 0, auto;">-->
-      <img src="../img/CubanFreedomFlights/03_gallery.jpg" alt="Explore Immersive Galleries" class="img_zigzag">
+            <div class="hero-content">
+                <p class="hero-subtitle">A Mixed Reality Experience</p>
+                <h1>The Cuban Freedom Flights</h1>
+                <p>From 1965 to 1973, these flights became a lifeline for an estimated 300,000 refugees, marking it as the largest airborne refugee operation in American history.</p>
             </div>
+            <div class="scroll-indicator">
+                <i class="fa-solid fa-chevron-down fa-2x" style="color: #fff;"></i>
+            </div>
+        </section>
 
-  <div class="column-left">
-      <h2><b>Captivating Galleries</b></h2>
-      
-      <p>Immerse yourself in stunning galleries featuring authentic photographs from the era. Our Mixed Reality technology transforms these images, giving them depth and scale to create a truly immersive experience.</p>
+        <section id="overview" class="fade-in-section">
+            <div class="container">
+                <h2>The Concept</h2>
+                <div class="highlight-text">
+                    "Imagine stepping into a world where history comes alive through augmented and virtual reality."
+                </div>
+                <p>
+                    This interactive project acts as a <strong>digital time machine</strong>, allowing users to explore three immersive experiences about the Cuban Freedom Flights: <strong>History, Photo Galleries, and Stories</strong>.
+                </p>
+                <p>
+                    The aim is to entertain, educate, and tell meaningful stories by blending the strengths of technology and hand-crafted art to create an interactive and immersive animated short film.
+                </p>
+            </div>
+        </section>
 
-    </div>
-  </div>
+        <section id="design-question" class="fade-in-section">
+            <div class="container">
+                <h2>Key Design Question</h2>
+                <p style="font-size: 1.3rem; color: #fff; text-align: center; border: 1px solid var(--accent-color); padding: 40px; border-radius: 4px;">
+                    How can mixed reality be used to tell <span style="color: var(--accent-color);">Meaningful Stories</span> that bridge the worlds of traditional and interactive media?
+                </p>
+            </div>
+        </section>
 
-
-
-
-<!-- History Section -->
-
-  <div class="row">
-    <div class="column-left">
-      <img src="../img/CubanFreedomFlights/freedom_interaction_1.jpg" alt="Personal Stories Image" class="img_zigzag">
-    </div>
-
-    <div class="column-right">
-           <h2><b>Interactive History</b></h2>
-           <p>Dive into the rich history of the Cuban Freedom Flights as you navigate along a timeline, uncovering the significance of this monumental operation and its enduring impact on American society.</p>
-          </div>
-  </div>
-
-  
-
-
-<!-- Stories Section -->
-<div class="row">
-  <div class="column-right">
-    <!--<img src="img/CubanFreedomFlights/gifs/Story_Narrative.gif" alt="Personal Stories Image" style= "max-width: 350px; height: 0, auto;"> --> 
-    <img src="../img/CubanFreedomFlights/freedom_interaction_stories.jpg" alt="Personal Stories Image" class="img_zigzag" >  
-  </div>
-
-<div class="column-left">
-    <h2><b>Personal Stories</b></h2>
-    
-    <p>Hear the voices of those who lived through the Cuban Freedom Flights. Through a blend of animation, physical models, and scanned artifacts, their stories come to life in vivid detail.</p>
-    
-  </div>
-</div>
-
-     
-       <h2><b>Goals:</b></h2>
+        <section id="project-video" class="fade-in-section">
+            <div class="container">
+                <h2>Project Walkthrough</h2>
+                <div class="video-container">
+                    <iframe src="https://player.vimeo.com/video/1083323575?h=00000000&color=d4af37" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
        
-       <ul>
-        <li><strong>Education and Awareness:</strong> Our project aims to educate and raise awareness about this important chapter in Cuban-American relations, fostering a deeper understanding of the human stories behind the headlines.</li>
-        <br>
-        <li><strong>Authenticity:</strong> We are dedicated to preserving the authenticity of this historical narrative while leveraging cutting-edge technology to make it accessible and engaging to audiences of all ages.</li>
-         <br>
-         <li><strong>Innovation:</strong> By harnessing the power of Mixed Reality, we push the boundaries of storytelling, offering a unique and unforgettable experience that transcends traditional media.</li>
-       </ul>
-       <br>
-       <h2><b>Join Us...</b></h2>
+        <section id="interactions" class="fade-in-section">
+            <div class="divider-icon"><i class="fa-solid fa-layer-group"></i></div>
+            <div class="container">
+                <h2>Key Interactions</h2>
+                <p>The experience utilizes hand tracking and controller inputs to create a tactile connection to the past.</p>
+
+                <div class="highlight-text">
+                    <i class="fa-solid fa-up-down-left-right" style="color: var(--accent-color);"></i> Immersive Galleries
+                </div>
+                <p>
+                    Users can view stunning galleries featuring authentic photographs from the era. Images are enhanced with depth map layers to add previously unseen dimension.
+                </p>
+
+                <div class="highlight-text">
+                    <i class="fa-solid fa-plane-departure" style="color: var(--accent-color);"></i> Interactive History
+                </div>
+                <p>
+                    Progress is triggered by user actions, such as "Grab the airplane and follow the blue path." This gamifies the learning process.
+                </p>
+
+                <div class="highlight-text">
+                   <i class="fa-solid fa-book-open icon" style="color: var(--accent-color);"></i> Animated Narrative
+                </div>
+                <p>Hear the voices of those who lived through the Cuban Freedom Flights. Through a blend of animation and physical models, their stories come to life.
+                </p>
+
+                <div class="gallery-grid">
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/Gallery1.jpg">
+                        <img src="img/Gallery1.jpg" alt="Interactive Galleries">
+                        <div class="gallery-caption"><strong>Interactive Galleries</strong></div>
+                    </div>
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/Gallery2.jpg">
+                        <img src="img/Gallery2.jpg" alt="Grabbable Elements">
+                        <div class="gallery-caption"><strong>Grabbable Elements</strong></div>
+                    </div>
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/Gallery3.jpg">
+                        <img src="img/Gallery3.jpg" alt="Animated Stories">
+                        <div class="gallery-caption"><strong>Animated Stories</strong></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="design-process" class="fade-in-section">
+            <div class="container">
+                <h2>Design Process</h2>
+                <div class="highlight-text">
+                    <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent-color);"></i> Blue Sky Brainstorming
+                </div>
+                <p>
+                    The Cuban Freedom Flights came about after a period of concept exploration and ideation, using methods such as mind-mapping and storyboarding. My concept has gone through at least six major changes. Below are some explorations including early concepts that never made it past the initial pitch phase.
+                </p>
+
+                <div class="gallery-grid">
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/ideation/Gallery4.jpg">
+                        <img src="img/ideation/Gallery4.jpg" alt="Mind Mapping">
+                        <div class="gallery-caption"><strong>Mind Mapping</strong></div>
+                    </div>
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/ideation/Gallery5.jpg">
+                        <img src="img/ideation/Gallery5.jpg" alt="Augmented Canvas Concept">
+                        <div class="gallery-caption"><strong>Augmented Canvas Concept</strong></div>
+                    </div>
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/ideation/Gallery6.jpg">
+                        <img src="img/ideation/Gallery6.jpg" alt="Physical Set Concept">
+                        <div class="gallery-caption"><strong>Physical Set Concept</strong></div>
+                    </div>
+                </div>
+
+                <div class="highlight-text">
+                    <i class="fa-solid fa-pen-nib" style="color: var(--accent-color);"></i> Concept Design
+                </div>
+                <p>
+                    Early concepts involved incorporating physical sets with augmented overlays to tell an immersive, historical story. The slides seen below explore potential user interactions and triggers.
+                </p>
+                <div class="video-container">
+                    <iframe src="https://speakerdeck.com/player/2c2fca48f417414da65bcd3fbf608c02?slide=12" allowfullscreen scrolling="no" allow="encrypted-media"></iframe>
+                </div>
+
+                <div class="gallery-grid">
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/ideation/Gallery7.jpg">
+                        <img src="img/ideation/Gallery7.jpg" alt="Set Design Research">
+                        <div class="gallery-caption"><strong>Concept: Set Design Research</strong></div>
+                    </div>
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/ideation/Gallery8.jpg">
+                        <img src="img/ideation/Gallery8.jpg" alt="Spatial Use">
+                        <div class="gallery-caption"><strong>Spatial Use: Concept</strong></div>
+                    </div>
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/ideation/Gallery9.jpg">
+                        <img src="img/ideation/Gallery9.jpg" alt="Timeline">
+                        <div class="gallery-caption"><strong>Proposed Timeline</strong></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="precedents" class="fade-in-section">
+            <div class="container">
+                <div class="highlight-text">
+                    <i class="fa-solid fa-lightbulb" style="color: var(--accent-color);"></i> Precedents & Inspiration
+                </div>
+                <p>The project draws inspiration from three key precedents that balance storytelling with technology.</p>
+                
+                <div class="grid-3">
+                    <div class="info-card has-img" style="background-image: url('img/Storycorps.jpg');">
+                        <i class="fa-solid fa-microphone-lines icon-large"></i>
+                        <h4>StoryCorps</h4>
+                        <ul>
+                            <li>Short, personal stories</li>
+                            <li>Traditional animation style</li>
+                            <li>Interview-style narratives</li>
+                        </ul>
+                    </div>
+                    <div class="info-card has-img" style="background-image: url('img/Book_of_Distance.jpg');">
+                        <i class="fa-solid fa-book-open icon-large"></i>
+                        <h4>The Book of Distance</h4>
+                        <ul>
+                            <li>Interactive VR story</li>
+                            <li>Rooted in historical context</li>
+                            <li>Dramatic retelling</li>
+                        </ul>
+                    </div>
+                    <div class="info-card has-img" style="background-image: url('img/305-360.png');">
+                        <i class="fa-solid fa-map-location-dot icon-large"></i>
+                        <h4>(305) 360°</h4>
+                        <ul>
+                            <li>Passthrough technology</li>
+                            <li>Educational focus</li>
+                            <li>Diverse AR/VR interactions</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="testing-tech" class="fade-in-section">
+            <div class="container">
+                <div class="highlight-text">
+                    <i class="fa-solid fa-microscope" style="color: var(--accent-color);"></i> Testing Technology
+                </div>
+                <p>
+                    One of my goals was to incorporate hand-drawn animation in a virtual environment and to design interactions during the experience. Below are some tests conducted to see if the illusion could be pulled off.
+                </p>
+                
+                <div class="gallery-grid">
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/testing/Gallery10.gif">
+                        <img src="img/testing/Gallery10.gif" alt="Hand Tracking Interaction">
+                        <div class="gallery-caption"><strong>Can 2D Animation be combined with 3D assets?</strong></div>
+                    </div>
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/testing/Gallery11.gif">
+                        <img src="img/testing/Gallery11.gif" alt="Depth Test">
+                        <div class="gallery-caption"><strong>Testing 2D interactions in a 3D scene</strong></div>
+                    </div>
+                </div>
+               
+                <div class="highlight-text">
+                     <i class="fa-solid fa-hammer" style="color: var(--accent-color);"></i> Building Assets & Spatial Experiments
+         
+                </div>
+
+                <div class="process-video-wrapper">
+                    <h3>Building the Freedom Tower</h3>
+                    <div class="video-container">
+                        <video muted loop playsinline controls preload="metadata">
+                            <source src="img/testing/Gallery12.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+
+                <div class="process-video-wrapper">
+                    <h3>Testing Passthrough VR</h3>
+                    <div class="video-container">
+                        <video muted loop playsinline controls preload="metadata">
+                            <source src="img/testing/Gallery13.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+
+                <div class="process-video-wrapper">
+                    <h3>Virtual & Physical Integration</h3>
+                    <div class="video-container">
+                        <video muted loop playsinline controls preload="metadata">
+                            <source src="img/testing/Gallery14.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+
+                <div class="process-video-wrapper">
+                    <h3>Real World Integration</h3>
+                    <div class="video-container">
+                        <video muted loop playsinline controls preload="metadata">
+                            <source src="img/testing/Gallery15_Realworld_integration.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+
+                <div class="process-video-wrapper">
+                    <h3>Historical Artifact Digital Cloning</h3>
+                    <div class="video-container">
+                        <video muted loop playsinline controls preload="metadata">
+                            <source src="img/testing/Gallery16_Artifacts.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+
+                <div class="process-video-wrapper">
+                    <h3>Adding Depth to Virtual Gallery</h3>
+                    <div class="video-container">
+                        <video muted loop playsinline controls preload="metadata">
+                            <source src="img/testing/Gallery17_depthmap.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+
+                <div class="process-video-wrapper">
+                    <h3>Protoyping a Virtual Play Table</h3>
+                    <div class="video-container">
+                        <video muted loop playsinline controls preload="metadata">
+                            <source src="img/testing/Gallery18_Center%20Map.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+
+                <div class="process-video-wrapper">
+                    <h3>Creating the 2D Assets</h3>
+                    <div class="video-container">
+                        <video muted loop playsinline controls preload="metadata">
+                            <source src="img/testing/Gallery19_Animation.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </section>
        
-       <p>...on this extraordinary journey through history. Whether you're a history enthusiast, a technology aficionado, or simply curious to learn more, the Cuban Freedom Flights Experience welcomes you to explore, engage, and discover the past in a whole new way.</p>
-       
-       <p><strong>Start your journey today!</strong></p>
+        <section id="user-testing" class="fade-in-section">
+            <div class="container">
+                <h2>User Testing & Iteration</h2>
+                <div class="grid-2">
+                    <div>
+                        <h3>The Feedback</h3>
+                        <div class="quote-box"><p>"I feel like they are staring into my soul. I really like the depth of the photos."</p></div>
+                        <div class="quote-box"><p>"Oh, my abuelo would love this."</p></div>
+                        <div class="quote-box"><p>"I wish I could move the menu so I could get a full view of the photos."</p></div>
+                        <div class="quote-box"><p>"English is not my first language... Closed captioning would be great."</p></div>
+                    </div>
+                    <div>
+                        <h3>The Improvements</h3>
+                        <ul style="margin-top: 20px;">
+                            <li><strong>Accessibility:</strong> Added closed captioning options for diverse users.</li>
+                            <li><strong>Navigation:</strong> Simplified menu system with moveable/grabbable UI.</li>
+                            <li><strong>Immersion:</strong> Added subtle environmental audio to deepen the sense of place.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-     
+        <section id="reflection" class="fade-in-section">
+            <div class="container">
+                <h2>Reflection</h2>
+                <div class="grid-2">
+                    <div class="info-card">
+                        <h4><i class="fa-solid fa-lightbulb"></i> Lessons Learned</h4>
+                        <ul>
+                            <li>Lock down your story before developing code.</li>
+                            <li>Collaboration is key for complex XR projects.</li>
+                            <li>Managing scope is critical to meeting deadlines.</li>
+                        </ul>
+                    </div>
+                    <div class="info-card">
+                        <h4><i class="fa-solid fa-forward"></i> What is Next?</h4>
+                        <ul>
+                            <li>Polish artwork and storytelling elements.</li>
+                            <li>Tell more stories of the generations before us.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        
-<br>
-<hr class="divider_rounded">
-<!-- --------------------- Interactions GIFS -------------------------- -->
-<h2><center><b>LEARN MORE ABOUT THE PROJECT</b></center></h2>
-     
-   
-   
- 
+        <section id="meta" class="fade-in-section">
+            <div class="container">
+                <div class="grid-3" style="text-align: center; font-size: 0.9rem;">
+                    <div>
+                        <h4 style="color: var(--accent-color);">Created By</h4>
+                        <p>Noel Nuñez</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--accent-color);">Context</h4>
+                        <p>Capstone | Spring 2024</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--accent-color);">Tools</h4>
+                        <p>Unity, Maya, Adobe Creative Suite</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-<!-----------------------End of Modal ----------------- -->
-<br>
-    <p>To explore the production of this experience, feel free to check out <a href="https://interactivedesigndevelopment.blogspot.com/2024/01/capstone-week-1.html"><b>this post</b></a> on the Interactive Media production blog. 
+    </main>
 
-</div>  <!-- This is the end of the container for the main content -->
-    <!-- -------------Divider---------------------------------- -->
-  
-    <hr class="divider_rounded">
+    <footer style="text-align: center; padding: 40px; border-top: 1px solid rgba(255,255,255,0.1); color: #666; font-size: 0.9rem;">
+        <p>&copy; 2026 Noel Nuñez.</p>
+    </footer>
 
-      <!-- -------------------Design Thinking Process -------------------------- -->
-       <h2><center>GALLERY of INTERACTIONS</center></h1>
-
-     
-      </div> <!--This cuts off the "inner shield to allow the gallery to run full width"-->
-  <!-- -------------------Gallery Blue Sky -------------------------- -->
-
-  <div class="container">
-      <div class="gallery1">
-        <div class="gallery-margin">
-      <div class="centerd-gallery">
-        <a href="../img/CubanFreedomFlights/14_stories.jpg"><img src="../img/CubanFreedomFlights/14_stories.jpg" alt="" title="Interact with the stories"/></a>  
-        <a href="../img/CubanFreedomFlights/freedom_interaction_2.jpg"><img src="../img/CubanFreedomFlights/freedom_interaction_2.jpg" alt="" title="Hear the stories of passengers from the Cuban Freedom Flights"/></a>  
-        <a href="../img/CubanFreedomFlights/11_Stories.jpg"><img src="../img/CubanFreedomFlights/11_Stories.jpg" alt="" title="Drive the narrative forward"/></a>
-        <a href="../img/CubanFreedomFlights/Animation_.gif"><img src="../img/CubanFreedomFlights/12_Stories.jpg" alt="" title="Custom Animation"/></a>
-        <a href="../img/CubanFreedomFlights/13_Stories.jpg"><img src="../img/CubanFreedomFlights/13_Stories.jpg" alt="" title="virtual re-creations of historical artifacts"/></a>  
-        <a href="../img/CubanFreedomFlights/15_stories.jpg"><img src="../img/CubanFreedomFlights/15_stories.jpg" alt="" title="View the world from the narrator's perspective"/></a>
-        <a href="../img/CubanFreedomFlights/04_gallery.jpg"><img src="../img/CubanFreedomFlights/04_gallery.jpg" alt="" title="Explore Immersive Galleries"/></a>
-        <a href="../img/CubanFreedomFlights/05_gallery.jpg"><img src="../img/CubanFreedomFlights/05_gallery.jpg" alt="" title="Explore Immersive Galleries"/></a>
-        <a href="../img/CubanFreedomFlights/06_Gallery.jpg"><img src="../img/CubanFreedomFlights/06_Gallery.jpg" alt="" title="Explore Immersive Galleries"/></a>
-        <a href="../img/CubanFreedomFlights/07_gallery.jpg"><img src="../img/CubanFreedomFlights/07_gallery.jpg" alt="" title="Explore Immersive Galleries"/></a>
-        <a href="../img/CubanFreedomFlights/08_Gallery.jpg"><img src="../img/CubanFreedomFlights/08_Gallery.jpg" alt="" title="Explore Immersive Galleries"/></a>
-        <a href="../img/CubanFreedomFlights/09_gallery.jpg"><img src="../img/CubanFreedomFlights/09_gallery.jpg" alt="" title="Explore Immersive Galleries"/></a>
-        
-        <div class="clear">
-        </div>
-        </div>
+    <div id="lightbox">
+        <button id="lb-close" class="lb-btn" title="Close"><i class="fa-solid fa-xmark"></i></button>
+        <button id="lb-prev" class="lb-btn" title="Previous Image"><i class="fa-solid fa-chevron-left"></i></button>
+        <button id="lb-next" class="lb-btn" title="Next Image"><i class="fa-solid fa-chevron-right"></i></button>
+        <img id="lightbox-img" src="" alt="Expanded View">
     </div>
-  </div>
-</div>
 
-  <!-- --------------------Concept Section--------------------------  --> 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // SCROLL ANIMATION - Threshold set lower to ensure long sections trigger visibility
+            const observerOptions = { root: null, threshold: 0.05, rootMargin: "0px" };
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
 
- 
+            document.querySelectorAll('.fade-in-section').forEach(section => {
+                observer.observe(section);
+            });
 
-    <!-- --------------------Feasibility Section--------------------------  --> 
+            // -------------------------------------------------------------
+            // NEW VIDEO AUTOPLAY OBSERVER
+            // -------------------------------------------------------------
+            // This watches the videos in the "Building Assets" section.
+            // It plays them when they are 50% visible, and pauses them otherwise.
+            const videoObserverOptions = {
+                root: null,
+                threshold: 0.5 // 50% visible means "center" of view roughly
+            };
 
-   
-<!-- --------------------Design Section--------------------------  --> 
+            const videoObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const video = entry.target;
+                    if (entry.isIntersecting) {
+                        // Video is > 50% visible: Play
+                        video.play().catch(error => {
+                            // Auto-play might be blocked by browser if not muted
+                            console.log("Autoplay prevented or video not ready", error);
+                        });
+                    } else {
+                        // Video is < 50% visible: Pause
+                        video.pause();
+                    }
+                });
+            }, videoObserverOptions);
+
+            // Select only videos inside the process-video-wrapper
+            const processVideos = document.querySelectorAll('.process-video-wrapper video');
+            processVideos.forEach(video => {
+                videoObserver.observe(video);
+            });
 
 
+            // LIGHTBOX LOGIC
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const triggers = document.querySelectorAll('.lightbox-trigger');
+            const closeBtn = document.getElementById('lb-close');
+            const prevBtn = document.getElementById('lb-prev');
+            const nextBtn = document.getElementById('lb-next');
 
-<!-- --------------------Production Section--------------------------  --> 
+            let galleryImages = [];
+            let currentIndex = 0;
 
+            triggers.forEach((trigger, index) => {
+                const src = trigger.getAttribute('data-src') || trigger.querySelector('img').src;
+                galleryImages.push(src);
+                trigger.addEventListener('click', () => openLightbox(index));
+            });
 
-<!-- --------------------Deployment Section--------------------------  --> 
+            function openLightbox(index) {
+                currentIndex = index;
+                updateImage();
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
 
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+            }
 
-    <!-- -------------------centered image -------------------------- 
-      <img src="img/CubanFreedomFlights/freedom_thumb.jpg" alt="Hero" class="center">  
-      <br> 
+            function updateImage() {
+                lightboxImg.style.opacity = '0.5';
+                setTimeout(() => {
+                    lightboxImg.src = galleryImages[currentIndex];
+                    lightboxImg.style.opacity = '1';
+                }, 200);
+            }
 
-      <h2><b>What to Expect</b></h2> 
-    
-       <br>-->
+            function nextImage() {
+                currentIndex = (currentIndex + 1) % galleryImages.length;
+                updateImage();
+            }
 
- 
-<br>
-        </div>
-      </div>
-    </div>
-        
-         <!-- -------------------- Javascript--------------------------  --> 
+            function prevImage() {
+                currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+                updateImage();
+            }
 
-         <script src="../dist/simple-lightbox.js?v2.14.0"></script>
-         <script>
-             (function() {
-                 var $gallery = new SimpleLightbox('.gallery1 a', {});      
-             })();
+            closeBtn.addEventListener('click', closeLightbox);
+            nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); });
+            prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); });
+            lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
 
-         </script>
-                 <script>
-                  (function() {
-                      var $gallery = new SimpleLightbox('.gallery2 a', {});        
-                  })();
-     
-              </script>
-
-         <script>
-          (function() {
-              var $gallery = new SimpleLightbox('.gallery3 a', {});
-          })();
-      </script>
-
-<script>
-  (function() {
-      var $gallery = new SimpleLightbox('.gallery4 a', {});
-  })();
-</script>
-
-<script>
-  (function() {
-      var $gallery = new SimpleLightbox('.gallery5 a', {});
-  })();
-</script>
-
-<script>
-  (function() {
-      var $gallery = new SimpleLightbox('.gallery6 a', {});
-  })();
-</script>
-
+            document.addEventListener('keydown', (e) => {
+                if (!lightbox.classList.contains('active')) return;
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowRight') nextImage();
+                if (e.key === 'ArrowLeft') prevImage();
+            });
+        });
+    </script>
 </body>
-<footer>
-    <p>(C) Noel Nuñez 2026</p></footer>
 </html>
