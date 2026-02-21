@@ -13,36 +13,9 @@
     <!-- FONT AWESOME (Icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-   <!--NOTES:
-Includes a set of Gallery Utility Classes.
-
-These new CSS classes allow you to easily control the layout without writing new code every time.
-How to use the new features:
-
-    For a Single Image (Centered & Natural Size):
-    Add the class single-focus to the gallery-grid container.
-
-        Effect: It centers the image, prevents it from stretching the full width of the screen, and allows the height to adjust naturally (fixing the "narrow strip" issue).
-
-        Example: <div class="gallery-grid single-focus">
-
-    To Prevent Stretching (for 1 or 2 images):
-    Add the class no-stretch to the gallery-grid.
-
-        Effect: Images will stay their defined size (approx 300px+) and align to the left, rather than expanding to fill the empty space.
-
-        Example: <div class="gallery-grid no-stretch">
-
-    To Adjust Image Height:
-    Add tall or natural to the specific gallery-item.
-
-    Example: <div class="gallery-item tall"> (Makes it 450px high)  
-   -->
-   
    <style>
         /* -----------------------------------------------------------
            CSS VARIABLES & RESET
-           Easy to edit colors and fonts here.
         ----------------------------------------------------------- */
         :root {
             --bg-color: #121212;
@@ -135,7 +108,7 @@ How to use the new features:
 
         /* Subtle Section Dividers */
         section {
-            padding: 80px 0;
+            padding: 20px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         
@@ -203,7 +176,7 @@ How to use the new features:
         ----------------------------------------------------------- */
         .hero {
             height: 90vh;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjmrRLNd9U8r011q3iSVHelzYeHf_mfVjg51cMR1j9EAjK_6JhEe1VfhZ7FsjBg5Wjakuqh8gdvqcJACSB_lQy0RwewJ7qIxYe2iQJ5zlXg_WtKDg62DNSS0ZBT34aVlUQa9mi8vrfOwNN1TxMbC5T05adcDF5NvwQ_LavEOJVRRFKv0wuBe7sEzrWwCg/s2000/Banner_Image.jpg');
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('img/Banner_Image.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed; /* Parallax effect */
@@ -239,6 +212,36 @@ How to use the new features:
         }
 
         /* -----------------------------------------------------------
+           OVERVIEW LAYOUT
+        ----------------------------------------------------------- */
+        .overview-layout {
+            display: flex;
+            gap: 40px;
+            align-items: stretch; /* Changed from center to stretch so image fills height */
+            margin-bottom: 2rem;
+        }
+
+        .overview-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centers text vertically if the image forces the container to be taller */
+        }
+
+        .overview-image {
+            flex: 0 0 400px;
+            max-width: 100%;
+        }
+
+        /* On desktop, force the overview image to match the text height */
+        @media (min-width: 769px) {
+            .overview-image.gallery-item img {
+                height: 100% !important;
+                object-fit: cover;
+            }
+        }
+
+        /* -----------------------------------------------------------
            GRID & IMAGES
         ----------------------------------------------------------- */
         .gallery-grid {
@@ -248,48 +251,35 @@ How to use the new features:
             margin-top: 20px;
         }
 
-        /* NEW UTILITY CLASSES: Use these to control layout for 
-           sections with single images or uneven numbers.
-        */
-
-        /* Option 1: SINGLE IMAGE CENTERED (Prevents stretching)
-           Usage: <div class="gallery-grid single-focus"> */
         .gallery-grid.single-focus {
             display: flex;
             justify-content: center;
-            grid-template-columns: none; /* Reset grid */
+            grid-template-columns: none; 
         }
 
         .gallery-grid.single-focus .gallery-item {
-            max-width: 700px; /* Adjust this to control single image width */
+            max-width: 500px; 
             width: 100%;
         }
         
         .gallery-grid.single-focus .gallery-item img {
-            height: auto; /* Lets height be natural, prevents cropping */
-            max-height: 600px; /* Optional cap */
+            height: auto; 
+            max-height: 600px; 
         }
 
-        /* Option 2: NO STRETCH (Aligns left, keeps columns tight)
-           Usage: <div class="gallery-grid no-stretch"> */
         .gallery-grid.no-stretch {
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         }
 
-        /* Option 3: TALLER IMAGES
-           Usage: <div class="gallery-item tall"> */
         .gallery-item.tall img {
             height: 450px;
         }
 
-        /* Option 4: NATURAL HEIGHT
-           Usage: <div class="gallery-item natural"> */
         .gallery-item.natural img {
             height: auto;
             min-height: 250px;
         }
 
-        /* Standard Gallery Item */
         .gallery-item {
             position: relative;
             overflow: hidden;
@@ -305,7 +295,7 @@ How to use the new features:
 
         .gallery-item img {
             width: 100%;
-            height: 250px; /* Default uniform height */
+            height: 250px; 
             object-fit: cover;
             display: block;
             transition: transform 0.5s ease;
@@ -316,7 +306,6 @@ How to use the new features:
             opacity: 0.9;
         }
 
-        /* Caption overlay on hover (optional cinematic touch) */
         .gallery-caption {
             position: absolute;
             bottom: 0;
@@ -333,7 +322,73 @@ How to use the new features:
         }
 
         /* -----------------------------------------------------------
-           META SECTION (Role, Tech, etc.)
+           HORIZONTAL CAROUSEL GALLERY (NEW)
+        ----------------------------------------------------------- */
+        .carousel-wrapper {
+            width: 100%;
+            padding: 0 20px;
+            margin: 0 auto;
+        }
+
+        .gallery-carousel {
+            display: flex;
+            gap: 20px;
+            justify-content: center; /* Centers if < 4 images */
+            width: 100%;
+        }
+
+        .gallery-carousel .gallery-item {
+            flex: 0 0 calc(25% - 15px); /* 4 across with 20px gap */
+            max-width: calc(25% - 15px);
+        }
+
+        /* Mobile specific adjustments for infinite scroll loop */
+        @media (max-width: 768px) {
+            .gallery-carousel {
+                justify-content: flex-start;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none; /* IE/Edge */
+                scroll-behavior: auto;
+            }
+
+            .gallery-carousel::-webkit-scrollbar {
+                display: none; /* Chrome/Safari */
+            }
+
+            .gallery-carousel .gallery-item {
+                flex: 0 0 85%; /* Image takes 85%, leaving space for the next to peek */
+                max-width: 85%;
+                scroll-snap-align: center;
+            }
+        }
+
+        /* -----------------------------------------------------------
+           VIDEO EMBED
+        ----------------------------------------------------------- */
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            margin-top: 2rem;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            background-color: #000;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* -----------------------------------------------------------
+           META SECTION
         ----------------------------------------------------------- */
         .meta-grid {
             display: grid;
@@ -464,7 +519,16 @@ How to use the new features:
             }
             
             .hero {
-                background-attachment: scroll; /* Fix for mobile parallax issues */
+                background-attachment: scroll; 
+            }
+
+            .overview-layout {
+                flex-direction: column;
+            }
+
+            .overview-image {
+                flex: 1 1 auto;
+                width: 100%;
             }
 
             .lb-btn { font-size: 1.5rem; padding: 10px; }
@@ -478,11 +542,14 @@ How to use the new features:
     <!-- STICKY HEADER -->
     <header class="sticky-header">
         <div class="container header-content">
-            <div class="brand">
+           <!-- <div class="brand">
                 NOEL NUÑEZ <span>|</span> INTERACTIVE
-            </div>
+            </div>-->
+                  <a href="/index.html" class="brand">
+                NOEL NUÑEZ <span>|</span> Zoetrope
+            </a>
             <a href="/Projects/" class="back-btn">
-                <i class="fa-solid fa-arrow-left"></i> Back to Projects
+                <i class="fa-solid fa-arrow-left"></i> Interactive Media Projects
             </a>
         </div>
     </header>
@@ -504,36 +571,88 @@ How to use the new features:
         <section id="overview" class="fade-in-section">
             <div class="container">
                 <h2>Project Overview</h2>
-                <p>
-                    This project was a two-part physical computing journey. It began as a challenge to create a simple interactive object using a servo motor, a 3D printed component, and an external button—resulting in a classic <strong>Zoetrope</strong>.
-                </p>
-                <p>
-                    Through iteration and feedback, the project evolved. The second phase focused on refining the visibility and mechanics, ultimately converting the shutter-based Zoetrope into a mirror-based <strong>Praxinoscope</strong>.
-                </p>
+                
+                <!-- Added Flexbox Layout for text and GIF -->
+                <div class="overview-layout">
+                    <div class="overview-text">
+                        <p>
+                            This project was a two-part physical computing journey. It began as a challenge to create a simple interactive object using a servo motor, a 3D printed component, and an external button—resulting in a classic <strong>Zoetrope</strong>.
+                        </p>
+                        <p>
+                            Through iteration and feedback, the project evolved. The second phase focused on refining the visibility and mechanics, ultimately converting the shutter-based Zoetrope into a mirror-based <strong>Praxinoscope</strong>.
+                        </p>
+                    </div>
+                    
+                    <div class="overview-image gallery-item natural lightbox-trigger" data-src="img/Praxinoscope.gif">
+                        <img src="img/Praxinoscope.gif" alt="Praxinoscope Action">
+                        <div class="gallery-caption"><i class="fa-solid fa-play"></i> Praxinoscope Action</div>
+                    </div>
+                </div>
+
+                <!-- RESPONSIVE VIMEO EMBED -->
+                 <p>
+<h3>>Watch the Zoetrope process video below (2:15 minutes)</h3>
+</p>
+                <div class="video-wrapper">
+                    <!-- REPLACE "VIDEO_ID_HERE" WITH YOUR ACTUAL VIMEO VIDEO ID -->
+                    <iframe src="https://player.vimeo.com/video/704709385?color=00bcd4&title=0&byline=0&portrait=0" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                </div>
             </div>
         </section>
+
+        <!-- EXTENDED HORIZONTAL CAROUSEL GALLERY -->
+        <!--<section id="process-carousel" class="fade-in-section">
+            <div class="carousel-wrapper">
+                <div class="divider-icon"><i class="fa-solid fa-images"></i></div>
+                <h2 style="text-align: center;">Production Process Gallery</h2>-->
+                
+                <!-- Add "infinite" class to enable mobile scrolling loop -->
+                <!--<div class="gallery-carousel infinite">
+                    
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhKsHHQMC9JRBuR8Hmrw5s3UOu9fUQucVUTOkcIoaYBCpI-TV3HYIhWM9vTN47nUY_80AJB9igMIe8KVZu1jUTLvO7gbP-BGcrJQ15Leg1JuYTl03gnS1y4ELb-5Mc2jlIcQZ0yx4TRPYPUKdmpf5eDeXKpb2t3u9yoXSStJYG52o89--xQRhdDxpGYDA/s1000/1.jpg">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhKsHHQMC9JRBuR8Hmrw5s3UOu9fUQucVUTOkcIoaYBCpI-TV3HYIhWM9vTN47nUY_80AJB9igMIe8KVZu1jUTLvO7gbP-BGcrJQ15Leg1JuYTl03gnS1y4ELb-5Mc2jlIcQZ0yx4TRPYPUKdmpf5eDeXKpb2t3u9yoXSStJYG52o89--xQRhdDxpGYDA/s600/1.jpg" alt="Assembly Check">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Base Assembly</div>
+                    </div>
+
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh4r68BtZCutPzrQo6ara2m-hxC5gMB120wtC-crtv7M0ZUg8qT8_82rPL5Fl_arC2SD2Lyf5TCss8FNyHKIapuQGhzLk2brb8e2V_WXIA0KRtE0vA8vKgtdrBYNfBPu7Uw_AMnWdccErkEW4lebnLvuhs9Pw2B43XpRqcTTnc31-w-lvUGldXxIOvYng/s1000/7.jpg">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh4r68BtZCutPzrQo6ara2m-hxC5gMB120wtC-crtv7M0ZUg8qT8_82rPL5Fl_arC2SD2Lyf5TCss8FNyHKIapuQGhzLk2brb8e2V_WXIA0KRtE0vA8vKgtdrBYNfBPu7Uw_AMnWdccErkEW4lebnLvuhs9Pw2B43XpRqcTTnc31-w-lvUGldXxIOvYng/s600/7.jpg" alt="Mirror Installation">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Mirror Alignment</div>
+                    </div>
+
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiO7YsA8sxGN5f8VwqBnvVRE8gOtkqRVvzDMgRDr9dF89LcK0yLEiqNGDsGPvK--ShE5S-DfLF1mqB2X-WOGl_HyqHHMht5YPa9lNaECXVkf5Re2ZH04kmHYJsB595aNufl3ObQnjI9Fbx-hJhp3-MOpUuoiaM70rjOr3_NPcgmxD9nCWxSVnv6gdJ_ZA/s1000/Corrections_3.jpg">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiO7YsA8sxGN5f8VwqBnvVRE8gOtkqRVvzDMgRDr9dF89LcK0yLEiqNGDsGPvK--ShE5S-DfLF1mqB2X-WOGl_HyqHHMht5YPa9lNaECXVkf5Re2ZH04kmHYJsB595aNufl3ObQnjI9Fbx-hJhp3-MOpUuoiaM70rjOr3_NPcgmxD9nCWxSVnv6gdJ_ZA/s600/Corrections_3.jpg" alt="Support Structure">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Support Structure</div>
+                    </div>
+
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjkNoGT_K-m9M2toFAA_YmMJZe6L88wizAZ4SbzxajiHfzkkjSD2AvSDXARm-g8hNeQpp79cLAJZpG9WYZTwB9W6U31X3Lz3ixj-L1GrI_0LWUMekbMSUS91nBHCZtLoZJmdM8oyDqr6T31RoeylV73xDgOqv6hmx5eDg5OLEEViJdVjerG7-jVT93W2Q/s1000/Corrections_5.jpg">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjkNoGT_K-m9M2toFAA_YmMJZe6L88wizAZ4SbzxajiHfzkkjSD2AvSDXARm-g8hNeQpp79cLAJZpG9WYZTwB9W6U31X3Lz3ixj-L1GrI_0LWUMekbMSUS91nBHCZtLoZJmdM8oyDqr6T31RoeylV73xDgOqv6hmx5eDg5OLEEViJdVjerG7-jVT93W2Q/s600/Corrections_5.jpg" alt="Final Polish">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Final Finish</div>
+                    </div>
+
+                </div>
+            </div>
+        </section>-->
 
         <!-- PHASE 1: BRAINSTORMING -->
         <section id="brainstorming" class="fade-in-section">
             <div class="container">
-                <div class="divider-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                <!--<div class="divider-icon"><i class="fa-solid fa-lightbulb"></i></div>-->
                 <h2>Brainstorming</h2>
                 <p>
                     As part of the design process, it is important to quickly explore as many ideas as possible. Deviations often lead to a richer final product.
                 </p>
                 <p>
-                    I utilized a combination of traditional sketching on paper and collaborative digital mind-mapping on Miro. My initial concept involved a 3D printed character jumping into a portal and re-emerging as a 2D drawing in an infinite loop.
+                    I utilized a combination of traditional sketching on paper and collaborative digital mind-mapping on Miro.
                 </p>
                 
-                <!-- STANDARD GRID (Auto-fit) -->
                 <div class="gallery-grid">
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiiRDVguMkGEhANlQNpo5GNxxjaMK5yvGbY4VF6TR6ovalGxYrqCFHPN8tRskRiPrF5osWBt0BMasK0R42fWlkYecKoyRBc1WlV458lQA5jnNKdzm8ZWkr6_EESigZ5zypgsn4KSdb82BTGGPYCmn-SzDDsuy3x2Qeb8jttKCCBrjnNSaiEdSrh3l1Zdw/s1258/Miro_1.JPG">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiiRDVguMkGEhANlQNpo5GNxxjaMK5yvGbY4VF6TR6ovalGxYrqCFHPN8tRskRiPrF5osWBt0BMasK0R42fWlkYecKoyRBc1WlV458lQA5jnNKdzm8ZWkr6_EESigZ5zypgsn4KSdb82BTGGPYCmn-SzDDsuy3x2Qeb8jttKCCBrjnNSaiEdSrh3l1Zdw/s600/Miro_1.JPG" alt="Miro Board Brainstorming">
+                    <div class="gallery-item lightbox-trigger" data-src="img/Miro_1.JPG">
+                        <img src="img/Miro_1.JPG">
                         <div class="gallery-caption"><i class="fa-solid fa-magnifying-glass-plus"></i> Concept Mapping</div>
                     </div>
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEirmF4EPiB3uRpgVRZIsvK-KaThAmqRncPpvHk0J7z-cR4phXqbtwaO-iiREQwGxNm_eADTg5P5EwFUKBFLg9C3LQksjzyvT3UJyJEaAaSygmfsR-Dk_hJFw_dp_JOAgpGcyNO3sCNzK7IdpA4mKTqo09RaBL5opVflsuJYxskNWtjsvbP97MxB1lJ1TA/s996/Miro_2.JPG">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEirmF4EPiB3uRpgVRZIsvK-KaThAmqRncPpvHk0J7z-cR4phXqbtwaO-iiREQwGxNm_eADTg5P5EwFUKBFLg9C3LQksjzyvT3UJyJEaAaSygmfsR-Dk_hJFw_dp_JOAgpGcyNO3sCNzK7IdpA4mKTqo09RaBL5opVflsuJYxskNWtjsvbP97MxB1lJ1TA/s600/Miro_2.JPG" alt="Idea Sketching">
-                        <div class="gallery-caption"><i class="fa-solid fa-magnifying-glass-plus"></i> Initial Sketches</div>
+                    <div class="gallery-item lightbox-trigger" data-src="img/Miro_3.JPG">
+                        <img src="img/Miro_3.JPG" alt="Idea Sketching">
+                        <div class="gallery-caption"><i class="fa-solid fa-magnifying-glass-plus"></i> Concept Mapping</div>
                     </div>
                 </div>
             </div>
@@ -547,28 +666,147 @@ How to use the new features:
                     My initial concept involved a 3D printed character jumping into a portal and re-emerging as a 2D drawing in an infinite loop.
                 </p>
                 <p>
-                    To help figure out the action of the character in the limited "frames" alloted, I animated the subject in 2D using <strong>Toon Boom Harmony</strong>.
+                    To help figure out the action of the character in the 12 limited "frames" alloted, I animated the subject in 2D using <strong>Toon Boom Harmony</strong>.
                 </p>
                 <div class="gallery-grid single-focus">
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgb8jUvklsnkQUv7exFABciVlXXTcdxX00kyoyOv6ht4-lHq6-1aSEOEYp5KqeLfGMW2yGJB82Q1YsFQ4AJ2VtR7F0LSCm_9Vzdip0XOcCwqpnTl9l-vIKPyxrjxI4c6xCoB0iAh1EicbtVn8JY_QRMWSMOUYV0aFKw_tbekXh6XBjFlSpp8KV16rEDLg/s500/2D_Animation.gif">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgb8jUvklsnkQUv7exFABciVlXXTcdxX00kyoyOv6ht4-lHq6-1aSEOEYp5KqeLfGMW2yGJB82Q1YsFQ4AJ2VtR7F0LSCm_9Vzdip0XOcCwqpnTl9l-vIKPyxrjxI4c6xCoB0iAh1EicbtVn8JY_QRMWSMOUYV0aFKw_tbekXh6XBjFlSpp8KV16rEDLg/s500/2D_Animation.gif" alt="3D Animation Cycle">
+                    <div class="gallery-item lightbox-trigger" data-src="img/2D_Animation.gif">
+                        <img src="img/2D_Animation.gif" alt="2D Animation Cycle">
                         <div class="gallery-caption"><i class="fa-solid fa-play"></i> 2D Animation Cycle</div>
+                    </div>
+                    
+                </div>
+           
+            
+                <!--<div class="gallery-grid">
+                    <div class="gallery-item lightbox-trigger" data-src="img/2D_Animation.gif">
+                        <img src="img/2D_Animation.gif" alt="2D Animation Cycle">
+                        <div class="gallery-caption"><i class="fa-solid fa-play"></i> 2D Animation Cycle</div>
+                    </div>
+                    <div class="gallery-item lightbox-trigger" data-src="img/3D_Animation.gif">
+                        <img src="img/3D_Animation.gif" alt="3D Animation Cycle">
+                        <div class="gallery-caption"><i class="fa-solid fa-magnifying-glass-plus"></i> 3D Animation Cycle</div>
+                    </div>
+                </div>-->
+                <br>
+                           <p>
+                    The 3D version was animated in <strong>Autodesk Maya</strong>, with careful consideration for the 360-degree silhouette so the animation would be legible from any angle.
+                </p>
+                             <div class="gallery-grid single-focus">
+                    <div class="gallery-item lightbox-trigger" data-src="img/3D_Animation.gif">
+                        <img src="img/3D_Animation.gif" alt="3D Animation Cycle">
+                        <div class="gallery-caption"><i class="fa-solid fa-play"></i> 3D Animation Cycle</div>
                     </div>
                     
                 </div>
             </div>
 
-        </section> <!-- PHASE 3: DESIGN -->
-        <section id="design" class="fade-in-section">
+   
+
+        </section> 
+        
+        <!-- PHASE 3: DESIGN -->
+       <!-- <section id="design" class="fade-in-section">
             <div class="container">
                 <h2>Design & Modeling</h2>
+
+                                <div class="gallery-grid single-focus">
+                    <div class="gallery-item lightbox-trigger" data-src="img/3D_Animation.gif">
+                        <img src="img/3D_Animation.gif" alt="3D Animation Cycle">
+                        <div class="gallery-caption"><i class="fa-solid fa-play"></i> 3D Animation Cycle</div>
+                    </div>
+                    
+                </div>
+            </div>
+            </section>-->
+                
+<section id="process-carousel" class="fade-in-section">
+    <div class="container">
+                 <h2 style="text-align: center;"></h2>
+               <!-- <p>
+                <div class="divider-icon"><i class="fa-solid fa-images"></i></div>
+       
+                <p>-->
+                    <p>
+                        Once the action was determined, I needed to figure out how to place the figures on the Zoetropes support base. I used a cylinder in Maya as a proxy for the real base and positioned the action appropriately.
+                    </p>
+                    <p>
+                        I quickly discovered my "portal" idea was too complex for the frame rate of a Zoetrope. I scaled the action down to a single 3D printed character.
+                    </p>
+</div>
+ <div class="carousel-wrapper">           
+<!-- Add "infinite" class to enable mobile scrolling loop -->
+                <div class="container">
+                    <div class="gallery-grid">
+                    <div class="gallery-item lightbox-trigger" data-src="img/Maya_Ref_Disc3.jpg">
+                        <img src="img/Maya_Ref_Disc3.jpg" alt="Assembly Check">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Base Assembly</div>
+                    </div>
+
+                    <div class="gallery-item lightbox-trigger" data-src="img/Maya_Ref_Disc4.jpg">
+                        <img src="img/Maya_Ref_Disc4.jpg" alt="Mirror Installation">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Mirror Alignment</div>
+                    </div>
+                    </div>
+                    <br>
                 <p>
-                    I quickly discovered my "portal" idea was too complex for the frame rate of a Zoetrope. I scaled the action down to a single 3D printed character.
-                </p>
-                <p>
-                    I animated the subject in <strong>Autodesk Maya</strong>, carefully considering the 360-degree silhouette so the animation would be legible from any angle.
-                </p>
-                <div class="gallery-grid">
+                Once I was satisfied with the animation and layout, I exported the figures as .obj files in batches of 3 or 4 and imported them into a program called Zbrush. Here you can push the geometry and do more advanced modeling, but my goal was to make the geometry "water tight" for 3D printing, and this was done be re-meshing the model using "Dynamesh".
+            </p> 
+            <p>Once the model was sealed, I saved it as a .stl file.
+                
+            </p>
+            <div class="gallery-grid">
+                    <div class="gallery-item lightbox-trigger" data-src="img/ZBrush.jpg">
+                        <img src="img/ZBrush.jpg" alt="Support Structure">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Support Structure</div>
+                    </div>
+
+                    <div class="gallery-item lightbox-trigger" data-src="img/Cura.jpg">
+                        <img src="img/Cura.jpg" alt="Final Polish">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Final Finish</div>
+                    </div>
+                </div>
+            </div>  
+            
+            </section>
+
+            <section id="process-carousel" class="fade-in-section">
+    <div class="container">
+                 <h2 style="text-align: center;">Printing</h2>
+               <!-- <p>
+                <div class="divider-icon"><i class="fa-solid fa-images"></i></div>
+       
+                <p>-->
+                    <p>
+From Zbrush, I moved to a program called Cura which is used to prepare the models for 3D printing by establishing the scale, orientation, and determinig if any structural support is needed to prevent gravity from destroying your hot plastic!                     </p>
+                   
+</div>
+ <div class="carousel-wrapper">           
+<!-- Add "infinite" class to enable mobile scrolling loop -->
+                <div class="gallery-carousel infinite">
+                    
+                    <div class="gallery-item lightbox-trigger" data-src="img/printing1.jpg">
+                        <img src="img/printing1.jpg" alt="Assembly Check">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> 3D Printer</div>
+                    </div>
+
+                   <div class="gallery-item lightbox-trigger" data-src="img/printing3.jpg">
+                        <img src="img/printing3.jpg" alt="Print Support Structure">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Print Support Structure</div>
+                    </div>
+
+                    <div class="gallery-item lightbox-trigger" data-src="img/printing4.jpg">
+                        <img src="img/printing4.jpg" alt="Cleanup">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Cleanup</div>
+                    </div>
+                                        <div class="gallery-item lightbox-trigger" data-src="img/Group_Shot_Optimized.jpg">
+                        <img src="img/Group_Shot_Optimized.jpg" alt="Final Polish">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Final Finish</div>
+                    </div>
+                </div>
+            </div>  
+            </section>
+
+<!--<div class="gallery-grid">
                     <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5qlY57pPDUOLeZUCacBzNIubmk8dZwsCjNl0azGsQflTKeri1_K75gwbVP9BgxRrU5ymIvAh_X6UnLGvi2aoBKDQktWvMB6jf2CklrwQL2VgEtAPVu1aGinNsVa4keA6ZlKODa1lMXt5d1U7-vqr21XOqb1uTw2BRlug6o0cdWHZeMkPbj5_cv3lJVQ/s500/3D_Animation.gif">
                         <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5qlY57pPDUOLeZUCacBzNIubmk8dZwsCjNl0azGsQflTKeri1_K75gwbVP9BgxRrU5ymIvAh_X6UnLGvi2aoBKDQktWvMB6jf2CklrwQL2VgEtAPVu1aGinNsVa4keA6ZlKODa1lMXt5d1U7-vqr21XOqb1uTw2BRlug6o0cdWHZeMkPbj5_cv3lJVQ/s500/3D_Animation.gif" alt="3D Animation Cycle">
                         <div class="gallery-caption"><i class="fa-solid fa-play"></i> 3D Animation Cycle</div>
@@ -579,41 +817,83 @@ How to use the new features:
                     </div>
                 </div>
             </div>
-        </section>
+        </section>-->
 
         <!-- PHASE 4: PROTOTYPING -->
         <section id="prototyping" class="fade-in-section">
             <div class="container">
-                <div class="divider-icon"><i class="fa-solid fa-microchip"></i></div>
+                <!--<div class="divider-icon"><i class="fa-solid fa-microchip"></i></div>-->
                 <h2>Prototyping & Wiring</h2>
                 <p>
-                    The physical build involved preparing models in <strong>ZBrush</strong> and <strong>Cura</strong> for 3D printing. The core mechanism relied on a servo motor controlled by a microcontroller.
-                </p>
-                <p>
-                    I experimented with different input methods, including a potentiometer to control speed and even a sound sensor, though I ultimately focused on stability for the final presentation.
+                    To make the Zoetrope rotate, I wired a  micro-controller and servo to a breadboard.  Getting the signal to work involved a learning curve, but it eventually got there!
                 </p>
                 <div class="gallery-grid">
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhTFPhrZg52M4hYkbR9DM9ZcgBFNLMkYPn4UnQ7-WdxTVaqhJWQfbPVZdryzzC8Jzw4mjWm2vEk4aLZDh_EZ6KUTbivGrN-EPZ0x-uRgN1SfdKkJPk-SwyFyj7uzQ7aURkSid-GiozpF77NFeYHwRHEqlZRziH9MGG1Hk6N1F9070UYngT3IwyVb0WStA/s1000/printing1.jpg">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhTFPhrZg52M4hYkbR9DM9ZcgBFNLMkYPn4UnQ7-WdxTVaqhJWQfbPVZdryzzC8Jzw4mjWm2vEk4aLZDh_EZ6KUTbivGrN-EPZ0x-uRgN1SfdKkJPk-SwyFyj7uzQ7aURkSid-GiozpF77NFeYHwRHEqlZRziH9MGG1Hk6N1F9070UYngT3IwyVb0WStA/s600/printing1.jpg" alt="3D Printing Process">
+                    <div class="gallery-item lightbox-trigger" data-src="img/Coding_1.jpg">
+                        <img src="img/Coding_1.jpg" alt="3D Printing Process">
                     </div>
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjc-lFsSK3Hv4zukqoV5M5pfkGjMgz_bKyeAxZh6aB2jzm9uH954rmnxJLZy4lUcpw2vjPNpoKMTIIhRXYFKDxAW1c_Sgk0cBSoIBkTooyUNuuxwtDu4xt0VZb45o2uMNR-1T2sbIB29GC3qQofEfnR18LyUL53OgWp95sh_5boXc5PfozoUXHIjQo6yA/s1333/Coding_2.jpg">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjc-lFsSK3Hv4zukqoV5M5pfkGjMgz_bKyeAxZh6aB2jzm9uH954rmnxJLZy4lUcpw2vjPNpoKMTIIhRXYFKDxAW1c_Sgk0cBSoIBkTooyUNuuxwtDu4xt0VZb45o2uMNR-1T2sbIB29GC3qQofEfnR18LyUL53OgWp95sh_5boXc5PfozoUXHIjQo6yA/s600/Coding_2.jpg" alt="Wiring and Breadboarding">
+                    <div class="gallery-item lightbox-trigger" data-src="img/Coding_3.jpg">
+                        <img src="img/Coding_3.jpg" alt="Wiring and Breadboarding">
+                    </div>
+                                        <div class="gallery-item lightbox-trigger" data-src="img/Coding_4.jpg">
+                        <img src="img/Coding_4.jpg" alt="Wiring and Breadboarding">
                     </div>
                 </div>
             </div>
         </section>
-
+               <!-- PHASE : Base Building -->
+        <section id="prototyping" class="fade-in-section">
+            <div class="container">
+                <!--<div class="divider-icon"><i class="fa-solid fa-microchip"></i></div>-->
+                <h2>Building the Base</h2>
+                <p>
+                    The base needed to be wide enough for all of the 3D figures to fit, and light enough for the servo to succesfully rotate it. The base went through two iterations, with the first attempt being too flimsy and prone to pealing if an adjustment needed to be made to any of the 3D figures.</p>
+                    <P>Additionally, there were too many "frames". The solution was to widen the spacing between each figure, ultimately reducing the "frames" from 20, down to 12. The second attempt utilized a thicker board and it was wrapped with painters tape to allow repositioning of the 3D figures.</P>
+                </p>
+                <div class="gallery-grid">
+                    <div class="gallery-item lightbox-trigger" data-src="img/Corrections_1.jpg">
+                        <img src="img/Corrections_1.jpg" alt="Base building">
+                    </div>
+                    <div class="gallery-item lightbox-trigger" data-src="img/Corrections_2.jpg">
+                        <img src="img/Corrections_2.jpg" alt="Wiring and Breadboarding">
+                    </div>
+                                        <div class="gallery-item lightbox-trigger" data-src="img/Corrections_3.jpg">
+                        <img src="img/Corrections_3.jpg" alt="Wiring and Breadboarding">
+                    </div>
+                    </div>
+                <div class="gallery-grid">
+                <div class="gallery-item lightbox-trigger" data-src="img/Corrections_4.jpg">
+                        <img src="img/Corrections_4.jpg" alt="Wiring and Breadboarding">
+                    </div>
+                <div class="gallery-item lightbox-trigger" data-src="img/Corrections_5.jpg">
+                        <img src="img/Corrections_5.jpg" alt="Wiring and Breadboarding">
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- PHASE: FINAL DESIGN -->
+        <section id="final" class="fade-in-section">
+            <div class="container">
+                <h2>Zoetrope Design</h2>
+                <p>
+                    The final result is a functional Zoetrope that smoothly animates the 3D printed figure, viewable through narrow slits, creating the illusion of persistence of vision. 
+                </p>
+                <div class="gallery-grid single-focus">
+                    <div class="gallery-item lightbox-trigger" data-src="img/Zoetrope.gif">
+                        <img src="img/Zoetrope.gif" alt="Final Animation in Motion">
+                        <div class="gallery-caption"><i class="fa-solid fa-film"></i> Final Animation Test</div>
+                    </div>
+                </div>
+            </div>
+        </section>
         <!-- PHASE 5: CHALLENGES -->
         <section id="challenges" class="fade-in-section">
             <div class="container">
-                <h2>Design Challenges</h2>
+                <h2>Design Feedback</h2>
                 <div style="background-color: rgba(255,0,0,0.1); padding: 20px; border-left: 4px solid #ff4444; border-radius: 4px;">
                     <p>
                         <strong>Zoetrope Feedback:</strong> The shutters (slits) of the Zoetrope obstructed the view of the animation too much. Additionally, the push-button activation was physically uncomfortable to hold down for extended periods.
                     </p>
-                    <p style="margin-bottom: 0;">
-                        <strong>Scope Creep:</strong> I attempted to add an animatronic servo controlled by a potentiometer for the second iteration but had to abandon it to focus on perfecting the core animation experience.
-                    </p>
+                    
                 </div>
             </div>
         </section>
@@ -623,41 +903,39 @@ How to use the new features:
             <div class="container">
                 <div class="divider-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
                 <h2>The Solution: Praxinoscope</h2>
+                
+                <div class="overview-layout">
+                    <div class="overview-text">
+                        <p>
+                            To solve the visibility issue, I converted the Zoetrope into a <strong>Praxinoscope</strong>. This device replaces the slits with a central ring of mirrors.
+                        </p>
+                        <ul>
+                            <li style="margin-bottom: 10px;"><i class="fa-solid fa-check" style="color: var(--accent-color); margin-right: 10px;"></i> <strong>Mirrors:</strong> I used 12 mirrors to match the 12 frames of animation 1:1. This reflects the image to the viewer, creating a brighter, clearer persistence of vision.</li>
+                            <li style="margin-bottom: 10px;"><i class="fa-solid fa-check" style="color: var(--accent-color); margin-right: 10px;"></i> <strong>Interaction:</strong> I swapped the momentary push button for a robust toggle switch, improving user comfort.</li>
+                            <li><i class="fa-solid fa-check" style="color: var(--accent-color); margin-right: 10px;"></i> <strong>Fabrication:</strong> I designed a new base in Carbide Create and cut it using a CNC machine for a cleaner finish.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="overview-image gallery-item natural lightbox-trigger" data-src="img/16.jpg">
+                        <img src="img/16.jpg" alt="Final Praxinoscope Build">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Final Praxinoscope Build</div>
+                    </div>
+                </div>
+
+                <br>
+
                 <p>
-                    To solve the visibility issue, I converted the Zoetrope into a <strong>Praxinoscope</strong>. This device replaces the slits with a central ring of mirrors.
+                <h3>>Watch the Praxinoscope process video below! (1:21 minutes)</h3>
                 </p>
-                <ul>
-                    <li style="margin-bottom: 10px;"><i class="fa-solid fa-check" style="color: var(--accent-color); margin-right: 10px;"></i> <strong>Mirrors:</strong> I used 12 mirrors to match the 12 frames of animation 1:1. This reflects the image to the viewer, creating a brighter, clearer persistence of vision.</li>
-                    <li style="margin-bottom: 10px;"><i class="fa-solid fa-check" style="color: var(--accent-color); margin-right: 10px;"></i> <strong>Interaction:</strong> I swapped the momentary push button for a robust toggle switch, improving user comfort.</li>
-                    <li><i class="fa-solid fa-check" style="color: var(--accent-color); margin-right: 10px;"></i> <strong>Fabrication:</strong> I designed a new base in Carbide Create and cut it using a CNC machine for a cleaner finish.</li>
-                </ul>
-                <div class="gallery-grid">
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhMi0AR81OG9jqTBDKoPNlUTmax31VMWgSMTfEd3Eeh0pSeI8pVuHonz8KutanIUPKx56RKi_i59SAPxo0iu1vIRiP-ZxjBRyvOz9vZ44Msd0oNpZt8QeqYkpJxFTzZNfRecV06zTqIDiRrfIhv3x2pLbKNRM4ptFodovU2EMCEsCnXT78NrbBDyTOYRg/s1043/2.jpg">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhMi0AR81OG9jqTBDKoPNlUTmax31VMWgSMTfEd3Eeh0pSeI8pVuHonz8KutanIUPKx56RKi_i59SAPxo0iu1vIRiP-ZxjBRyvOz9vZ44Msd0oNpZt8QeqYkpJxFTzZNfRecV06zTqIDiRrfIhv3x2pLbKNRM4ptFodovU2EMCEsCnXT78NrbBDyTOYRg/s600/2.jpg" alt="Installing Mirrors">
-                    </div>
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgsSkkzMrKvMXZo0w9RP8fNUOGL241V3WgPm7inbFGr6wxw7d5tzb6BamqcgBtjfSwZRXkuOcRzIpAXzaHZMv2samtEsMQxMAmrgCD2EfKycsEEsI6VB55uYg3vFpOd0IUudgmFDWiGNlaHuWIjGUyp4lXPQ0VoBeQ3VpswjvQ5Yno89LvtoSvjFaOMpw/s1067/8.jpg">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgsSkkzMrKvMXZo0w9RP8fNUOGL241V3WgPm7inbFGr6wxw7d5tzb6BamqcgBtjfSwZRXkuOcRzIpAXzaHZMv2samtEsMQxMAmrgCD2EfKycsEEsI6VB55uYg3vFpOd0IUudgmFDWiGNlaHuWIjGUyp4lXPQ0VoBeQ3VpswjvQ5Yno89LvtoSvjFaOMpw/s600/8.jpg" alt="Final Assembly">
-                    </div>
+
+                <!-- RESPONSIVE VIMEO EMBED -->
+                <div class="video-wrapper">
+                    <!-- REPLACE "VIDEO_ID_HERE" WITH YOUR ACTUAL VIMEO VIDEO ID -->
+                    <iframe src="https://player.vimeo.com/video/707972241?color=00bcd4&title=0&byline=0&portrait=0" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
                 </div>
             </div>
         </section>
 
-        <!-- PHASE 7: FINAL DESIGN (Uses new "single-focus" class) -->
-        <section id="final" class="fade-in-section">
-            <div class="container">
-                <h2>Final Design</h2>
-                <p>
-                    The final result is a functional Praxinoscope that smoothly animates the 3D printed figure. The mirrors successfully stabilize the image, and the toggle switch allows for hands-free viewing.
-                </p>
-                <!-- EXAMPLE USAGE: "single-focus" for 1 image -->
-                <div class="gallery-grid single-focus">
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBxVYtaJWuXw_JGWcFiewcqHzCcuDvPICP3NS8u17cWEYVAV_kYF5U9Id_Ox23-cJ5M0xyPxJLinkduJ9S3xgE63EwY9-3bam-sDMOFLJ8BrL3UQUysrynYpJEa4HJlsK0a_xsUH3US2dttIUpUvOc7ZhvvFJmkB-1QipWlwLCO21pkcTvSGQnXQx77A/s500/Zoetrope.gif">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBxVYtaJWuXw_JGWcFiewcqHzCcuDvPICP3NS8u17cWEYVAV_kYF5U9Id_Ox23-cJ5M0xyPxJLinkduJ9S3xgE63EwY9-3bam-sDMOFLJ8BrL3UQUysrynYpJEa4HJlsK0a_xsUH3US2dttIUpUvOc7ZhvvFJmkB-1QipWlwLCO21pkcTvSGQnXQx77A/s500/Zoetrope.gif" alt="Final Animation in Motion">
-                        <div class="gallery-caption"><i class="fa-solid fa-film"></i> Final Animation Test</div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <!-- PHASE 8: LESSONS LEARNED -->
         <section id="lessons" class="fade-in-section">
@@ -686,11 +964,11 @@ How to use the new features:
                         <p>Fabricator</p>
                         <p>Animator</p>
                     </div>
-                    <div class="meta-col">
+                    <!--<div class="meta-col">
                         <h4><i class="fa-solid fa-users"></i> Collaborators</h4>
                         <p>IDM Classmates (Critique)</p>
                         <p>Miro Contributors</p>
-                    </div>
+                    </div>-->
                     <div class="meta-col">
                         <h4><i class="fa-regular fa-calendar"></i> Timeline</h4>
                         <p>April - May 2022</p>
@@ -700,6 +978,7 @@ How to use the new features:
                         <h4><i class="fa-solid fa-screwdriver-wrench"></i> Technology</h4>
                         <ul>
                             <li>Autodesk Maya / ZBrush</li>
+                            <li>ToonBoom Animation</li>
                             <li>3D Printing (Cura)</li>
                             <li>Arduino / Servos</li>
                             <li>CNC Milling</li>
@@ -708,32 +987,33 @@ How to use the new features:
                 </div>
             </div>
         </section>
-<!-- RELATED PROJECTS -->
-        <section id="related" class="fade-in-section">
+        
+        <!-- RELATED PROJECTS -->
+       <!-- <section id="related" class="fade-in-section">
             <div class="container">
                 <div class="divider-icon"><i class="fa-solid fa-layer-group"></i></div>
                 <h2>Explore More Projects</h2>
-                <div class="gallery-grid">
+                <div class="gallery-grid">-->
                     <!-- Project 1 -->
-                    <a href="#" class="gallery-item">
+                    <!--<a href="#" class="gallery-item">
                         <img src="https://placehold.co/600x400/333333/ff9800?text=AR+Sculpture" alt="AR Project">
                         <div class="gallery-caption">
                             <h4>AR Sculpture</h4>
                             <p style="margin:0; font-size: 0.9rem;">Vuforia & Unity</p>
                         </div>
-                    </a>
+                    </a>-->
                     
                     <!-- Project 2 -->
-                    <a href="#" class="gallery-item">
+                    <!--<a href="#" class="gallery-item">
                         <img src="https://placehold.co/600x400/333333/ff9800?text=Audio+Reactive" alt="Audio Project">
                         <div class="gallery-caption">
                             <h4>Audio Reactive</h4>
                             <p style="margin:0; font-size: 0.9rem;">TouchDesigner</p>
                         </div>
-                    </a>
+                    </a>-->
 
                     <!-- Project 3 -->
-                    <a href="#" class="gallery-item">
+                    <!--<a href="#" class="gallery-item">
                         <img src="https://placehold.co/600x400/333333/ff9800?text=Projection+Mapping" alt="Mapping Project">
                         <div class="gallery-caption">
                             <h4>Projection Mapping</h4>
@@ -742,12 +1022,12 @@ How to use the new features:
                     </a>
                 </div>
             </div>
-        </section>
+        </section>-->
     </main>
 
     <!-- FOOTER -->
     <footer style="text-align: center; padding: 40px; border-top: 1px solid rgba(255,255,255,0.1); color: #666; font-size: 0.9rem;">
-        <p>&copy; 2022 Noel Nuñez. All Rights Reserved.</p>
+        <p>&copy; 2026 Noel Nuñez</p>
     </footer>
 
     <!-- LIGHTBOX OVERLAY -->
@@ -785,11 +1065,10 @@ How to use the new features:
             });
 
             /* -----------------------------------------------------------
-               LIGHTBOX LOGIC
+               ROBUST EVENT DELEGATION FOR LIGHTBOX (Handles clones too)
             ----------------------------------------------------------- */
             const lightbox = document.getElementById('lightbox');
             const lightboxImg = document.getElementById('lightbox-img');
-            const triggers = document.querySelectorAll('.lightbox-trigger');
             const closeBtn = document.getElementById('lb-close');
             const prevBtn = document.getElementById('lb-prev');
             const nextBtn = document.getElementById('lb-next');
@@ -797,19 +1076,27 @@ How to use the new features:
             let galleryImages = [];
             let currentIndex = 0;
 
-            // Collect all gallery image sources
-            triggers.forEach((trigger, index) => {
-                // Use data-src if available, fallback to img src
+            // Build a unique array of image sources 
+            document.querySelectorAll('.lightbox-trigger').forEach(trigger => {
                 const src = trigger.getAttribute('data-src') || trigger.querySelector('img').src;
-                galleryImages.push(src);
-                
-                trigger.addEventListener('click', () => {
-                    openLightbox(index);
-                });
+                if (!galleryImages.includes(src)) {
+                    galleryImages.push(src);
+                }
             });
 
-            function openLightbox(index) {
-                currentIndex = index;
+            // Event Delegation handles standard elements AND JS-cloned elements
+            document.addEventListener('click', (e) => {
+                const trigger = e.target.closest('.lightbox-trigger');
+                if (trigger) {
+                    const src = trigger.getAttribute('data-src') || trigger.querySelector('img').src;
+                    currentIndex = galleryImages.indexOf(src);
+                    if (currentIndex !== -1) {
+                        openLightbox();
+                    }
+                }
+            });
+
+            function openLightbox() {
                 updateImage();
                 lightbox.classList.add('active');
                 document.body.style.overflow = 'hidden'; // Prevent scrolling
@@ -821,7 +1108,6 @@ How to use the new features:
             }
 
             function updateImage() {
-                // Add fade effect
                 lightboxImg.style.opacity = '0.5';
                 setTimeout(() => {
                     lightboxImg.src = galleryImages[currentIndex];
@@ -839,17 +1125,15 @@ How to use the new features:
                 updateImage();
             }
 
-            // Event Listeners
+            // Event Listeners for Lightbox Controls
             closeBtn.addEventListener('click', closeLightbox);
             nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); });
             prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); });
 
-            // Close on background click
             lightbox.addEventListener('click', (e) => {
                 if (e.target === lightbox) closeLightbox();
             });
 
-            // Keyboard Navigation
             document.addEventListener('keydown', (e) => {
                 if (!lightbox.classList.contains('active')) return;
                 
@@ -857,8 +1141,68 @@ How to use the new features:
                 if (e.key === 'ArrowRight') nextImage();
                 if (e.key === 'ArrowLeft') prevImage();
             });
+
+            /* -----------------------------------------------------------
+               INFINITE CAROUSEL LOGIC (MOBILE)
+            ----------------------------------------------------------- */
+            const carousels = document.querySelectorAll('.gallery-carousel.infinite');
+            carousels.forEach(carousel => {
+                const originalItems = Array.from(carousel.children);
+                
+                if (originalItems.length > 1) {
+                    // Clone items to the end
+                    originalItems.forEach(item => {
+                        let clone = item.cloneNode(true);
+                        clone.classList.add('clone-element');
+                        carousel.appendChild(clone);
+                    });
+                    
+                    // Clone items to the beginning
+                    originalItems.forEach(item => {
+                        let clone = item.cloneNode(true);
+                        clone.classList.add('clone-element');
+                        carousel.insertBefore(clone, carousel.firstChild);
+                    });
+
+                    // Manage seamless jump offsets
+                    const handleScrollPosition = () => {
+                        if (window.innerWidth <= 768) {
+                            const itemWidth = carousel.children[0].offsetWidth + parseInt(window.getComputedStyle(carousel).gap || 20);
+                            const originalBlockWidth = originalItems.length * itemWidth;
+
+                            // If scrolling backwards past the prepended clones
+                            if (carousel.scrollLeft < originalBlockWidth - itemWidth) {
+                                carousel.style.scrollBehavior = 'auto'; // Temp disable smooth scroll snap
+                                carousel.style.scrollSnapType = 'none';
+                                carousel.scrollLeft += originalBlockWidth;
+                                setTimeout(() => { carousel.style.scrollSnapType = 'x mandatory'; }, 10);
+                            }
+                            // If scrolling forwards past original block
+                            else if (carousel.scrollLeft >= originalBlockWidth * 2) {
+                                carousel.style.scrollBehavior = 'auto'; 
+                                carousel.style.scrollSnapType = 'none';
+                                carousel.scrollLeft -= originalBlockWidth;
+                                setTimeout(() => { carousel.style.scrollSnapType = 'x mandatory'; }, 10);
+                            }
+                        }
+                    };
+
+                    // Initial jump to original content
+                    const initScroll = () => {
+                        if (window.innerWidth <= 768) {
+                            carousel.style.scrollSnapType = 'none';
+                            const itemWidth = carousel.children[0].offsetWidth + parseInt(window.getComputedStyle(carousel).gap || 20);
+                            carousel.scrollLeft = originalItems.length * itemWidth;
+                            setTimeout(() => { carousel.style.scrollSnapType = 'x mandatory'; }, 50);
+                        }
+                    };
+
+                    setTimeout(initScroll, 100);
+                    window.addEventListener('resize', initScroll);
+                    carousel.addEventListener('scroll', handleScrollPosition);
+                }
+            });
         });
     </script>
 </body>
-
 </html>
