@@ -233,9 +233,10 @@
             max-width: 100%;
         }
 
-        /* On desktop, force the overview image to match the text height */
+        /* On desktop, force the overview image/video to match the text height */
         @media (min-width: 769px) {
-            .overview-image.gallery-item img {
+            .overview-image.gallery-item img,
+            .overview-image.gallery-item video {
                 height: 100% !important;
                 object-fit: cover;
             }
@@ -262,7 +263,8 @@
             width: 100%;
         }
         
-        .gallery-grid.single-focus .gallery-item img {
+        .gallery-grid.single-focus .gallery-item img,
+        .gallery-grid.single-focus .gallery-item video {
             height: auto; 
             max-height: 600px; 
         }
@@ -271,11 +273,13 @@
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         }
 
-        .gallery-item.tall img {
+        .gallery-item.tall img,
+        .gallery-item.tall video {
             height: 450px;
         }
 
-        .gallery-item.natural img {
+        .gallery-item.natural img,
+        .gallery-item.natural video {
             height: auto;
             min-height: 250px;
         }
@@ -293,7 +297,8 @@
             transform: translateY(-5px);
         }
 
-        .gallery-item img {
+        .gallery-item img,
+        .gallery-item video {
             width: 100%;
             height: 250px; 
             object-fit: cover;
@@ -301,7 +306,8 @@
             transition: transform 0.5s ease;
         }
 
-        .gallery-item:hover img {
+        .gallery-item:hover img,
+        .gallery-item:hover video {
             transform: scale(1.05);
             opacity: 0.9;
         }
@@ -583,8 +589,9 @@
                         </p>
                     </div>
                     
-                    <div class="overview-image gallery-item natural lightbox-trigger" data-src="img/Praxinoscope.gif">
-                        <img src="img/Praxinoscope.gif" alt="Praxinoscope Action">
+                    <!-- REPLACED GIF WITH AUTOPLAYING MP4 (Removed lightbox-trigger so it doesn't try to open video as an img) -->
+                    <div class="overview-image gallery-item natural">
+                        <video src="img/Praxinoscope.mp4" autoplay loop muted playsinline></video>
                         <div class="gallery-caption"><i class="fa-solid fa-play"></i> Praxinoscope Action</div>
                     </div>
                 </div>
@@ -599,39 +606,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- EXTENDED HORIZONTAL CAROUSEL GALLERY -->
-        <!--<section id="process-carousel" class="fade-in-section">
-            <div class="carousel-wrapper">
-                <div class="divider-icon"><i class="fa-solid fa-images"></i></div>
-                <h2 style="text-align: center;">Production Process Gallery</h2>-->
-                
-                <!-- Add "infinite" class to enable mobile scrolling loop -->
-                <!--<div class="gallery-carousel infinite">
-                    
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhKsHHQMC9JRBuR8Hmrw5s3UOu9fUQucVUTOkcIoaYBCpI-TV3HYIhWM9vTN47nUY_80AJB9igMIe8KVZu1jUTLvO7gbP-BGcrJQ15Leg1JuYTl03gnS1y4ELb-5Mc2jlIcQZ0yx4TRPYPUKdmpf5eDeXKpb2t3u9yoXSStJYG52o89--xQRhdDxpGYDA/s1000/1.jpg">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhKsHHQMC9JRBuR8Hmrw5s3UOu9fUQucVUTOkcIoaYBCpI-TV3HYIhWM9vTN47nUY_80AJB9igMIe8KVZu1jUTLvO7gbP-BGcrJQ15Leg1JuYTl03gnS1y4ELb-5Mc2jlIcQZ0yx4TRPYPUKdmpf5eDeXKpb2t3u9yoXSStJYG52o89--xQRhdDxpGYDA/s600/1.jpg" alt="Assembly Check">
-                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Base Assembly</div>
-                    </div>
-
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh4r68BtZCutPzrQo6ara2m-hxC5gMB120wtC-crtv7M0ZUg8qT8_82rPL5Fl_arC2SD2Lyf5TCss8FNyHKIapuQGhzLk2brb8e2V_WXIA0KRtE0vA8vKgtdrBYNfBPu7Uw_AMnWdccErkEW4lebnLvuhs9Pw2B43XpRqcTTnc31-w-lvUGldXxIOvYng/s1000/7.jpg">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh4r68BtZCutPzrQo6ara2m-hxC5gMB120wtC-crtv7M0ZUg8qT8_82rPL5Fl_arC2SD2Lyf5TCss8FNyHKIapuQGhzLk2brb8e2V_WXIA0KRtE0vA8vKgtdrBYNfBPu7Uw_AMnWdccErkEW4lebnLvuhs9Pw2B43XpRqcTTnc31-w-lvUGldXxIOvYng/s600/7.jpg" alt="Mirror Installation">
-                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Mirror Alignment</div>
-                    </div>
-
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiO7YsA8sxGN5f8VwqBnvVRE8gOtkqRVvzDMgRDr9dF89LcK0yLEiqNGDsGPvK--ShE5S-DfLF1mqB2X-WOGl_HyqHHMht5YPa9lNaECXVkf5Re2ZH04kmHYJsB595aNufl3ObQnjI9Fbx-hJhp3-MOpUuoiaM70rjOr3_NPcgmxD9nCWxSVnv6gdJ_ZA/s1000/Corrections_3.jpg">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiO7YsA8sxGN5f8VwqBnvVRE8gOtkqRVvzDMgRDr9dF89LcK0yLEiqNGDsGPvK--ShE5S-DfLF1mqB2X-WOGl_HyqHHMht5YPa9lNaECXVkf5Re2ZH04kmHYJsB595aNufl3ObQnjI9Fbx-hJhp3-MOpUuoiaM70rjOr3_NPcgmxD9nCWxSVnv6gdJ_ZA/s600/Corrections_3.jpg" alt="Support Structure">
-                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Support Structure</div>
-                    </div>
-
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjkNoGT_K-m9M2toFAA_YmMJZe6L88wizAZ4SbzxajiHfzkkjSD2AvSDXARm-g8hNeQpp79cLAJZpG9WYZTwB9W6U31X3Lz3ixj-L1GrI_0LWUMekbMSUS91nBHCZtLoZJmdM8oyDqr6T31RoeylV73xDgOqv6hmx5eDg5OLEEViJdVjerG7-jVT93W2Q/s1000/Corrections_5.jpg">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjkNoGT_K-m9M2toFAA_YmMJZe6L88wizAZ4SbzxajiHfzkkjSD2AvSDXARm-g8hNeQpp79cLAJZpG9WYZTwB9W6U31X3Lz3ixj-L1GrI_0LWUMekbMSUS91nBHCZtLoZJmdM8oyDqr6T31RoeylV73xDgOqv6hmx5eDg5OLEEViJdVjerG7-jVT93W2Q/s600/Corrections_5.jpg" alt="Final Polish">
-                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Final Finish</div>
-                    </div>
-
-                </div>
-            </div>
-        </section>-->
 
         <!-- PHASE 1: BRAINSTORMING -->
         <section id="brainstorming" class="fade-in-section">
@@ -675,18 +649,6 @@
                     </div>
                     
                 </div>
-           
-            
-                <!--<div class="gallery-grid">
-                    <div class="gallery-item lightbox-trigger" data-src="img/2D_Animation.gif">
-                        <img src="img/2D_Animation.gif" alt="2D Animation Cycle">
-                        <div class="gallery-caption"><i class="fa-solid fa-play"></i> 2D Animation Cycle</div>
-                    </div>
-                    <div class="gallery-item lightbox-trigger" data-src="img/3D_Animation.gif">
-                        <img src="img/3D_Animation.gif" alt="3D Animation Cycle">
-                        <div class="gallery-caption"><i class="fa-solid fa-magnifying-glass-plus"></i> 3D Animation Cycle</div>
-                    </div>
-                </div>-->
                 <br>
                            <p>
                     The 3D version was animated in <strong>Autodesk Maya</strong>, with careful consideration for the 360-degree silhouette so the animation would be legible from any angle.
@@ -703,21 +665,6 @@
    
 
         </section> 
-        
-        <!-- PHASE 3: DESIGN -->
-       <!-- <section id="design" class="fade-in-section">
-            <div class="container">
-                <h2>Design & Modeling</h2>
-
-                                <div class="gallery-grid single-focus">
-                    <div class="gallery-item lightbox-trigger" data-src="img/3D_Animation.gif">
-                        <img src="img/3D_Animation.gif" alt="3D Animation Cycle">
-                        <div class="gallery-caption"><i class="fa-solid fa-play"></i> 3D Animation Cycle</div>
-                    </div>
-                    
-                </div>
-            </div>
-            </section>-->
                 
 <section id="process-carousel" class="fade-in-section">
     <div class="container">
@@ -806,19 +753,6 @@ From Zbrush, I moved to a program called Cura which is used to prepare the model
             </div>  
             </section>
 
-<!--<div class="gallery-grid">
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5qlY57pPDUOLeZUCacBzNIubmk8dZwsCjNl0azGsQflTKeri1_K75gwbVP9BgxRrU5ymIvAh_X6UnLGvi2aoBKDQktWvMB6jf2CklrwQL2VgEtAPVu1aGinNsVa4keA6ZlKODa1lMXt5d1U7-vqr21XOqb1uTw2BRlug6o0cdWHZeMkPbj5_cv3lJVQ/s500/3D_Animation.gif">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5qlY57pPDUOLeZUCacBzNIubmk8dZwsCjNl0azGsQflTKeri1_K75gwbVP9BgxRrU5ymIvAh_X6UnLGvi2aoBKDQktWvMB6jf2CklrwQL2VgEtAPVu1aGinNsVa4keA6ZlKODa1lMXt5d1U7-vqr21XOqb1uTw2BRlug6o0cdWHZeMkPbj5_cv3lJVQ/s500/3D_Animation.gif" alt="3D Animation Cycle">
-                        <div class="gallery-caption"><i class="fa-solid fa-play"></i> 3D Animation Cycle</div>
-                    </div>
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg2Et9nk-FcRmvYDTmdUA3EQfn_ZMo1lgSA8HhLd3VCgS76AiO0S-6WncmHJiB6ew5DfTj0lxaU2Ebhcg9zG0WWpwF0zULPAfWsJ34hAw4G50GadLAqcB8ybhmHd5v2aScam5jis1lhOzvgUnBZLdwY8TXykWxamaSglJdjYNESO6P88cRqTtB4Du5wZw/s1554/Maya_Ref_Disc3.jpg">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg2Et9nk-FcRmvYDTmdUA3EQfn_ZMo1lgSA8HhLd3VCgS76AiO0S-6WncmHJiB6ew5DfTj0lxaU2Ebhcg9zG0WWpwF0zULPAfWsJ34hAw4G50GadLAqcB8ybhmHd5v2aScam5jis1lhOzvgUnBZLdwY8TXykWxamaSglJdjYNESO6P88cRqTtB4Du5wZw/s600/Maya_Ref_Disc3.jpg" alt="Maya Scene Layout">
-                        <div class="gallery-caption"><i class="fa-solid fa-magnifying-glass-plus"></i> Scene Layout</div>
-                    </div>
-                </div>
-            </div>
-        </section>-->
-
         <!-- PHASE 4: PROTOTYPING -->
         <section id="prototyping" class="fade-in-section">
             <div class="container">
@@ -878,8 +812,8 @@ From Zbrush, I moved to a program called Cura which is used to prepare the model
                     The final result is a functional Zoetrope that smoothly animates the 3D printed figure, viewable through narrow slits, creating the illusion of persistence of vision. 
                 </p>
                 <div class="gallery-grid single-focus">
-                    <div class="gallery-item lightbox-trigger" data-src="img/Zoetrope.gif">
-                        <img src="img/Zoetrope.gif" alt="Final Animation in Motion">
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBxVYtaJWuXw_JGWcFiewcqHzCcuDvPICP3NS8u17cWEYVAV_kYF5U9Id_Ox23-cJ5M0xyPxJLinkduJ9S3xgE63EwY9-3bam-sDMOFLJ8BrL3UQUysrynYpJEa4HJlsK0a_xsUH3US2dttIUpUvOc7ZhvvFJmkB-1QipWlwLCO21pkcTvSGQnXQx77A/s500/Zoetrope.gif">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBxVYtaJWuXw_JGWcFiewcqHzCcuDvPICP3NS8u17cWEYVAV_kYF5U9Id_Ox23-cJ5M0xyPxJLinkduJ9S3xgE63EwY9-3bam-sDMOFLJ8BrL3UQUysrynYpJEa4HJlsK0a_xsUH3US2dttIUpUvOc7ZhvvFJmkB-1QipWlwLCO21pkcTvSGQnXQx77A/s500/Zoetrope.gif" alt="Final Animation in Motion">
                         <div class="gallery-caption"><i class="fa-solid fa-film"></i> Final Animation Test</div>
                     </div>
                 </div>
@@ -988,41 +922,6 @@ From Zbrush, I moved to a program called Cura which is used to prepare the model
             </div>
         </section>
         
-        <!-- RELATED PROJECTS -->
-       <!-- <section id="related" class="fade-in-section">
-            <div class="container">
-                <div class="divider-icon"><i class="fa-solid fa-layer-group"></i></div>
-                <h2>Explore More Projects</h2>
-                <div class="gallery-grid">-->
-                    <!-- Project 1 -->
-                    <!--<a href="#" class="gallery-item">
-                        <img src="https://placehold.co/600x400/333333/ff9800?text=AR+Sculpture" alt="AR Project">
-                        <div class="gallery-caption">
-                            <h4>AR Sculpture</h4>
-                            <p style="margin:0; font-size: 0.9rem;">Vuforia & Unity</p>
-                        </div>
-                    </a>-->
-                    
-                    <!-- Project 2 -->
-                    <!--<a href="#" class="gallery-item">
-                        <img src="https://placehold.co/600x400/333333/ff9800?text=Audio+Reactive" alt="Audio Project">
-                        <div class="gallery-caption">
-                            <h4>Audio Reactive</h4>
-                            <p style="margin:0; font-size: 0.9rem;">TouchDesigner</p>
-                        </div>
-                    </a>-->
-
-                    <!-- Project 3 -->
-                    <!--<a href="#" class="gallery-item">
-                        <img src="https://placehold.co/600x400/333333/ff9800?text=Projection+Mapping" alt="Mapping Project">
-                        <div class="gallery-caption">
-                            <h4>Projection Mapping</h4>
-                            <p style="margin:0; font-size: 0.9rem;">MadMapper</p>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </section>-->
     </main>
 
     <!-- FOOTER -->
