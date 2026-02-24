@@ -180,7 +180,7 @@
         ----------------------------------------------------------- */
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 30px;
             max-width: var(--container-width);
             margin: 0 auto;
@@ -197,13 +197,14 @@
             border: 1px solid rgba(255,255,255,0.05);
             opacity: 1;
             transform: scale(1);
+            aspect-ratio: 1 / 1;
+            display: block;
         }
 
         /* Update to ensure anchor cards display correctly */
         a.project-card {
             text-decoration: none;
             color: inherit;
-            display: block;
         }
 
         .project-card.hide {
@@ -223,46 +224,80 @@
 
         /* Image Area */
         .card-image {
-            height: 250px;
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
             background-color: #333;
             overflow: hidden;
-            position: relative;
         }
 
-        .card-image img {
+        /* Support for both images and videos */
+        .card-image img,
+        .card-image video {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.6s ease;
+            transition: transform 0.6s ease, opacity 0.4s ease;
         }
 
-        .project-card:hover .card-image img {
+        /* Stacking for multiple media */
+        .card-image .primary-media {
+            z-index: 1;
+            opacity: 1;
+        }
+
+        .card-image .hover-media {
+            z-index: 2;
+            opacity: 0;
+        }
+
+        /* Scale effect for all media on hover */
+        .project-card:hover .card-image img,
+        .project-card:hover .card-image video {
             transform: scale(1.1);
+        }
+
+        /* Show hover media on hover */
+        .project-card:hover .card-image .hover-media {
+            opacity: 1;
         }
 
         /* Category Tag (Top Right) */
         .card-tag {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 20px;
+            right: 20px;
             background-color: rgba(0,0,0,0.7);
             backdrop-filter: blur(4px);
             color: var(--accent-color);
-            padding: 5px 12px;
-            border-radius: 4px;
-            font-size: 0.75rem;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-family: var(--heading-font);
+            font-size: 0.85rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
+            border: 1px solid rgba(255,255,255,0.2);
             z-index: 5; /* Ensure above overlay */
         }
 
         /* Content Area */
         .card-content {
             padding: 25px;
-            position: relative;
-            background-color: var(--card-bg);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; /* Keep text anchored at the bottom */
+            background: linear-gradient(to top, rgba(20, 20, 20, 0.95) 0%, rgba(20, 20, 20, 0.5) 40%, rgba(20, 20, 20, 0) 100%);
             z-index: 10;
         }
 
@@ -298,52 +333,8 @@
         }
 
         /* -----------------------------------------------------------
-           NEW HOVER OVERLAY (ON TOP OF IMAGE)
+           VIEW PROJECT BUTTON STYLES
         ----------------------------------------------------------- */
-        .details-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85); /* Dark transparent overlay */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 4; /* Above image, below tag */
-            padding: 20px;
-            text-align: center;
-            backdrop-filter: blur(3px);
-        }
-
-        .project-card:hover .details-overlay {
-            opacity: 1;
-        }
-
-        .detail-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-            color: #fff;
-            margin-bottom: 8px;
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-        }
-
-        .project-card:hover .detail-item {
-            transform: translateY(0);
-        }
-
-        .detail-item i {
-            color: var(--accent-color);
-            width: 20px;
-            text-align: center;
-        }
-
         .view-project-btn {
             display: inline-block;
             margin-top: 15px;
@@ -353,17 +344,20 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: color 0.3s;
-            transform: translateY(20px);
-            transition: transform 0.3s ease 0.1s, color 0.3s;
             cursor: pointer;
         }
-        
+
         .project-card:hover .view-project-btn {
-            transform: translateY(0);
-        }
-        
-        .view-project-btn:hover {
             color: var(--accent-color);
+        }
+
+        .view-project-btn i {
+            margin-left: 5px;
+            transition: transform 0.3s;
+        }
+
+        .project-card:hover .view-project-btn i {
+            transform: translateX(5px);
         }
 
         /* -----------------------------------------------------------
@@ -382,7 +376,7 @@
     <!-- STICKY HEADER -->
     <header class="sticky-header">
         <div class="header-content">
-            <a href="/index.html" class="brand">
+            <a href="#" class="brand">
                 NOEL NUÑEZ <span>|</span> PORTFOLIO
             </a>
         </div>
@@ -419,143 +413,136 @@
         <!-- PROJECTS GRID -->
         <section class="projects-grid">
 
-            <!-- CARD 1: VR (Cuban Freedom Flights) -->
-            <a href="/CubanFreedomFlights/" class="project-card" data-category="vr">
+            <!-- CARD 1: VR (Example: Primary Image + Hover Video) -->
+           <!-- <a href="/CubanFreedomFlights/" class="project-card" data-category="vr">
                 <div class="card-image">
-                    <img src="img/freedom_thumb.jpg" alt="Freedom Flights VR">
+                    <img src="img/freedom_thumb.jpg" alt="Freedom Flights VR" class="primary-media">
+                    <video src="https://www.w3schools.com/html/mov_bbb.mp4" class="hover-media" autoplay loop muted playsinline></video>
                     <span class="card-tag">VR</span>
-                    
-                    <!-- Hover Details Overlay -->
-                    <div class="details-overlay">
-                        <div class="detail-item">
-                            <i class="fa-solid fa-code"></i> Unity Engine / C#
-                        </div>
-                        <div class="detail-item">
-                            <i class="fa-solid fa-glasses"></i> Oculus Quest 
-                        </div>
-                        <div class="detail-item">
-                            <i class="fa-solid fa-info-circle"></i> Educational Simulation
-                        </div>
-                        <span class="view-project-btn">View Case Study <i class="fa-solid fa-arrow-right"></i></span>
-                    </div>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">The Cuban Freedom Flights</h3>
                     <p class="card-short-desc">A Virtual Reality animated documentary.</p>
+                    <span class="view-project-btn">View Case Study <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </a>-->
+
+                        <a href="/CubanFreedomFlights/" class="project-card" data-category="vr">
+                <div class="card-image">
+                    <img src="img/freedom_thumb.jpg" alt="Freedom Flights VR" class="primary-media">
+                    <span class="card-tag">VR</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">The Cuban Freedom Flights</h3>
+                    <p class="card-short-desc">A Virtual Reality animated documentary.</p>
+                    <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
                 </div>
             </a>
           
-            <!-- CARD 2: VR (Thermae) -->
-            <a href="/Thermae/" class="project-card" data-category="vr">
+            <!-- CARD 2: VR (Example: Primary Video only) -->
+  
+
+                      <!--  <a href="/Thermae/" class="project-card" data-category="vr">
                 <div class="card-image">
-                    <img src="img/thermae-thumb.jpg" alt="Roman Bathhouse VR">
+                    <img src="img/thermae-thumb.jpg" alt="Thermae VR" class="primary-media">
+                    <video src="https://www.w3schools.com/html/mov_bbb.mp4" class="hover-media" autoplay loop muted playsinline></video>
                     <span class="card-tag">VR</span>
-                    
-                    <!-- Hover Details Overlay -->
-                    <div class="details-overlay">
-                        <div class="detail-item">
-                            <i class="fa-solid fa-code"></i> Unity Engine / C#
-                        </div>
-                        <div class="detail-item">
-                            <i class="fa-solid fa-glasses"></i> Oculus Quest
-                        </div>
-                        <div class="detail-item">
-                            <i class="fa-solid fa-info-circle"></i> Educational Simulation
-                        </div>
-                        <span class="view-project-btn">View Case Study <i class="fa-solid fa-arrow-right"></i></span>
-                    </div>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Thermae: Roman Bath</h3>
                     <p class="card-short-desc">A historical reconstruction of a Roman Bathhouse.</p>
+                    <span class="view-project-btn">View Case Study <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </a>-->
+
+                <a href="/Thermae/" class="project-card" data-category="vr">
+                <div class="card-image">
+                    <img src="img/thermae-thumb.jpg" alt="Thermae VR" class="primary-media">
+                    <span class="card-tag">VR</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Thermae: Roman Bath</h3>
+                    <p class="card-short-desc">A historical reconstruction of a Roman Bathhouse.</p>
+                    <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
                 </div>
             </a>
 
-            <!-- CARD 3: AR -->
-            <a href="/Arctic/" class="project-card" data-category="ar">
+            <!-- CARD 3: AR (Example: Primary Image + Hover Image) -->
+           <!-- <a href="/Arctic/" class="project-card" data-category="ar">
                 <div class="card-image">
-                    <img src="img/arctic_thumb.png" alt="Arctic AR">
+                    <img src="img/arctic_thumb.png" alt="Arctic AR" class="primary-media">
+                    <img src="https://images.unsplash.com/photo-1626379953822-baec19c3accd?auto=format&fit=crop&q=80&w=1000" class="hover-media" alt="Hover Image">
                     <span class="card-tag">AR</span>
-
-                    <div class="details-overlay">
-                        <div class="detail-item">
-                            <i class="fa-solid fa-mobile-screen"></i> Android
-                        </div>
-                        <div class="detail-item">
-                            <i class="fa-solid fa-location-dot"></i> Plane Detection
-                        </div>
-                        <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
-                    </div>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Beary's Arctic Adventure</h3>
                     <p class="card-short-desc">Educational AR app.</p>
+                    <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </a>-->
+
+                           <a href="/Arctic/" class="project-card" data-category="ar">
+                <div class="card-image">
+                    <img src="img/arctic_thumb.png" alt="Arctic AR" class="primary-media">
+                    <span class="card-tag">AR</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Beary's Arctic Adventure</h3>
+                    <p class="card-short-desc">Educational AR app.</p>
+                    <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
                 </div>
             </a>
 
             <!-- CARD 4: Physical Computing (Zoetrope) -->
-            <a href="/Zoetrope/" class="project-card" data-category="physical">
+           <!-- <a href="/Zoetrope/" class="project-card" data-category="physical">
                 <div class="card-image">
-                    <img src="img/Banner_Optimized.jpg" alt="Physical Computing Project">
+                    <img src="img/Banner_Optimized.jpg" alt="Physical Computing Project" class="primary-media">
                     <span class="card-tag">Physical Computing</span>
-
-                    <div class="details-overlay">
-                        <div class="detail-item">
-                            <i class="fa-solid fa-microchip"></i> Arduino Uno
-                        </div>
-                        <div class="detail-item">
-                            <i class="fa-solid fa-music"></i> MIDI Control
-                        </div>
-                        <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
-                    </div>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Praxinoscope/Zoetrope Animation</h3>
                     <p class="card-short-desc">Animation brought into the physical world through 3d printing.</p>
+                    <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </a>-->
+
+                <a href="/Zoetrope/" class="project-card" data-category="physical">
+                <div class="card-image">
+                    <video src="img/Praxinoscope.mp4" class="primary-media" autoplay loop muted playsinline></video>
+                    <img src="img/Banner_Optimized.jpg" alt="Physical Computing Project" class="hover-media">
+                    <span class="card-tag">Physical Computing</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Zoetrope/Praxinoscope Animation</h3>
+                    <p class="card-short-desc">Animation brought into the physical world through 3d printing.</p>
+                    <span class="view-project-btn">View Case Study <i class="fa-solid fa-arrow-right"></i></span>
                 </div>
             </a>
+
 
             <!-- CARD 5: Physical Computing (Joy) -->
             <a href="/Joy/" class="project-card" data-category="physical">
                 <div class="card-image">
-                    <img src="img/Joy_Banner.jpg" alt="Physical Computing Project">
+                    <img src="img/Joy_Banner.jpg" alt="Physical Computing Project" class="primary-media">
                     <span class="card-tag">Physical Computing</span>
-
-                    <div class="details-overlay">
-                        <div class="detail-item">
-                            <i class="fa-solid fa-microchip"></i> Adafruit Circuit microcontoller
-                        </div>
-                        <!--<div class="detail-item">
-                            <i class="fa-solid fa-music"></i> MIDI Control
-                        </div>-->
-                        <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
-                    </div>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Joyful Light Sclupture</h3>
                     <p class="card-short-desc">A 3D sculpture brought to life with light (and code).</p>
+                    <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
                 </div>
             </a>
 
             <!-- CARD 6: Prototype (Starlight Park) -->
             <a href="/Starlight_Park/" class="project-card" data-category="prototype">
                 <div class="card-image">
-                    <img src="img/starlight_thumb.jpg" alt="App Prototype">
+                    <img src="img/starlight_thumb.jpg" alt="App Prototype" class="primary-media">
                     <span class="card-tag">Prototype</span>
-
-                    <div class="details-overlay">
-                        <div class="detail-item">
-                            <i class="fa-brands fa-figma"></i> Unity
-                        </div>
-                        <div class="detail-item">
-                            <i class="fa-solid fa-users"></i> User Testing
-                        </div>
-                        <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
-                    </div>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Starlight Park</h3>
                     <p class="card-short-desc">A high-fidelity prototype for an immersive park.</p>
+                    <span class="view-project-btn">View Project <i class="fa-solid fa-arrow-right"></i></span>
                 </div>
             </a>
 
@@ -675,5 +662,3 @@
     </script>
 </body>
 </html>
-
-
