@@ -358,6 +358,33 @@
             margin-top: 20px;
             margin-bottom: 30px;
         }
+
+        /* Desktop Full Width Gallery */
+        .desktop-full-width {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 0 20px; /* 20px buffer */
+            margin-bottom: 60px;
+        }
+
+        .desktop-full-width .gallery-item {
+            height: 250px; /* Fixed height to ensure uniform sizing across all images */
+        }
+
+        @media (min-width: 768px) {
+            .desktop-full-width {
+                display: flex;
+                flex-wrap: nowrap; /* Forces all elements to stay on the same line */
+                justify-content: center;
+            }
+            .desktop-full-width .gallery-item {
+                flex: 1 1 0;
+                min-width: 0; /* Allows elements to shrink proportionally if there are many */
+                height: 350px; /* Taller fixed height for desktop viewing */
+            }
+        }
+
         .gallery-item {
             position: relative;
             overflow: hidden;
@@ -379,7 +406,7 @@
         .gallery-item img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; /* Ensures images fill the item without stretching */
             display: block;
             transition: transform 0.5s ease;
         }
@@ -402,6 +429,19 @@
 
         .gallery-item:hover .gallery-caption {
             transform: translateY(0);
+        }
+
+        /* Custom style for video items in galleries */
+        .gallery-item.gallery-video {
+            cursor: default; /* Avoid pointer cursor since it's a video, not a lightbox trigger */
+        }
+        
+        .gallery-item.gallery-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cover ensures it fills the gallery frame */
+            display: block;
+            background: #000;
         }
 
         /* -----------------------------------------------------------
@@ -512,7 +552,8 @@
             color: var(--accent-color);
         }
 
-        #lb-close { top: 20px; right: 20px; }        #lb-prev { left: 20px; top: 50%; transform: translateY(-50%); }
+        #lb-close { top: 20px; right: 20px; }        
+        #lb-prev { left: 20px; top: 50%; transform: translateY(-50%); }
         #lb-next { right: 20px; top: 50%; transform: translateY(-50%); }
 
         /* -----------------------------------------------------------
@@ -560,9 +601,9 @@
 
     <header class="sticky-header">
         <div class="container header-content">
-            <div class="brand">
+             <a href="/index.html" class="brand">
                 NOEL NUÑEZ <span>|</span> INTERACTION DESIGN
-            </div>
+            </a>
             <a href="/Projects/" class="back-btn">
                 <i class="fa-solid fa-arrow-left"></i> Back to Projects
             </a>
@@ -622,7 +663,6 @@
         </section>
        
         <section id="interactions" class="fade-in-section">
-            <div class="divider-icon"><i class="fa-solid fa-layer-group"></i></div>
             <div class="container">
                 <h2>Key Interactions</h2>
                 <p>The experience utilizes hand tracking and controller inputs to create a tactile connection to the past.</p>
@@ -695,8 +735,13 @@
                 <p>
                     Early concepts involved incorporating physical sets with augmented overlays to tell an immersive, historical story. The slides seen below explore potential user interactions and triggers.
                 </p>
-                <div class="video-container">
-                    <iframe src="https://speakerdeck.com/player/2c2fca48f417414da65bcd3fbf608c02?slide=12" allowfullscreen scrolling="no" allow="encrypted-media"></iframe>
+                <div class="process-video-wrapper">
+                    <div class="video-container">
+                        <video muted loop playsinline preload="metadata">
+                            <source src="img/ideation/Cff Interaction Prototype-1.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
                 </div>
 
                 <div class="gallery-grid">
@@ -777,33 +822,58 @@
                
                 <div class="highlight-text">
                      <i class="fa-solid fa-hammer" style="color: var(--accent-color);"></i> Building Assets & Spatial Experiments
-         
                 </div>
 
-                <div class="process-video-wrapper">
+                <div class="process-video-wrapper" style="margin-bottom: 20px;">
+                    <h3>Creating the 2D Assets</h3>
+                </div>
+                </div>
+         
+
+            <!-- Desktop Full Width Gallery -->
+            <div class="desktop-full-width">
+                <div class="gallery-item contain-img lightbox-trigger" data-src="img/2D Assets/E_turnaround_01.jpg">
+                    <img src="img/2D Assets/E_turnaround_01.jpg" alt="Turnaround">
+                    <div class="gallery-caption"><strong>Character Design Turnaround</strong></div>
+                </div>
+                <div class="gallery-item contain-img lightbox-trigger" data-src="img/2D Assets/Design_Exploration.PNG">
+                    <img src="img/2D Assets/Design_Exploration.PNG" alt="Design Explorations">
+                    <div class="gallery-caption"><strong>Spatial Use: Concept</strong></div>
+                </div>
+                <div class="gallery-item contain-img lightbox-trigger" data-src="img/2D Assets/Freedom_Tower_Stairs.jpg">
+                    <img src="img/2D Assets/Freedom_Tower_Stairs.jpg" alt="Freedom Tower shot">
+                    <div class="gallery-caption"><strong>Key Interaction Shot</strong></div>
+                </div>
+                <div class="gallery-item contain-img lightbox-trigger" data-src="img/2D Assets/Abuelo_Abuela_3.JPG">
+                    <img src="img/2D Assets/Abuelo_Abuela_3.JPG" alt="Abuelo and Abuela">
+                    <div class="gallery-caption"><strong>Grandparents initial design</strong></div>
+                </div>
+            </div>
+                <!--<div class="process-video-wrapper">
                     <h3>Building the Freedom Tower</h3>
                     <div class="video-container">
-                        <video muted loop playsinline controls preload="metadata">
+                        <video muted loop playsinline preload="metadata">
                             <source src="img/testing/Gallery12.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     </div>
-                </div>
+                </div>-->
 
                 <div class="process-video-wrapper">
                     <h3>Testing Passthrough VR</h3>
                     <div class="video-container">
-                        <video muted loop playsinline controls preload="metadata">
+                        <video muted loop playsinline preload="metadata">
                             <source src="img/testing/Gallery13.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     </div>
                 </div>
 
+
                 <div class="process-video-wrapper">
                     <h3>Virtual & Physical Integration</h3>
                     <div class="video-container">
-                        <video muted loop playsinline controls preload="metadata">
+                        <video muted loop playsinline preload="metadata">
                             <source src="img/testing/Gallery14.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -813,27 +883,44 @@
                 <div class="process-video-wrapper">
                     <h3>Real World Integration</h3>
                     <div class="video-container">
-                        <video muted loop playsinline controls preload="metadata">
+                        <video muted loop playsinline preload="metadata">
                             <source src="img/testing/Gallery15_Realworld_integration.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     </div>
                 </div>
-
-                <div class="process-video-wrapper">
-                    <h3>Historical Artifact Digital Cloning</h3>
-                    <div class="video-container">
-                        <video muted loop playsinline controls preload="metadata">
-                            <source src="img/testing/Gallery16_Artifacts.mp4" type="video/mp4">
+</div>
+                              
+                    <div class="process-video-wrapper">
+                  <h3>Historical Artifact Digital Cloning</h3>
+                  </div>
+                                  <!-- Desktop Full Width Gallery -->
+                <div class="desktop-full-width">
+                   
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/Physical Assets/TB-S-cigar-cupey-01_640x640.jpg">
+                        <img src="img/Physical Assets/TB-S-cigar-cupey-01_640x640.jpg" alt="Turnaround">
+                        <div class="gallery-caption"><strong>Character Design Turnaround</strong></div>
+                    </div>
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/Physical Assets/Blue_Dress.jpg">
+                        <img src="img/Physical Assets/Blue_Dress.jpg" alt="Design Explorations">
+                        <div class="gallery-caption"><strong>Spatial Use: Concept</strong></div>
+                    </div>
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/Physical Assets/Pink_Dress.jpg">
+                        <img src="img/Physical Assets/Pink_Dress.jpg" alt="Freedom Tower shot">
+                        <div class="gallery-caption"><strong>Key Interaction Shot</strong></div>
+                    </div>
+                    <div class="gallery-item gallery-video">
+                        <video muted loop playsinline preload="metadata">
+                            <source src="img/Physical Assets/Dress Recreation.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     </div>
                 </div>
-
+<div class="container">
                 <div class="process-video-wrapper">
                     <h3>Adding Depth to Virtual Gallery</h3>
                     <div class="video-container">
-                        <video muted loop playsinline controls preload="metadata">
+                        <video muted loop playsinline preload="metadata">
                             <source src="img/testing/Gallery17_depthmap.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -843,23 +930,14 @@
                 <div class="process-video-wrapper">
                     <h3>Protoyping a Virtual Play Table</h3>
                     <div class="video-container">
-                        <video muted loop playsinline controls preload="metadata">
+                        <video muted loop playsinline preload="metadata">
                             <source src="img/testing/Gallery18_Center%20Map.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     </div>
                 </div>
-
-                <div class="process-video-wrapper">
-                    <h3>Creating the 2D Assets</h3>
-                    <div class="video-container">
-                        <video muted loop playsinline controls preload="metadata">
-                            <source src="img/testing/Gallery19_Animation.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
                 </div>
-            </div>
+
         </section>
        
         <section id="user-testing" class="fade-in-section">
@@ -983,8 +1061,8 @@
                 });
             }, videoObserverOptions);
 
-            // Select only videos inside the process-video-wrapper
-            const processVideos = document.querySelectorAll('.process-video-wrapper video');
+            // Select only videos inside the process-video-wrapper and gallery-video
+            const processVideos = document.querySelectorAll('.process-video-wrapper video, .gallery-video video');
             processVideos.forEach(video => {
                 videoObserver.observe(video);
             });
@@ -1052,4 +1130,3 @@
     </script>
 </body>
 </html>
-
