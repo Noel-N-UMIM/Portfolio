@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thermae: Roman Bathhouse | Virtual Reality Project</title>
+    <title>Thermae: Roman Bathhouse | VR</title>
     
     <!-- GOOGLE FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,7 +13,7 @@
     <!-- FONT AWESOME (Icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <style>
+   <style>
         /* -----------------------------------------------------------
            CSS VARIABLES & RESET
         ----------------------------------------------------------- */
@@ -21,7 +21,7 @@
             --bg-color: #121212;
             --section-bg: #1a1a1a;
             --text-color: #e0e0e0;
-            --accent-color: #fca311; /* Warm Gold/Orange for Roman Theme */
+            --accent-color: #00bcd4; /* Cyan for cinematic pop */
             --heading-font: 'Poppins', sans-serif;
             --body-font: 'Open Sans', sans-serif;
             --transition-speed: 0.3s;
@@ -152,6 +152,60 @@
             color: var(--accent-color);
         }
 
+        /* -----------------------------------------------------------
+           MAIN NAVIGATION (Desktop & Mobile)
+        ----------------------------------------------------------- */
+        .main-nav {
+            display: flex;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li a {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 5px 0;
+            position: relative;
+            color: var(--text-color);
+        }
+
+        .nav-links li a:hover {
+            color: var(--accent-color);
+        }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links li a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
         .back-btn {
             display: flex;
             align-items: center;
@@ -176,32 +230,51 @@
         ----------------------------------------------------------- */
         .hero {
             height: 90vh;
-            /* Updated to use local image path - Ensure 'hero.jpg' exists in your 'img' folder */
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('img/thermae_banner_1.jpg');
+            /* NOTE: To use the video background template, comment out or remove the 'background' property below */
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('img/thermae_banner_1.jpg');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
+            background-attachment: fixed; /* Parallax effect */
+            
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             position: relative;
             padding: 0;
+            overflow: hidden; /* Added to constrain video background */
+        }
+
+        /* Template classes for Hero Video Background */
+        .hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8));
+            z-index: 1;
         }
 
         .hero-content {
             max-width: 800px;
             padding: 20px;
             animation: fadeIn 1.5s ease-out;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.8);
-        }
-
-        .hero-subtitle {
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 1rem;
-            color: var(--accent-color);
+            position: relative;
+            z-index: 2; /* Ensures content stays above the video background */
         }
 
         .scroll-indicator {
@@ -211,34 +284,45 @@
             transform: translateX(-50%);
             animation: bounce 2s infinite;
             opacity: 0.7;
+            z-index: 2; /* Ensures indicator stays above the video background */
+        }
+                .hero-subtitle {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
         }
 
         /* -----------------------------------------------------------
-           VIDEO EMBED (Responsive)
+           OVERVIEW LAYOUT
         ----------------------------------------------------------- */
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-            height: 0;
-            overflow: hidden;
-
-            /* CONTROL VIDEO SIZE HERE */
-            max-width: 850px; /* Adjust this value (e.g., 600px, 100%) to resize */
-            margin: 0 auto 2rem auto; /* Centers the video horizontally */
-
-            background: #000;
-            border-radius: 8px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        .overview-layout {
+            display: flex;
+            gap: 40px;
+            align-items: stretch; /* Changed from center to stretch so image fills height */
+            margin-bottom: 2rem;
         }
 
-        .video-container iframe, 
-        .video-container object, 
-        .video-container embed {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        .overview-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centers text vertically if the image forces the container to be taller */
+        }
+
+        .overview-image {
+            flex: 0 0 400px;
+            max-width: 100%;
+        }
+
+        /* On desktop, force the overview image/video to match the text height */
+        @media (min-width: 769px) {
+            .overview-image.gallery-item img,
+            .overview-image.gallery-item video {
+                height: 100% !important;
+                object-fit: cover;
+            }
         }
 
         /* -----------------------------------------------------------
@@ -258,13 +342,29 @@
         }
 
         .gallery-grid.single-focus .gallery-item {
-            max-width: 700px;
+            max-width: 500px; 
             width: 100%;
         }
         
-        .gallery-grid.single-focus .gallery-item img {
+        .gallery-grid.single-focus .gallery-item img,
+        .gallery-grid.single-focus .gallery-item video {
+            height: auto; 
+            max-height: 600px; 
+        }
+
+        .gallery-grid.no-stretch {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+
+        .gallery-item.tall img,
+        .gallery-item.tall video {
+            height: 450px;
+        }
+
+        .gallery-item.natural img,
+        .gallery-item.natural video {
             height: auto;
-            max-height: 600px;
+            min-height: 250px;
         }
 
         .gallery-item {
@@ -280,15 +380,17 @@
             transform: translateY(-5px);
         }
 
-        .gallery-item img {
+        .gallery-item img,
+        .gallery-item video {
             width: 100%;
-            height: 250px;
+            height: 250px; 
             object-fit: cover;
             display: block;
             transition: transform 0.5s ease;
         }
 
-        .gallery-item:hover img {
+        .gallery-item:hover img,
+        .gallery-item:hover video {
             transform: scale(1.05);
             opacity: 0.9;
         }
@@ -306,6 +408,72 @@
 
         .gallery-item:hover .gallery-caption {
             transform: translateY(0);
+        }
+
+        /* -----------------------------------------------------------
+           HORIZONTAL CAROUSEL GALLERY (NEW)
+        ----------------------------------------------------------- */
+        .carousel-wrapper {
+            width: 100%;
+            padding: 0 20px;
+            margin: 0 auto;
+        }
+
+        .gallery-carousel {
+            display: flex;
+            gap: 20px;
+            justify-content: center; /* Centers if < 4 images */
+            width: 100%;
+        }
+
+        .gallery-carousel .gallery-item {
+            flex: 0 0 calc(25% - 15px); /* 4 across with 20px gap */
+            max-width: calc(25% - 15px);
+        }
+
+        /* Mobile specific adjustments for infinite scroll loop */
+        @media (max-width: 768px) {
+            .gallery-carousel {
+                justify-content: flex-start;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none; /* IE/Edge */
+                scroll-behavior: auto;
+            }
+
+            .gallery-carousel::-webkit-scrollbar {
+                display: none; /* Chrome/Safari */
+            }
+
+            .gallery-carousel .gallery-item {
+                flex: 0 0 85%; /* Image takes 85%, leaving space for the next to peek */
+                max-width: 85%;
+                scroll-snap-align: center;
+            }
+        }
+
+        /* -----------------------------------------------------------
+           VIDEO EMBED
+        ----------------------------------------------------------- */
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            margin-top: 2rem;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            background-color: #000;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
         }
 
         /* -----------------------------------------------------------
@@ -426,32 +594,57 @@
             color: rgba(255,255,255,0.1);
             font-size: 1.5rem;
         }
-        
-        .code-snippet {
-            font-family: 'Courier New', Courier, monospace;
-            background: #222;
-            padding: 15px;
-            border-radius: 5px;
-            border-left: 3px solid var(--accent-color);
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #88c0d0;
-        }
 
         /* -----------------------------------------------------------
            RESPONSIVE MEDIA QUERIES
         ----------------------------------------------------------- */
+        /* Kick in the mobile menu slightly earlier (992px) due to 7 menu items */
+        @media (max-width: 992px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+            .mobile-menu-toggle {
+                display: block;
+                order: 2; /* Positions hamburger on the right */
+            }
+            .brand {
+                order: 1; /* Positions logo on the left */
+            }
+            .main-nav {
+                display: none; /* Hidden by default on small screens */
+                width: 100%;
+                order: 3;
+                padding-top: 15px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                margin-top: 15px;
+            }
+            .main-nav.active {
+                display: flex;
+                justify-content: center;
+            }
+            .nav-links {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                width: 100%;
+            }
+        }
+
         @media (max-width: 768px) {
             h1 { font-size: 2rem; }
             h2 { font-size: 1.6rem; }
             
-            .header-content {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
             .hero {
-                background-attachment: scroll;
+                background-attachment: scroll; 
+            }
+
+            .overview-layout {
+                flex-direction: column;
+            }
+
+            .overview-image {
+                flex: 1 1 auto;
+                width: 100%;
             }
 
             .lb-btn { font-size: 1.5rem; padding: 10px; }
@@ -465,18 +658,47 @@
     <!-- STICKY HEADER -->
     <header class="sticky-header">
         <div class="container header-content">
-            <div class="brand">
-                NOEL NUÑEZ <span>|</span> INTERACTION DESIGN
-            </div>
-            <a href="/Projects/" class="back-btn">
-                <i class="fa-solid fa-arrow-left"></i> Back to Projects
+           <!-- <div class="brand">
+                NOEL NUÑEZ <span>|</span> INTERACTIVE
+            </div>-->
+                  <a href="/index.html" class="brand">
+                NOEL NUÑEZ <span>|</span> Zoetrope
             </a>
+            
+            <!-- Mobile Menu Toggle Button -->
+            <button class="mobile-menu-toggle" aria-label="Toggle Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- New Navigation Menu -->
+            <nav class="main-nav">
+                <ul class="nav-links">
+                    <li><a href="/index.html">Home</a></li>
+                    <li><a href="/Projects">Interaction Design</a></li>
+                    <li><a href="/storyboard.html">Storyboards</a></li>
+                    <li><a href="/animation.html">Animation</a></li>
+                    <li><a href="/art.html">Art</a></li>
+                    <li><a href="/index.html#about">About</a></li>
+                    <li><a href="https://interactivedesigndevelopment.blogspot.com/">Blog</a></li>
+                </ul>
+            </nav>
         </div>
     </header>
 
     <main>
         <!-- HERO SECTION -->
         <section id="hero" class="hero">
+            
+            <!-- VIDEO BACKGROUND TEMPLATE 
+                 To use this: 
+                 1. Uncomment the <video> and <div class="hero-overlay"> elements below.
+                 2. Go to the .hero CSS class and remove or comment out the 'background' property.
+            -->
+            
+           <!-- <video class="hero-video" src="img/Praxinoscope.mp4" autoplay loop muted playsinline></video>
+            <div class="hero-overlay"></div> -->
+            
+
             <div class="hero-content">
                 <p class="hero-subtitle">Building Virtual Worlds</p>
                 <h1>Thermae: Roman Bathhouse</h1>
@@ -491,170 +713,39 @@
         <section id="overview" class="fade-in-section">
             <div class="container">
                 <h2>Project Overview</h2>
-                <p><strong>Immersive Histories: A Roman Thermae Virtual Reality Experience</strong> lets users step into ancient Roman life, exploring the social and functional aspects of the bathhouse. Visitors can enter the frigidarium to learn about its art and heating and cooling systems, then wander the open-air palestra courtyard—where exercise and socializing took place—while overhearing conversations and enjoying a minstrel’s music.</p>
-                <p>
-                    Teaming up with art history students, we had just three weeks to develop a functional virtual reality experience. 
-                </p>
-                <!--<p>
-                    We were fortunate to have clear design goals and assets ready from our art history collaborators. With no time to waste, we quickly set to work to bring their vision to life, focusing on creating an educational yet immersive environment.
-                </p>-->
-            </div>
-        </section>
-        <!-- VIDEO SECTION (NEW) -->
-        <section id="video-walkthrough" class="fade-in-section">
-            <div class="container">
-                <h2>Project Walkthrough</h2>
-                <div class="video-container">
-                 <iframe src="https://player.vimeo.com/video/824589005" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-                </div>
-            </div>
-        </section>
-
-<!-- Interactions: What Can you do? -->
-        <section id="interactions" class="fade-in-section">
-            <div class="container">
-                <!--<div class="divider-icon"><i class="fa-solid fa-layer-group"></i></div>-->
-                <h2>Interactions</h2>
-                <h3>What Can You Experience?</h3>
-                <p>When designing this experience, the team wanted the end user to feel fully immersed in the environment, as if they had travelled back in time to be amongst the people and culture.</p>
-                <p>To pull this off we created the following key interactions:</p>
-
-                <ul style="margin-left: 20px; margin-bottom: 20px; color: #ccc;">
-                    <li>Animated Characters</li>
-                    <li>360 degree audio with triggers for educational content</li>
-                    <li>Convenient user interfaces to provide guidance and transport the user to specific areas of the experience</li>
-                    <li>Crossfading between scenes for a better user experience</li>
-                </ul>
-                                <div class="gallery-grid">
-                    <div class="gallery-item lightbox-trigger" data-src="img/Blog_10.JPG">
-                        <img src="img/Blog_10.JPG" alt="Environment Layout">
-                        <div class="gallery-caption"><i class="fa-solid fa-magnifying-glass-plus"></i> Animated Characters</div>
-                    </div>
-                    <div class="gallery-item lightbox-trigger" data-src="img/Blog_18_Audio_Source_Button.JPG">
-                        <img src="img/Blog_18_Audio_Source_Button.JPG" alt="Animation Controller">
-                        <div class="gallery-caption"><i class="fa-solid fa-film"></i> 360 Audio</div>
-                    </div>
-                                                            <div class="gallery-item lightbox-trigger" data-src="img/Fade Out.gif">
-                        <img src="img/Fade Out.gif" alt="Animation Controller">
-                        <div class="gallery-caption"><i class="fa-solid fa-film"></i> Crossfading</div>
-                    </div>
-                    </div>
-                   <!-- <div class="gallery-grid">
-                                        <div class="gallery-item lightbox-trigger" data-src="img/Button_Delay.gif">
-                        <img src="img/Button_Delay.gif" alt="Animation Controller">
-                        <div class="gallery-caption"><i class="fa-solid fa-film"></i> Tutorials</div>
-                    </div>
-
-                    </div>-->
-                </div>
-            
-                </section>
-        <!-- PHASE 3: TECHNICAL IMPLEMENTATION -->
-        <section id="technical" class="fade-in-section">
-            <div class="container">
-                <h2>Technical Implementation</h2>
-                <p>
-                    Specific scripts were developed to enhance the user interface and immersion. For example, the <strong>Logo Scale Script</strong> allowed for dynamic resizing of UI elements on the canvas.
-                </p>
-                <p>
-                    Another challenge was the main menu, which featured a 3D unrolling scroll. I implemented a <strong>Button Appearance Delay</strong> script to ensure the interactive buttons only appeared <em>after</em> the scroll animation had completed, preserving the physical realism of the UI.
-                </p>
-                <div class="gallery-grid">
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjxHH176NTAzhgsfzis9GIgPGHI28K4HCe87PqiJcnVFlhJqS41LslBueNteggQX_Ee60SKXYv44FIYoVnuxA4pq8Ylx7N-RgaboMnc9h7Fa0_w08hRMAjHKD20dGJTXbbKEqOV9AV2sDPeZpTYJ7KSmGtD_OW91tVL_0SiFsdC5RLJpc03Hk6Saaipxg/s500/Title_Scale.gif">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjxHH176NTAzhgsfzis9GIgPGHI28K4HCe87PqiJcnVFlhJqS41LslBueNteggQX_Ee60SKXYv44FIYoVnuxA4pq8Ylx7N-RgaboMnc9h7Fa0_w08hRMAjHKD20dGJTXbbKEqOV9AV2sDPeZpTYJ7KSmGtD_OW91tVL_0SiFsdC5RLJpc03Hk6Saaipxg/s500/Title_Scale.gif" alt="UI Logo Scaling">
-                        <div class="gallery-caption"><i class="fa-solid fa-play"></i> Logo Scale Script</div>
-                    </div>
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjCmInDKJPDoN8Kw0mzsiDYUsVApZIh0HszqedTapwuSI1kCjIPl9Oi4KexDxIE-s4OgtbtMNniZ-WH2bSc9qqbHkP0ZwM5ZOZn_WDq4JP-Lhtvrm0q-H1GOzWzofGkd3TJqownE6NNYJvaOvO9C7T-shON_qs2HP4eqxJ_nmbRfoWdYPszSs-IKPBdug/s500/Button_Delay.gif">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjCmInDKJPDoN8Kw0mzsiDYUsVApZIh0HszqedTapwuSI1kCjIPl9Oi4KexDxIE-s4OgtbtMNniZ-WH2bSc9qqbHkP0ZwM5ZOZn_WDq4JP-Lhtvrm0q-H1GOzWzofGkd3TJqownE6NNYJvaOvO9C7T-shON_qs2HP4eqxJ_nmbRfoWdYPszSs-IKPBdug/s500/Button_Delay.gif" alt="Button Delay Logic">
-                        <div class="gallery-caption"><i class="fa-solid fa-play"></i> Button Delay Logic</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PHASE 4: CHALLENGES -->
-        <section id="challenges" class="fade-in-section">
-            <div class="container">
-                <div class="divider-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                <h2>Challenges & Complications</h2>
-                <div style="background-color: rgba(255,150,0,0.1); padding: 20px; border-left: 4px solid var(--accent-color); border-radius: 4px;">
-                    <p>
-                        <strong>Optimization:</strong> The biggest hurdle was file size management. The project ballooned to a whopping <strong>29GB</strong>, making collaboration difficult. I had to aggressively scavenge the project for unused assets and worked with the animator to reduce polygon counts.
-                    </p>
-                    <p>
-                        <strong>VR Discrepancies:</strong> The preview window in Unity did not correlate 1:1 with the Oculus headset view. UI elements and player height felt different in-headset, requiring constant "build and test" cycles.
-                    </p>
-                    <p style="margin-bottom: 0;">
-                        <strong>The "One-Eyed" Shader:</strong> Our water shader—integral to a bathhouse—would only render in the left eye on the Quest! As a workaround, I swapped it for a simpler, non-moving shader to maintain immersion across both eyes.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- PHASE 5: THE EXPERIENCE -->
-        <section id="solution" class="fade-in-section">
-            <div class="container">
-                <h2>The Virtual Experience</h2>
-                <p>
-                    Despite the challenges, we created a rich environment where users can teleport between different chambers of the bathhouse, learn about Roman culture through interactive pop-ups, and observe animated characters inhabiting the space.
-                </p>
-                <div class="gallery-grid">
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjkWtHgxBxMRKTm4NubtjGqM6Jgif7gjpUt5uZJuaVALPxBeTD7f7SBcw0dONDVNJENYpuT16bOkbpCkfd8yILf-Tc609I8bCk124Q9q_5H0C0rl8HfIsX4rvJxlU1juheHC8QMh1GX0tciijBJEru6gSXZ3AfhjRZb_t048KZ0RVIvFDe1m2Uk27OFUg/s1919/Blog_2.JPG">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjkWtHgxBxMRKTm4NubtjGqM6Jgif7gjpUt5uZJuaVALPxBeTD7f7SBcw0dONDVNJENYpuT16bOkbpCkfd8yILf-Tc609I8bCk124Q9q_5H0C0rl8HfIsX4rvJxlU1juheHC8QMh1GX0tciijBJEru6gSXZ3AfhjRZb_t048KZ0RVIvFDe1m2Uk27OFUg/s1919/Blog_2.JPG" alt="Bathhouse Interior">
-                    </div>
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhAbm8G5pG1z5kWPDlPUuF5iLSO16K5smkxVgP3Bw5DMny3-E7lMznO4DI7Z5iaEXJd6n1irAeqh6UhqLmIiRqUMuy0D42KBHzcOq_S9gLB4eF0Ag46v4Txp5wldDWup9k3TtQuIM0C1T5hLTTXaZ7RxjW6AgfoYHlps_4T_esQOcNmInFiGXLGkpfa6A/s1919/Blog_7.JPG">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhAbm8G5pG1z5kWPDlPUuF5iLSO16K5smkxVgP3Bw5DMny3-E7lMznO4DI7Z5iaEXJd6n1irAeqh6UhqLmIiRqUMuy0D42KBHzcOq_S9gLB4eF0Ag46v4Txp5wldDWup9k3TtQuIM0C1T5hLTTXaZ7RxjW6AgfoYHlps_4T_esQOcNmInFiGXLGkpfa6A/s1919/Blog_7.JPG" alt="Character Interaction">
-                    </div>
-                </div>
-            </div>
-        </section>
- <!-- PHASE 2: ROLE & DEVELOPMENT -->
-        <section id="role" class="fade-in-section">
-            <div class="container">
-                <!--<div class="divider-icon"><i class="fa-solid fa-layer-group"></i></div>-->
-                <h2>My Role & Development</h2>
-                <p>
-                    My primary role as the project lead was to ensure that the team of 3 developers worked towards the same vision and to directing their specific skills and to bring together all the assets for a uniform final product. In addition, I served as the technical integrator, responsible for designing the terrain, laying out game objects, implementing spatial audio, and troubleshooting errors.
-                </p>
-                <p>
-                    Additionally, I wrote the C# scripts that triggered key interactions within the experience:
-                </p>
-                <ul style="margin-left: 20px; margin-bottom: 20px; color: #ccc;">
-                    <li>Teleporting players to specific areas of the bathhouse.</li>
-                    <li>Revealing and hiding historical information panels.</li>
-                    <li>Playing specific animation "takes" created by our animator, Ace.</li>
-                    <li>Designing menu interactions and UI flow.</li>
-                </ul>
                 
-                <div class="gallery-grid">
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjTxkTPmLYGlwPB7Vc2WmYYpdBXVsgF8Y7r3N8lMRxxovbWRR_9xi-fjRe2lcSsxEB3JJbi8Z2wQax_UTglzTisIFd9FnWTABEPWedGa9FGOLO8z3LbkfKeyz1auRIaW_wTVYBHcP2TVXSyM0pEwwsZ-LpLIbAW7SDCWomQixqw4V9ADWuw9I8ibc0d8A/s1646/Blog_6.JPG">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjTxkTPmLYGlwPB7Vc2WmYYpdBXVsgF8Y7r3N8lMRxxovbWRR_9xi-fjRe2lcSsxEB3JJbi8Z2wQax_UTglzTisIFd9FnWTABEPWedGa9FGOLO8z3LbkfKeyz1auRIaW_wTVYBHcP2TVXSyM0pEwwsZ-LpLIbAW7SDCWomQixqw4V9ADWuw9I8ibc0d8A/s1646/Blog_6.JPG" alt="Environment Layout">
-                        <div class="gallery-caption"><i class="fa-solid fa-magnifying-glass-plus"></i> Environment Layout</div>
+                <!-- Added Flexbox Layout for text and GIF -->
+                <div class="overview-layout">
+                    <div class="overview-text">
+                        <p>
+                            Immersive Histories: A Roman Thermae Virtual Reality Experience</strong> lets users step into ancient Roman life, exploring the social and functional aspects of the bathhouse. Visitors can enter the frigidarium to learn about its art and heating and cooling systems, then wander the open-air palestra courtyard—where exercise and socializing took place—while overhearing conversations and enjoying a minstrel’s music.                        
+                        </p>
+                        <p>
+                            Teaming up with art history students, we had just three weeks to develop a functional virtual reality experience.                        
+                        </p>
+                        <p>
+                            We were fortunate to have clear design goals and assets ready from our art history collaborators. With no time to waste, we quickly set to work to bring their vision to life, focusing on creating an educational yet immersive environment.
+                        </p>
                     </div>
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj9TAOvtklUfH5Y7lUbH5rMy5ZRx23KWhSkjOwr5z3pXzFH6EOk0lqn_qjdFyAHW6cfH2Zf0JHquyacbz2l7VYETy9Kf6Ik8c7D4qoeQbLnt52BEhWnIjt3nCpPcNj_qmIthev_kHB8mimjpTyilnEAyqZgN1ZhnT8sWXhoDS8uPFmaZW4aDY9SyrGHxQ/s1920/Blog_20_Animator.JPG">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj9TAOvtklUfH5Y7lUbH5rMy5ZRx23KWhSkjOwr5z3pXzFH6EOk0lqn_qjdFyAHW6cfH2Zf0JHquyacbz2l7VYETy9Kf6Ik8c7D4qoeQbLnt52BEhWnIjt3nCpPcNj_qmIthev_kHB8mimjpTyilnEAyqZgN1ZhnT8sWXhoDS8uPFmaZW4aDY9SyrGHxQ/s1920/Blog_20_Animator.JPG" alt="Animation Controller">
-                        <div class="gallery-caption"><i class="fa-solid fa-film"></i> Animation Controller</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- PHASE 6: LESSONS -->
-        <section id="lessons" class="fade-in-section">
-            <div class="container">
-                <h2>Conclusion</h2>
-                <p>
-                    This collaboration allowed my team to readily jump into the technical aspects of a project without having to worry about the research phase, as the Art History students provided the context. It was a rigorous test of our ability to produce a uniform, functional VR application in a short timeframe.
-                </p>
-                <div class="gallery-grid single-focus">
-                    <div class="gallery-item lightbox-trigger" data-src="img/Blog_1.JPG">
-                        <img src="img/Blog_1.JPG" alt="Final Scene View">
-                        <div class="gallery-caption"><i class="fa-solid fa-vr-cardboard"></i> Immersive View</div>
+                    
+                    <!-- REPLACED GIF WITH AUTOPLAYING MP4 (Removed lightbox-trigger so it doesn't try to open video as an img) -->
+                    <div class="overview-image gallery-item natural">
+                        <video src="img/Praxinoscope.mp4" autoplay loop muted playsinline></video>
+                        <div class="gallery-caption"><i class="fa-solid fa-play"></i> Praxinoscope Action</div>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <!-- META DATA SECTION -->
+                <!-- RESPONSIVE VIMEO EMBED -->
+                 <p>
+<h3>>Watch a wlkthrough of the Virtual Reality experience below (4:59 minutes)</h3>
+</p>
+                <div class="video-wrapper">
+                    <!-- REPLACE "VIDEO_ID_HERE" WITH YOUR ACTUAL VIMEO VIDEO ID -->
+                    <iframe src="https://player.vimeo.com/video/824589005?color=00bcd4&title=0&byline=0&portrait=0" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
+               <!-- META DATA SECTION -->
         <section id="meta" class="fade-in-section">
             <div class="container">
                 <div class="meta-grid">
@@ -688,13 +779,237 @@
                 </div>
             </div>
         </section>
+<!-- ROLE & DEVELOPMENT -->
+        <section id="role" class="fade-in-section">
+            <div class="container">
+                <!--<div class="divider-icon"><i class="fa-solid fa-layer-group"></i></div>-->
+                <h2>My Role & Development</h2>
+                <p>
+                    My primary role as the project lead was to ensure that the team of 3 developers worked towards the same vision and to directing their specific skills and to bring together all the assets for a uniform final product. In addition, I served as the technical integrator, responsible for designing the terrain, laying out game objects, implementing spatial audio, and troubleshooting errors.
+                </p>
+                <p>
+                    Additionally, I wrote the C# scripts that triggered key interactions within the experience:
+                </p>
+                <ul style="margin-left: 20px; margin-bottom: 20px; color: #ccc;">
+                    <li>Teleporting players to specific areas of the bathhouse.</li>
+                    <li>Revealing and hiding historical information panels.</li>
+                    <li>Playing specific animation "takes" created by our animator, Ace.</li>
+                    <li>Designing menu interactions and UI flow.</li>
+                </ul>
+                
+                <div class="gallery-grid">
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjTxkTPmLYGlwPB7Vc2WmYYpdBXVsgF8Y7r3N8lMRxxovbWRR_9xi-fjRe2lcSsxEB3JJbi8Z2wQax_UTglzTisIFd9FnWTABEPWedGa9FGOLO8z3LbkfKeyz1auRIaW_wTVYBHcP2TVXSyM0pEwwsZ-LpLIbAW7SDCWomQixqw4V9ADWuw9I8ibc0d8A/s1646/Blog_6.JPG">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjTxkTPmLYGlwPB7Vc2WmYYpdBXVsgF8Y7r3N8lMRxxovbWRR_9xi-fjRe2lcSsxEB3JJbi8Z2wQax_UTglzTisIFd9FnWTABEPWedGa9FGOLO8z3LbkfKeyz1auRIaW_wTVYBHcP2TVXSyM0pEwwsZ-LpLIbAW7SDCWomQixqw4V9ADWuw9I8ibc0d8A/s1646/Blog_6.JPG" alt="Environment Layout">
+                        <div class="gallery-caption"><i class="fa-solid fa-magnifying-glass-plus"></i> Environment Layout</div>
+                    </div>
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj9TAOvtklUfH5Y7lUbH5rMy5ZRx23KWhSkjOwr5z3pXzFH6EOk0lqn_qjdFyAHW6cfH2Zf0JHquyacbz2l7VYETy9Kf6Ik8c7D4qoeQbLnt52BEhWnIjt3nCpPcNj_qmIthev_kHB8mimjpTyilnEAyqZgN1ZhnT8sWXhoDS8uPFmaZW4aDY9SyrGHxQ/s1920/Blog_20_Animator.JPG">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj9TAOvtklUfH5Y7lUbH5rMy5ZRx23KWhSkjOwr5z3pXzFH6EOk0lqn_qjdFyAHW6cfH2Zf0JHquyacbz2l7VYETy9Kf6Ik8c7D4qoeQbLnt52BEhWnIjt3nCpPcNj_qmIthev_kHB8mimjpTyilnEAyqZgN1ZhnT8sWXhoDS8uPFmaZW4aDY9SyrGHxQ/s1920/Blog_20_Animator.JPG" alt="Animation Controller">
+                        <div class="gallery-caption"><i class="fa-solid fa-film"></i> Animation Controller</div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+<!-- Interactions: What Can you do? -->
+        <section id="interactions" class="fade-in-section">
+            <div class="container">
+                <!--<div class="divider-icon"><i class="fa-solid fa-lightbulb"></i></div>-->
+                <h2>Interactions</h2>
+                <h3>What Can You Experience?</h3>
+                <p>When designing this experience, the team wanted the end user to feel fully immersed in the environment, as if they had travelled back in time to be amongst the people and culture.</p>
+                <p>To pull this off we created the following key interactions:</p>
+
+                <ul style="margin-left: 20px; margin-bottom: 20px; color: #ccc;">
+                    <li>Animated Characters</li>
+                    <li>360 degree audio with triggers for educational content</li>
+                    <li>Convenient user interfaces to provide guidance and transport the user to specific areas of the experience</li>
+                    <li>Crossfading between scenes for a better user experience</li>
+                </ul>
+                
+                <div class="gallery-grid">
+                    <div class="gallery-item lightbox-trigger" data-src="img/Blog_10.jpg">
+                        <img src="img/Blog_10.jpg">
+                        <div class="gallery-caption"><i class="fa-solid fa-magnifying-glass-plus"></i> Animated Characters</div>
+                    </div>
+                <div class="gallery-item lightbox-trigger" data-src="img/Blog_18_Audio_Source_Button.jpg">
+                        <img src="img/Blog_18_Audio_Source_Button.jpg" alt="360 Audio">
+                        <div class="gallery-caption"><i class="fa-solid fa-magnifying-glass-plus"></i> 360 Audio</div>
+                    </div>
+                <div class="gallery-item lightbox-trigger" data-src="img/Fade Out.gif">
+                    <img src="img/Fade Out.gif" alt="Crossfading">
+                <div class="gallery-caption"><i class="fa-solid fa-magnifying-glass-plus"></i> Crossfading</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<!-- TECHNICAL IMPLEMENTATION -->
+        <section id="development" class="fade-in-section">
+            <div class="technical">
+                <div class="container">
+                <h2>Technical Implementation</h2>
+                <p>
+                    Specific scripts were developed to enhance the user interface and immersion. For example, the <strong>Logo Scale Script</strong> allowed for dynamic resizing of UI elements on the canvas.
+                </p>
+                <p>
+                    Another challenge was the main menu, which featured a 3D unrolling scroll. I implemented a <strong>Button Appearance Delay</strong> script to ensure the interactive buttons only appeared <em>after</em> the scroll animation had completed, preserving the physical realism of the UI.
+                </p>
+            <div class="gallery-grid">
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjxHH176NTAzhgsfzis9GIgPGHI28K4HCe87PqiJcnVFlhJqS41LslBueNteggQX_Ee60SKXYv44FIYoVnuxA4pq8Ylx7N-RgaboMnc9h7Fa0_w08hRMAjHKD20dGJTXbbKEqOV9AV2sDPeZpTYJ7KSmGtD_OW91tVL_0SiFsdC5RLJpc03Hk6Saaipxg/s500/Title_Scale.gif">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjxHH176NTAzhgsfzis9GIgPGHI28K4HCe87PqiJcnVFlhJqS41LslBueNteggQX_Ee60SKXYv44FIYoVnuxA4pq8Ylx7N-RgaboMnc9h7Fa0_w08hRMAjHKD20dGJTXbbKEqOV9AV2sDPeZpTYJ7KSmGtD_OW91tVL_0SiFsdC5RLJpc03Hk6Saaipxg/s500/Title_Scale.gif" alt="UI Logo Scaling">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Logo Scale Script</div>
+                    </div>
+
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjCmInDKJPDoN8Kw0mzsiDYUsVApZIh0HszqedTapwuSI1kCjIPl9Oi4KexDxIE-s4OgtbtMNniZ-WH2bSc9qqbHkP0ZwM5ZOZn_WDq4JP-Lhtvrm0q-H1GOzWzofGkd3TJqownE6NNYJvaOvO9C7T-shON_qs2HP4eqxJ_nmbRfoWdYPszSs-IKPBdug/s500/Button_Delay.gif">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjCmInDKJPDoN8Kw0mzsiDYUsVApZIh0HszqedTapwuSI1kCjIPl9Oi4KexDxIE-s4OgtbtMNniZ-WH2bSc9qqbHkP0ZwM5ZOZn_WDq4JP-Lhtvrm0q-H1GOzWzofGkd3TJqownE6NNYJvaOvO9C7T-shON_qs2HP4eqxJ_nmbRfoWdYPszSs-IKPBdug/s500/Button_Delay.gif" alt="Button Delay Logic">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Button Delay Logic</div>
+                    </div>
+                </div>
+            </div>
+        </section> 
+                
+<!-- PHASE 5: CHALLENGES -->
+        <section id="challenges" class="fade-in-section">
+            <div class="container">
+                <h2>Challenges & Complications</h2>
+                <div style="background-color: rgba(255,0,0,0.1); padding: 20px; border-left: 4px solid #ff4444; border-radius: 4px;">
+                    <p>
+                        <strong>Optimization:</strong> The biggest hurdle was file size management. The project ballooned to a whopping <strong>29GB</strong>, making collaboration difficult. I had to aggressively scavenge the project for unused assets and worked with the animator to reduce polygon counts.
+                    </p>
+                    <p>
+                        <strong>VR Discrepancies:</strong> The preview window in Unity did not correlate 1:1 with the Oculus headset view. UI elements and player height felt different in-headset, requiring constant "build and test" cycles.
+                    </p>
+                    <p style="margin-bottom: 0;">
+                        <strong>The "One-Eyed" Shader:</strong> Our water shader—integral to a bathhouse—would only render in the left eye on the Quest! As a workaround, I swapped it for a simpler, non-moving shader to maintain immersion across both eyes.
+                    </p>
+                    
+                </div>
+            </div>
+        </section>
+<!-- THE EXPERIENCE -->
+        <section id="development" class="fade-in-section">
+            <div class="experience">
+                <div class="container">
+                <h2>The Virtual Experience</h2>
+                <p>
+                    Despite the challenges, we created a rich environment where users can teleport between different chambers of the bathhouse, learn about Roman culture through interactive pop-ups, and observe animated characters inhabiting the space.
+                </p>
+                <div class="gallery-grid">
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjkWtHgxBxMRKTm4NubtjGqM6Jgif7gjpUt5uZJuaVALPxBeTD7f7SBcw0dONDVNJENYpuT16bOkbpCkfd8yILf-Tc609I8bCk124Q9q_5H0C0rl8HfIsX4rvJxlU1juheHC8QMh1GX0tciijBJEru6gSXZ3AfhjRZb_t048KZ0RVIvFDe1m2Uk27OFUg/s1919/Blog_2.JPG">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjkWtHgxBxMRKTm4NubtjGqM6Jgif7gjpUt5uZJuaVALPxBeTD7f7SBcw0dONDVNJENYpuT16bOkbpCkfd8yILf-Tc609I8bCk124Q9q_5H0C0rl8HfIsX4rvJxlU1juheHC8QMh1GX0tciijBJEru6gSXZ3AfhjRZb_t048KZ0RVIvFDe1m2Uk27OFUg/s1919/Blog_2.JPG" alt="Bathhouse Interior">
+                    </div>
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhAbm8G5pG1z5kWPDlPUuF5iLSO16K5smkxVgP3Bw5DMny3-E7lMznO4DI7Z5iaEXJd6n1irAeqh6UhqLmIiRqUMuy0D42KBHzcOq_S9gLB4eF0Ag46v4Txp5wldDWup9k3TtQuIM0C1T5hLTTXaZ7RxjW6AgfoYHlps_4T_esQOcNmInFiGXLGkpfa6A/s1919/Blog_7.JPG">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhAbm8G5pG1z5kWPDlPUuF5iLSO16K5smkxVgP3Bw5DMny3-E7lMznO4DI7Z5iaEXJd6n1irAeqh6UhqLmIiRqUMuy0D42KBHzcOq_S9gLB4eF0Ag46v4Txp5wldDWup9k3TtQuIM0C1T5hLTTXaZ7RxjW6AgfoYHlps_4T_esQOcNmInFiGXLGkpfa6A/s1919/Blog_7.JPG" alt="Character Interaction">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<!-- LESSONS -->
+        <section id="lessons" class="fade-in-section">
+            <div class="container">
+                <h2>Conclusion</h2>
+                <p>
+                    This collaboration allowed my team to readily jump into the technical aspects of a project without having to worry about the research phase, as the Art History students provided the context. It was a rigorous test of our ability to produce a uniform, functional VR application in a short timeframe.
+                </p>
+                <div class="gallery-grid single-focus">
+                    <div class="gallery-item lightbox-trigger" data-src="img/Blog_1.jpg">
+                        <img src="img/Blog_1.jpg" alt="Final Scene View">
+                        <div class="gallery-caption"><i class="fa-solid fa-vr-cardboard"></i> Immersive View</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+ 
     </main>
 
     <!-- FOOTER -->
     <footer style="text-align: center; padding: 40px; border-top: 1px solid rgba(255,255,255,0.1); color: #666; font-size: 0.9rem;">
         <p>&copy; 2026 Noel Nuñez. All Rights Reserved.</p>
     </footer>
+
+
+
+
+   
+<!--Section: Gallery from edge to edge-->
+<!--<section id="process-carousel" class="fade-in-section">
+    <div class="container">
+    <h2 style="text-align: center;">Printing</h2>-->
+    <!-- <p>
+    <div class="divider-icon"><i class="fa-solid fa-images"></i></div>
+    <p>-->
+     <!--<p>
+        From Zbrush, I moved to a program called Cura which is used to prepare the models for 3D printing by establishing the scale, orientation, and determinig if any structural support is needed to prevent gravity from destroying your hot plastic!                     </p>
+                   
+</div>
+ <div class="carousel-wrapper">-->           
+<!-- Add "infinite" class to enable mobile scrolling loop -->
+                <!--<div class="gallery-carousel infinite">
+                    
+                    <div class="gallery-item lightbox-trigger" data-src="img/printing1.jpg">
+                        <img src="img/printing1.jpg" alt="Assembly Check">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> 3D Printer</div>
+                    </div>
+
+                   <div class="gallery-item lightbox-trigger" data-src="img/printing3.jpg">
+                        <img src="img/printing3.jpg" alt="Print Support Structure">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Print Support Structure</div>
+                    </div>
+
+                    <div class="gallery-item lightbox-trigger" data-src="img/printing4.jpg">
+                        <img src="img/printing4.jpg" alt="Cleanup">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Cleanup</div>
+                    </div>
+                                        <div class="gallery-item lightbox-trigger" data-src="img/Group_Shot_Optimized.jpg">
+                        <img src="img/Group_Shot_Optimized.jpg" alt="Final Polish">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Final Finish</div>
+                    </div>
+                </div>
+            </div>  
+            </section>-->
+
+ 
+        <!-- Section Gif in the Center -->
+        <!--<section id="final" class="fade-in-section">
+            <div class="container">
+                <h2>Zoetrope Design</h2>
+                <p>
+                    The final result is a functional Zoetrope that smoothly animates the 3D printed figure, viewable through narrow slits, creating the illusion of persistence of vision. 
+                </p>
+                <div class="gallery-grid single-focus">
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBxVYtaJWuXw_JGWcFiewcqHzCcuDvPICP3NS8u17cWEYVAV_kYF5U9Id_Ox23-cJ5M0xyPxJLinkduJ9S3xgE63EwY9-3bam-sDMOFLJ8BrL3UQUysrynYpJEa4HJlsK0a_xsUH3US2dttIUpUvOc7ZhvvFJmkB-1QipWlwLCO21pkcTvSGQnXQx77A/s500/Zoetrope.gif">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBxVYtaJWuXw_JGWcFiewcqHzCcuDvPICP3NS8u17cWEYVAV_kYF5U9Id_Ox23-cJ5M0xyPxJLinkduJ9S3xgE63EwY9-3bam-sDMOFLJ8BrL3UQUysrynYpJEa4HJlsK0a_xsUH3US2dttIUpUvOc7ZhvvFJmkB-1QipWlwLCO21pkcTvSGQnXQx77A/s500/Zoetrope.gif" alt="Final Animation in Motion">
+                        <div class="gallery-caption"><i class="fa-solid fa-film"></i> Final Animation Test</div>
+                    </div>
+                </div>
+            </div>
+        </section>-->
+
+        <!-- Section Text on Left, Image on Right -->
+        <!--<section id="solution" class="fade-in-section">
+            <div class="container">
+                <div class="divider-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <h2>Title</h2>
+                
+                <div class="overview-layout">
+                    <div class="overview-text">
+                        <p>
+                            Add text here. This text will be on the left.
+                        </p>
+                        <ul>
+                            <li style="margin-bottom: 10px;"><i class="fa-solid fa-check" style="color: var(--accent-color); margin-right: 10px;"></i> <strong>Mirrors:</strong> I used 12 mirrors to match the 12 frames of animation 1:1. This reflects the image to the viewer, creating a brighter, clearer persistence of vision.</li>
+                            <li style="margin-bottom: 10px;"><i class="fa-solid fa-check" style="color: var(--accent-color); margin-right: 10px;"></i> <strong>Interaction:</strong> I swapped the momentary push button for a robust toggle switch, improving user comfort.</li>
+                            <li><i class="fa-solid fa-check" style="color: var(--accent-color); margin-right: 10px;"></i> <strong>Fabrication:</strong> I designed a new base in Carbide Create and cut it using a CNC machine for a cleaner finish.</li>
+                        </ul>
+                    </div>-->
+                    <!--Note: This image will be on the right-->
+                    <!--<div class="overview-image gallery-item natural lightbox-trigger" data-src="img/16.jpg">
+                        <img src="img/16.jpg" alt="Final Praxinoscope Build">
+                        <div class="gallery-caption"><i class="fa-solid fa-search"></i> Final Praxinoscope Build</div>
+                    </div>
+                </div>-->
+
 
     <!-- LIGHTBOX OVERLAY -->
     <div id="lightbox">
@@ -708,6 +1023,27 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
+            /* -----------------------------------------------------------
+               MOBILE MENU TOGGLE
+            ----------------------------------------------------------- */
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            const mainNav = document.querySelector('.main-nav');
+            
+            if (menuToggle) {
+                menuToggle.addEventListener('click', () => {
+                    mainNav.classList.toggle('active');
+                    const icon = menuToggle.querySelector('i');
+                    // Swap icon between Hamburger and 'X'
+                    if (mainNav.classList.contains('active')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-xmark');
+                    } else {
+                        icon.classList.remove('fa-xmark');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+            }
+
             /* -----------------------------------------------------------
                SCROLL ANIMATION (INTERSECTION OBSERVER)
             ----------------------------------------------------------- */
@@ -731,11 +1067,10 @@
             });
 
             /* -----------------------------------------------------------
-               LIGHTBOX LOGIC
+               ROBUST EVENT DELEGATION FOR LIGHTBOX (Handles clones too)
             ----------------------------------------------------------- */
             const lightbox = document.getElementById('lightbox');
             const lightboxImg = document.getElementById('lightbox-img');
-            const triggers = document.querySelectorAll('.lightbox-trigger');
             const closeBtn = document.getElementById('lb-close');
             const prevBtn = document.getElementById('lb-prev');
             const nextBtn = document.getElementById('lb-next');
@@ -743,19 +1078,27 @@
             let galleryImages = [];
             let currentIndex = 0;
 
-            // Collect all gallery image sources
-            triggers.forEach((trigger, index) => {
-                // Use data-src if available, fallback to img src
+            // Build a unique array of image sources 
+            document.querySelectorAll('.lightbox-trigger').forEach(trigger => {
                 const src = trigger.getAttribute('data-src') || trigger.querySelector('img').src;
-                galleryImages.push(src);
-                
-                trigger.addEventListener('click', () => {
-                    openLightbox(index);
-                });
+                if (!galleryImages.includes(src)) {
+                    galleryImages.push(src);
+                }
             });
 
-            function openLightbox(index) {
-                currentIndex = index;
+            // Event Delegation handles standard elements AND JS-cloned elements
+            document.addEventListener('click', (e) => {
+                const trigger = e.target.closest('.lightbox-trigger');
+                if (trigger) {
+                    const src = trigger.getAttribute('data-src') || trigger.querySelector('img').src;
+                    currentIndex = galleryImages.indexOf(src);
+                    if (currentIndex !== -1) {
+                        openLightbox();
+                    }
+                }
+            });
+
+            function openLightbox() {
                 updateImage();
                 lightbox.classList.add('active');
                 document.body.style.overflow = 'hidden'; // Prevent scrolling
@@ -767,7 +1110,6 @@
             }
 
             function updateImage() {
-                // Add fade effect
                 lightboxImg.style.opacity = '0.5';
                 setTimeout(() => {
                     lightboxImg.src = galleryImages[currentIndex];
@@ -785,17 +1127,15 @@
                 updateImage();
             }
 
-            // Event Listeners
+            // Event Listeners for Lightbox Controls
             closeBtn.addEventListener('click', closeLightbox);
             nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); });
             prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); });
 
-            // Close on background click
             lightbox.addEventListener('click', (e) => {
                 if (e.target === lightbox) closeLightbox();
             });
 
-            // Keyboard Navigation
             document.addEventListener('keydown', (e) => {
                 if (!lightbox.classList.contains('active')) return;
                 
@@ -803,10 +1143,68 @@
                 if (e.key === 'ArrowRight') nextImage();
                 if (e.key === 'ArrowLeft') prevImage();
             });
+
+            /* -----------------------------------------------------------
+               INFINITE CAROUSEL LOGIC (MOBILE)
+            ----------------------------------------------------------- */
+            const carousels = document.querySelectorAll('.gallery-carousel.infinite');
+            carousels.forEach(carousel => {
+                const originalItems = Array.from(carousel.children);
+                
+                if (originalItems.length > 1) {
+                    // Clone items to the end
+                    originalItems.forEach(item => {
+                        let clone = item.cloneNode(true);
+                        clone.classList.add('clone-element');
+                        carousel.appendChild(clone);
+                    });
+                    
+                    // Clone items to the beginning
+                    originalItems.forEach(item => {
+                        let clone = item.cloneNode(true);
+                        clone.classList.add('clone-element');
+                        carousel.insertBefore(clone, carousel.firstChild);
+                    });
+
+                    // Manage seamless jump offsets
+                    const handleScrollPosition = () => {
+                        if (window.innerWidth <= 768) {
+                            const itemWidth = carousel.children[0].offsetWidth + parseInt(window.getComputedStyle(carousel).gap || 20);
+                            const originalBlockWidth = originalItems.length * itemWidth;
+
+                            // If scrolling backwards past the prepended clones
+                            if (carousel.scrollLeft < originalBlockWidth - itemWidth) {
+                                carousel.style.scrollBehavior = 'auto'; // Temp disable smooth scroll snap
+                                carousel.style.scrollSnapType = 'none';
+                                carousel.scrollLeft += originalBlockWidth;
+                                setTimeout(() => { carousel.style.scrollSnapType = 'x mandatory'; }, 10);
+                            }
+                            // If scrolling forwards past original block
+                            else if (carousel.scrollLeft >= originalBlockWidth * 2) {
+                                carousel.style.scrollBehavior = 'auto'; 
+                                carousel.style.scrollSnapType = 'none';
+                                carousel.scrollLeft -= originalBlockWidth;
+                                setTimeout(() => { carousel.style.scrollSnapType = 'x mandatory'; }, 10);
+                            }
+                        }
+                    };
+
+                    // Initial jump to original content
+                    const initScroll = () => {
+                        if (window.innerWidth <= 768) {
+                            carousel.style.scrollSnapType = 'none';
+                            const itemWidth = carousel.children[0].offsetWidth + parseInt(window.getComputedStyle(carousel).gap || 20);
+                            carousel.scrollLeft = originalItems.length * itemWidth;
+                            setTimeout(() => { carousel.style.scrollSnapType = 'x mandatory'; }, 50);
+                        }
+                    };
+
+                    setTimeout(initScroll, 100);
+                    window.addEventListener('resize', initScroll);
+                    carousel.addEventListener('scroll', handleScrollPosition);
+                }
+            });
         });
     </script>
 </body>
-
 </html>
-
-
