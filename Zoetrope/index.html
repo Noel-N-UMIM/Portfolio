@@ -152,6 +152,60 @@
             color: var(--accent-color);
         }
 
+        /* -----------------------------------------------------------
+           MAIN NAVIGATION (Desktop & Mobile)
+        ----------------------------------------------------------- */
+        .main-nav {
+            display: flex;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li a {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 5px 0;
+            position: relative;
+            color: var(--text-color);
+        }
+
+        .nav-links li a:hover {
+            color: var(--accent-color);
+        }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links li a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
         .back-btn {
             display: flex;
             align-items: center;
@@ -176,25 +230,53 @@
         ----------------------------------------------------------- */
         .hero {
             height: 90vh;
+            /* NOTE: To use the video background template, comment out or remove the 'background' property below */
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('img/Banner_Image.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed; /* Parallax effect */
+            
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             position: relative;
             padding: 0;
+            overflow: hidden; /* Added to constrain video background */
+        }
+
+        /* Template classes for Hero Video Background */
+        .hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8));
+            z-index: 1;
         }
 
         .hero-content {
             max-width: 800px;
             padding: 20px;
             animation: fadeIn 1.5s ease-out;
+            position: relative;
+            z-index: 2; /* Ensures content stays above the video background */
         }
-
-        .hero-subtitle {
+                .hero-subtitle {
             font-size: 1.2rem;
             text-transform: uppercase;
             letter-spacing: 3px;
@@ -209,6 +291,7 @@
             transform: translateX(-50%);
             animation: bounce 2s infinite;
             opacity: 0.7;
+            z-index: 2; /* Ensures indicator stays above the video background */
         }
 
         /* -----------------------------------------------------------
@@ -515,14 +598,41 @@
         /* -----------------------------------------------------------
            RESPONSIVE MEDIA QUERIES
         ----------------------------------------------------------- */
+        /* Kick in the mobile menu slightly earlier (992px) due to 7 menu items */
+        @media (max-width: 992px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+            .mobile-menu-toggle {
+                display: block;
+                order: 2; /* Positions hamburger on the right */
+            }
+            .brand {
+                order: 1; /* Positions logo on the left */
+            }
+            .main-nav {
+                display: none; /* Hidden by default on small screens */
+                width: 100%;
+                order: 3;
+                padding-top: 15px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                margin-top: 15px;
+            }
+            .main-nav.active {
+                display: flex;
+                justify-content: center;
+            }
+            .nav-links {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                width: 100%;
+            }
+        }
+
         @media (max-width: 768px) {
             h1 { font-size: 2rem; }
             h2 { font-size: 1.6rem; }
-            
-            .header-content {
-                flex-direction: column;
-                gap: 10px;
-            }
             
             .hero {
                 background-attachment: scroll; 
@@ -554,15 +664,41 @@
                   <a href="/index.html" class="brand">
                 NOEL NUÑEZ <span>|</span> Zoetrope
             </a>
-            <a href="/Projects/" class="back-btn">
-                <i class="fa-solid fa-arrow-left"></i> Interactive Media Projects
-            </a>
+            
+            <!-- Mobile Menu Toggle Button -->
+            <button class="mobile-menu-toggle" aria-label="Toggle Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- New Navigation Menu -->
+            <nav class="main-nav">
+                <ul class="nav-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Interaction Design</a></li>
+                    <li><a href="#">Storyboards</a></li>
+                    <li><a href="#">Animation</a></li>
+                    <li><a href="#">Art</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </nav>
         </div>
     </header>
 
     <main>
         <!-- HERO SECTION -->
         <section id="hero" class="hero">
+            
+            <!-- VIDEO BACKGROUND TEMPLATE 
+                 To use this: 
+                 1. Uncomment the <video> and <div class="hero-overlay"> elements below.
+                 2. Go to the .hero CSS class and remove or comment out the 'background' property.
+            -->
+            
+           <!-- <video class="hero-video" src="img/Praxinoscope.mp4" autoplay loop muted playsinline></video>
+            <div class="hero-overlay"></div> -->
+            
+
             <div class="hero-content">
                 <p class="hero-subtitle">Physical Computing Series</p>
                 <h1>Zoetrope & Praxinoscope</h1>
@@ -718,7 +854,7 @@
 
             <section id="process-carousel" class="fade-in-section">
     <div class="container">
-                 <h2>Printing</h2>
+                 <h2 style="text-align: center;">Printing</h2>
                <!-- <p>
                 <div class="divider-icon"><i class="fa-solid fa-images"></i></div>
        
@@ -835,7 +971,7 @@ From Zbrush, I moved to a program called Cura which is used to prepare the model
         <!-- PHASE 6: SOLUTION -->
         <section id="solution" class="fade-in-section">
             <div class="container">
-                <!--<div class="divider-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>-->
+                <div class="divider-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
                 <h2>The Solution: Praxinoscope</h2>
                 
                 <div class="overview-layout">
@@ -941,6 +1077,27 @@ From Zbrush, I moved to a program called Cura which is used to prepare the model
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
+            /* -----------------------------------------------------------
+               MOBILE MENU TOGGLE
+            ----------------------------------------------------------- */
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            const mainNav = document.querySelector('.main-nav');
+            
+            if (menuToggle) {
+                menuToggle.addEventListener('click', () => {
+                    mainNav.classList.toggle('active');
+                    const icon = menuToggle.querySelector('i');
+                    // Swap icon between Hamburger and 'X'
+                    if (mainNav.classList.contains('active')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-xmark');
+                    } else {
+                        icon.classList.remove('fa-xmark');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+            }
+
             /* -----------------------------------------------------------
                SCROLL ANIMATION (INTERSECTION OBSERVER)
             ----------------------------------------------------------- */
