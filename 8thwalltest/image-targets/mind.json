@@ -1,0 +1,23 @@
+{
+  "imagePath": "image-targets/mind_luminance.png",
+  "metadata": null,
+  "name": "mind",
+  "type": "PLANAR",
+  "properties": {
+    "top": 0,
+    "left": 0,
+    "width": 480,
+    "height": 640,
+    "isRotated": false,
+    "originalWidth": 480,
+    "originalHeight": 640
+  },
+  "resources": {
+    "originalImage": "mind_original.png",
+    "croppedImage": "mind_cropped.png",
+    "thumbnailImage": "mind_thumbnail.png",
+    "luminanceImage": "mind_luminance.png"
+  },
+  "created": 1774817042497,
+  "updated": 1774817042497
+}
