@@ -467,7 +467,8 @@
             background-color: #000;
         }
 
-        .video-wrapper iframe {
+        .video-wrapper iframe,
+        .video-wrapper video {
             position: absolute;
             top: 0;
             left: 0;
@@ -729,13 +730,17 @@
                     </div>-->
                 </div>
 
-                <!-- RESPONSIVE VIMEO EMBED -->
+                <!-- RESPONSIVE LOCAL VIDEO EMBED -->
                  <p>
-<h3>>Watch the VR experience below (4:59 minutes)</h3>
+<h3>Watch the VR experience below (1:16 minutes)</h3>
 </p>
                 <div class="video-wrapper">
-                    <!-- REPLACE "VIDEO_ID_HERE" WITH YOUR ACTUAL VIMEO VIDEO ID -->
-                    <iframe src="https://player.vimeo.com/video/824589005?color=00bcd4&title=0&byline=0&portrait=0" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                    <!-- REPLACE "img/Thermae Walkthrough Short-1.mp4" WITH YOUR ACTUAL LOCAL VIDEO PATH -->
+                    <!-- REPLACE "img/video-thumbnail.jpg" WITH YOUR ACTUAL THUMBNAIL PATH -->
+                    <video controls preload="metadata" poster="img/video_thumb.png">
+                        <source src="img/Thermae Walkthrough Short-1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
                 </div>
             </div>
         </section>
