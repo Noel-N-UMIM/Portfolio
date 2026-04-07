@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Galactic Lab: Shield Protocol Final</title>
+    <title>VESL Protocol</title>
     <style>
         :root {
             --color-cream: #FFDEAD;
@@ -52,9 +52,9 @@
         </div>
 
         <div id="intro-screen" class="ui-screen active">
-            <h1>SHIELD PROTOCOL</h1>
-            <p>PROTECT BOTH VESSELS.</p>
-            <p>IMPACT TRIGGERS HULL ALARM.</p>
+            <h1>VESL PROTOCOL</h1>
+            <p>PROTECT THE JUNIOR VESL.</p>
+            <p>FIRE AT METEORS AND MAKE A SAFE PATH TO YOUR DESTINATION.</p>
             <button id="start-btn" class="start-btn">ENGAGE</button>
         </div>
 
@@ -73,9 +73,38 @@
     </div>
 
     <script>
+        // --- Sound Manager (Web Audio API) ---
+        const Sound = {
+            ctx: new (window.AudioContext || window.webkitAudioContext)(),
+            play(type) {
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                const now = this.ctx.currentTime;
+                if (type === 'fire') {
+                    osc.type = 'square'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+                    gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(); osc.stop(now + 0.1);
+                } else if (type === 'impact') {
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(40, now + 0.2);
+                    gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now + 0.2);
+                    osc.start(); osc.stop(now + 0.2);
+                } else if (type === 'success') {
+                    osc.type = 'triangle'; [440, 554, 659, 880].forEach((f, i) => osc.frequency.setValueAtTime(f, now + i * 0.1));
+                    gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.5);
+                    osc.start(); osc.stop(now + 0.5);
+                } else if (type === 'fail') {
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, now); osc.frequency.linearRampToValueAtTime(50, now + 0.6);
+                    gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now + 0.6);
+                    osc.start(); osc.stop(now + 0.6);
+                }
+            }
+        };
+
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        
         let width, height, mainShip, smallShip, bullets, meteors, particles, stars, gameState, planet;
         let timeLeft = 30, health = 4, gameInterval, shake = 0, fadeAlpha = 1.0;
         let keys = { ArrowLeft: false, ArrowRight: false };
@@ -83,43 +112,29 @@
         function init() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
-            
             mainShip = { x: width/2 - 30, y: height - 280, targetX: width/2 - 30, w: 60, h: 90, flash: 0 };
             smallShip = { x: width/2 - 20, y: height - 160, w: 40, h: 50, vel: 1.5, nextChange: 0, flash: 0 };
-            
             bullets = []; meteors = []; particles = []; stars = [];
             timeLeft = 30; health = 4; gameState = 'intro'; fadeAlpha = 1.0;
             planet = { y: height + 300, size: width * 1.5 };
-
-            for(let i=0; i<60; i++) {
-                stars.push({ x: Math.random()*width, y: Math.random()*height, s: Math.random()*2, sp: 0.3 + Math.random()*0.5 });
-            }
+            for(let i=0; i<60; i++) stars.push({ x: Math.random()*width, y: Math.random()*height, s: Math.random()*2, sp: 0.3 + Math.random()*0.5 });
             updateHealthUI();
         }
 
         function triggerHit() {
-            health--;
-            shake = 15;
-            mainShip.flash = 15; // Trigger Red Flash
-            updateHealthUI();
+            health--; shake = 15; mainShip.flash = 15; Sound.play('impact'); updateHealthUI();
             if ("vibrate" in navigator) navigator.vibrate(60);
             if(health <= 0) endGame(false);
         }
 
         function drawMainShip(x, y, thrusters = true) {
             ctx.save(); ctx.translate(x, y);
-            // Impact Flash: Deep Red Overlay
-            if(mainShip.flash > 0) { 
-                ctx.filter = 'drop-shadow(0 0 10px red) brightness(0.8) sepia(1) hue-rotate(-50deg) saturate(5)';
-                mainShip.flash--; 
-            }
+            if(mainShip.flash > 0) { ctx.filter = 'drop-shadow(0 0 10px red) brightness(0.8) sepia(1) hue-rotate(-50deg) saturate(5)'; mainShip.flash--; }
             ctx.fillStyle = '#006400'; ctx.fillRect(6, 40, 9, 45); ctx.fillRect(45, 40, 9, 45);
             ctx.fillStyle = '#FFDEAD'; ctx.fillRect(15, 18, 30, 54);
             ctx.beginPath(); ctx.moveTo(15, 18); ctx.lineTo(30, 0); ctx.lineTo(45, 18); ctx.fill();
             ctx.fillStyle = '#FF8C00'; ctx.beginPath(); ctx.arc(30, 36, 7, 0, Math.PI*2); ctx.fill();
-            if(thrusters && Math.random() > 0.3) {
-                ctx.fillStyle = '#FF8C00'; ctx.fillRect(20, 72, 6, 12); ctx.fillRect(34, 72, 6, 12);
-            }
+            if(thrusters && Math.random() > 0.3) { ctx.fillStyle = '#FF8C00'; ctx.fillRect(20, 72, 6, 12); ctx.fillRect(34, 72, 6, 12); }
             ctx.restore();
         }
 
@@ -129,9 +144,7 @@
             ctx.fillStyle = '#666'; ctx.fillRect(5, 15, 30, 20);
             ctx.fillStyle = '#006400'; ctx.fillRect(0, 22, 40, 6);
             ctx.fillStyle = '#FFDEAD'; ctx.fillRect(15, 5, 10, 8);
-            if(thrusters && Math.random() > 0.3) {
-                ctx.fillStyle = '#00FFFF'; ctx.fillRect(18, 35, 4, 6);
-            }
+            if(thrusters && Math.random() > 0.3) { ctx.fillStyle = '#00FFFF'; ctx.fillRect(18, 35, 4, 6); }
             ctx.restore();
         }
 
@@ -139,111 +152,58 @@
             if(gameState !== 'playing') return;
             bullets.push({ x: mainShip.x + 10, y: mainShip.y + 40 });
             bullets.push({ x: mainShip.x + 50, y: mainShip.y + 40 });
+            Sound.play('fire');
         }
 
         function updateHealthUI() {
             const slots = document.querySelectorAll('.health-slot');
-            slots.forEach((slot, i) => {
-                if(i < health) slot.classList.add('filled');
-                else slot.classList.remove('filled');
-            });
+            slots.forEach((slot, i) => { i < health ? slot.classList.add('filled') : slot.classList.remove('filled'); });
         }
 
         function update() {
             stars.forEach(s => { s.y += s.sp; if(s.y > height) s.y = -5; });
-
             if(gameState === 'playing') {
                 if(keys.ArrowLeft) mainShip.targetX -= 5;
                 if(keys.ArrowRight) mainShip.targetX += 5;
                 mainShip.targetX = Math.max(0, Math.min(width - mainShip.w, mainShip.targetX));
                 mainShip.x += (mainShip.targetX - mainShip.x) * 0.12;
-
                 smallShip.x += smallShip.vel;
-                if(Date.now() > smallShip.nextChange) {
-                    smallShip.vel = (Math.random() - 0.5) * 4;
-                    smallShip.nextChange = Date.now() + 2000;
-                }
+                if(Date.now() > smallShip.nextChange) { smallShip.vel = (Math.random() - 0.5) * 4; smallShip.nextChange = Date.now() + 2000; }
                 if(smallShip.x < 20 || smallShip.x > width - 60) smallShip.vel *= -1;
-
-                bullets.forEach((b, i) => {
-                    b.y -= 14; if(b.y < -20) bullets.splice(i, 1);
-                });
-
+                bullets.forEach((b, i) => { b.y -= 14; if(b.y < -20) bullets.splice(i, 1); });
                 meteors.forEach((m, mi) => {
                     m.y += m.sp;
-                    // Main Ship Impact
-                    if(Math.hypot(m.x - (mainShip.x+30), m.y - (mainShip.y+45)) < m.r + 25) {
-                        meteors.splice(mi, 1); createParticles(m.x, m.y, 8, 'orange'); triggerHit();
-                    }
-                    // Escort Impact
-                    else if(Math.hypot(m.x - (smallShip.x+20), m.y - (smallShip.y+25)) < m.r + 15) {
-                        meteors.splice(mi, 1); smallShip.flash = 12; createParticles(smallShip.x+20, smallShip.y+25, 10, 'red'); triggerHit();
-                    }
-                    // Bullets
-                    bullets.forEach((b, bi) => {
-                        if(Math.hypot(m.x - b.x, m.y - b.y) < m.r + 20) {
-                            meteors.splice(mi, 1); bullets.splice(bi, 1); createParticles(m.x, m.y, 10, '#5C4033');
-                        }
-                    });
+                    if(Math.hypot(m.x - (mainShip.x+30), m.y - (mainShip.y+45)) < m.r + 25) { meteors.splice(mi, 1); createParticles(m.x, m.y, 8, 'orange'); triggerHit(); }
+                    else if(Math.hypot(m.x - (smallShip.x+20), m.y - (smallShip.y+25)) < m.r + 15) { meteors.splice(mi, 1); smallShip.flash = 12; createParticles(smallShip.x+20, smallShip.y+25, 10, 'red'); triggerHit(); }
+                    bullets.forEach((b, bi) => { if(Math.hypot(m.x - b.x, m.y - b.y) < m.r + 20) { meteors.splice(mi, 1); bullets.splice(bi, 1); createParticles(m.x, m.y, 10, '#5C4033'); Sound.play('impact'); } });
                     if(m.y > height + 50) meteors.splice(mi, 1);
                 });
-
-                if(Math.random() * 100 < 2.5) meteors.push({ x: Math.random()*width, y: -50, r: 15 + Math.random()*20, sp: 2 + Math.random()*2 });
+                // SPACING MATCHED: Slowed down spawn rate to 2.2% chance per frame for smoother density
+                if(Math.random() * 100 < 2.2) meteors.push({ x: Math.random()*width, y: -50, r: 15 + Math.random()*20, sp: 2 + Math.random()*2 });
             }
-
             if(gameState === 'landing') {
                 mainShip.x += (width/2 - 45 - mainShip.x) * 0.06;
                 smallShip.x += (width/2 + 15 - smallShip.x) * 0.06;
                 if(planet.y > height * 0.55) planet.y -= 2.5;
-                if(planet.y < height * 0.8) {
-                    mainShip.y += 1.2; smallShip.y += 1.2;
-                    createParticles(mainShip.x + 30, mainShip.y + 80, 1, 'rgba(200,200,200,0.3)', 2, 0);
-                    createParticles(smallShip.x + 20, smallShip.y + 45, 1, 'rgba(200,200,200,0.3)', 1, 0);
-                }
-                if(fadeAlpha > 0) fadeAlpha -= 0.02;
-                else { meteors = []; bullets = []; }
-
-                if(mainShip.y > planet.y - 40) { 
-                    if ("vibrate" in navigator) navigator.vibrate([100, 50, 100]); 
-                    gameState = 'finished'; 
-                    showEndUI(true); 
-                }
+                if(planet.y < height * 0.8) { mainShip.y += 1.2; smallShip.y += 1.2; createParticles(mainShip.x + 30, mainShip.y + 80, 1, 'rgba(200,200,200,0.3)', 2, 0); }
+                if(fadeAlpha > 0) fadeAlpha -= 0.02; else { meteors = []; bullets = []; }
+                if(mainShip.y > planet.y - 40) { if ("vibrate" in navigator) navigator.vibrate([100, 50, 100]); gameState = 'finished'; Sound.play('success'); showEndUI(true); }
             }
-
             particles.forEach((p, i) => { p.x += p.vx; p.y += p.vy + 2; p.l--; if(p.l <= 0) particles.splice(i, 1); });
             if(shake > 0) shake--;
         }
 
-        function createParticles(x, y, n, c, vx=4, vy=4) {
-            for(let i=0; i<n; i++) particles.push({ x, y, vx:(Math.random()-0.5)*vx, vy:(Math.random()-0.5)*vy, l:25, color:c });
-        }
+        function createParticles(x, y, n, c, vx=4, vy=4) { for(let i=0; i<n; i++) particles.push({ x, y, vx:(Math.random()-0.5)*vx, vy:(Math.random()-0.5)*vy, l:25, color:c }); }
 
         function draw() {
-            ctx.save();
-            if(shake > 0) ctx.translate(Math.random()*shake - shake/2, Math.random()*shake - shake/2);
+            ctx.save(); if(shake > 0) ctx.translate(Math.random()*shake - shake/2, Math.random()*shake - shake/2);
             ctx.fillStyle = '#080A14'; ctx.fillRect(0, 0, width, height);
             ctx.fillStyle = 'white'; stars.forEach(s => ctx.fillRect(s.x, s.y, s.s, s.s));
-
-            if(gameState === 'landing' || gameState === 'finished') {
-                ctx.fillStyle = '#222';
-                ctx.beginPath(); ctx.arc(width/2, planet.y + planet.size/2, planet.size/2, 0, Math.PI*2); ctx.fill();
-                ctx.strokeStyle = '#444'; ctx.lineWidth = 4; ctx.stroke();
-            }
-
-            ctx.save();
-            ctx.globalAlpha = Math.max(0, fadeAlpha);
-            bullets.forEach(b => { ctx.fillStyle = 'yellow'; ctx.fillRect(b.x, b.y, 4, 15); });
-            meteors.forEach(m => { ctx.fillStyle = '#5C4033'; ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, Math.PI*2); ctx.fill(); });
-            ctx.restore();
-
+            if(gameState === 'landing' || gameState === 'finished') { ctx.fillStyle = '#222'; ctx.beginPath(); ctx.arc(width/2, planet.y + planet.size/2, planet.size/2, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle = '#444'; ctx.lineWidth = 4; ctx.stroke(); }
+            ctx.save(); ctx.globalAlpha = Math.max(0, fadeAlpha); bullets.forEach(b => { ctx.fillStyle = 'yellow'; ctx.fillRect(b.x, b.y, 4, 15); }); meteors.forEach(m => { ctx.fillStyle = '#5C4033'; ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, Math.PI*2); ctx.fill(); }); ctx.restore();
             particles.forEach(p => { ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 4, 4); });
-
-            drawMainShip(mainShip.x, mainShip.y, gameState !== 'finished');
-            drawSmallShip(smallShip.x, smallShip.y, gameState !== 'finished');
-            ctx.restore();
-
-            update();
-            requestAnimationFrame(draw);
+            drawMainShip(mainShip.x, mainShip.y, gameState !== 'finished'); drawSmallShip(smallShip.x, smallShip.y, gameState !== 'finished');
+            ctx.restore(); update(); requestAnimationFrame(draw);
         }
 
         function endGame(success) {
@@ -252,48 +212,24 @@
             document.getElementById('controls').style.display = 'none';
             document.getElementById('timer-display').style.display = 'none';
             clearInterval(gameInterval);
-            if(!success) { if ("vibrate" in navigator) navigator.vibrate(300); showEndUI(false); }
+            if(!success) { Sound.play('fail'); if ("vibrate" in navigator) navigator.vibrate(300); showEndUI(false); }
         }
 
         function showEndUI(win) {
             document.getElementById('end-status').innerText = win ? "MISSION SUCCESS" : "MISSION FAILED";
             document.getElementById('end-status').style.color = win ? "var(--color-orange)" : "red";
-            document.getElementById('end-message').innerText = win ? "LANDING COMPLETE." : "MISSION TERMINATED.";
+            document.getElementById('end-message').innerText = win ? "SAFE ARRIVAL TO DESTINATION." : "MISSION TERMINATED.";
             document.getElementById('end-screen').classList.add('active');
         }
 
         window.addEventListener('keydown', e => { 
-            if(e.code === 'ArrowLeft') { keys.ArrowLeft = true; mainShip.targetX -= 40; }
-            if(e.code === 'ArrowRight') { keys.ArrowRight = true; mainShip.targetX += 40; }
+            if(e.code === 'ArrowLeft') { keys.ArrowLeft = true; mainShip.targetX -= 40; } 
+            if(e.code === 'ArrowRight') { keys.ArrowRight = true; mainShip.targetX += 40; } 
             if(e.code === 'Space') fire(); 
         });
-        window.addEventListener('keyup', e => { 
-            if(e.code === 'ArrowLeft') keys.ArrowLeft = false;
-            if(e.code === 'ArrowRight') keys.ArrowRight = false;
-        });
-
-        const bind = (id, act) => {
-            const el = document.getElementById(id);
-            const start = (e) => { e.preventDefault(); 
-                if(act === 'L') mainShip.targetX -= 60; 
-                if(act === 'R') mainShip.targetX += 60; 
-                if(act === 'F') fire();
-            };
-            el.addEventListener('touchstart', start); el.addEventListener('mousedown', start);
-        };
-
-        document.getElementById('start-btn').onclick = () => {
-            init(); gameState = 'playing';
-            document.getElementById('intro-screen').classList.remove('active');
-            document.getElementById('controls').style.display = 'flex';
-            gameInterval = setInterval(() => {
-                timeLeft--;
-                let s = timeLeft.toString().padStart(2,'0');
-                document.getElementById('timer-display').innerText = `00:${s}`;
-                if(timeLeft <= 0) endGame(true);
-            }, 1000);
-        };
-
+        window.addEventListener('keyup', e => { if(e.code === 'ArrowLeft') keys.ArrowLeft = false; if(e.code === 'ArrowRight') keys.ArrowRight = false; });
+        const bind = (id, act) => { const el = document.getElementById(id); const start = (e) => { e.preventDefault(); if(act === 'L') mainShip.targetX -= 60; if(act === 'R') mainShip.targetX += 60; if(act === 'F') fire(); }; el.addEventListener('touchstart', start); el.addEventListener('mousedown', start); };
+        document.getElementById('start-btn').onclick = () => { init(); gameState = 'playing'; document.getElementById('intro-screen').classList.remove('active'); document.getElementById('controls').style.display = 'flex'; gameInterval = setInterval(() => { timeLeft--; let s = timeLeft.toString().padStart(2,'0'); document.getElementById('timer-display').innerText = `00:${s}`; if(timeLeft <= 0) endGame(true); }, 1000); };
         document.getElementById('restart-btn').onclick = () => location.reload();
         bind('left-btn', 'L'); bind('right-btn', 'R'); bind('fire-btn', 'F');
         init(); draw();
