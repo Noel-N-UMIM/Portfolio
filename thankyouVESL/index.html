@@ -17,7 +17,6 @@
         canvas { display: block; image-rendering: pixelated; }
 
         #ui-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
-        
         #timer-display { position: absolute; top: 20px; left: 20px; font-size: 1.8rem; color: var(--color-orange); font-weight: bold; text-shadow: 2px 2px #000; }
         
         #health-container { position: absolute; top: 20px; right: 20px; text-align: right; }
@@ -26,7 +25,6 @@
         .health-slot { width: 25px; height: 12px; border: 2px solid var(--color-green); background: rgba(0, 100, 0, 0.2); }
         .filled { background: var(--color-orange); box-shadow: 0 0 8px var(--color-orange); }
 
-        /* Repositioned Mission Header */
         #mission-header { position: absolute; top: 70px; width: 100%; text-align: center; color: var(--color-orange); font-weight: bold; font-size: 0.9rem; text-shadow: 2px 2px #000; letter-spacing: 1px; display: none; }
 
         .ui-screen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; flex-direction: column; align-items: center; background: rgba(8, 10, 20, 0.95); width: 85%; max-width: 400px; padding: 30px; border: 4px solid var(--color-green); text-align: center; pointer-events: auto; }
@@ -96,6 +94,7 @@
                 osc.connect(gain);
                 gain.connect(this.ctx.destination);
                 const now = this.ctx.currentTime;
+                
                 if (type === 'fire') {
                     osc.type = 'square'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
                     gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
@@ -104,6 +103,11 @@
                     osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(40, now + 0.2);
                     gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now + 0.2);
                     osc.start(); osc.stop(now + 0.2);
+                } else if (type === 'thruster') {
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(80, now);
+                    osc.frequency.exponentialRampToValueAtTime(30, now + 1.5);
+                    gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0, now + 1.5);
+                    osc.start(); osc.stop(now + 1.5);
                 } else if (type === 'success') {
                     osc.type = 'triangle'; [440, 554, 659, 880].forEach((f, i) => osc.frequency.setValueAtTime(f, now + i * 0.1));
                     gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.5);
@@ -142,46 +146,22 @@
         }
 
         function triggerHit() {
-            health--; shake = 15; 
-            mainShip.flash = 20; // Increase flash duration
-            Sound.play('impact'); 
-            updateHealthUI();
+            health--; shake = 15; mainShip.flash = 20; Sound.play('impact'); updateHealthUI();
             if (navigator.vibrate) navigator.vibrate(80);
             if(health <= 0) endGame(false);
         }
 
         function drawMainShip(x, y, thrusters = true) {
             ctx.save(); ctx.translate(x, y);
-            
-            // Reliable Red Flash Override
             const isFlashing = mainShip.flash > 0 && Math.floor(mainShip.flash / 4) % 2 === 0;
             const bodyColor = isFlashing ? '#FF0000' : '#FFDEAD';
             const finColor = isFlashing ? '#AA0000' : '#006400';
-            
             if (mainShip.flash > 0) mainShip.flash--;
-
-            // Fins
-            ctx.fillStyle = finColor; 
-            ctx.fillRect(6, 40, 9, 45); 
-            ctx.fillRect(45, 40, 9, 45);
-            
-            // Main Body
-            ctx.fillStyle = bodyColor; 
-            ctx.fillRect(15, 18, 30, 54);
-            
-            // Nose Cone
-            ctx.beginPath(); 
-            ctx.moveTo(15, 18); ctx.lineTo(30, 0); ctx.lineTo(45, 18); 
-            ctx.fillStyle = finColor;
-            ctx.fill();
-            
-            // Cockpit Window
-            ctx.fillStyle = '#FF8C00'; 
-            ctx.beginPath(); ctx.arc(30, 36, 7, 0, Math.PI*2); ctx.fill();
-            
-            if(thrusters && Math.random() > 0.3) { 
-                ctx.fillStyle = '#FF8C00'; ctx.fillRect(20, 72, 6, 12); ctx.fillRect(34, 72, 6, 12); 
-            }
+            ctx.fillStyle = finColor; ctx.fillRect(6, 40, 9, 45); ctx.fillRect(45, 40, 9, 45);
+            ctx.fillStyle = bodyColor; ctx.fillRect(15, 18, 30, 54);
+            ctx.beginPath(); ctx.moveTo(15, 18); ctx.lineTo(30, 0); ctx.lineTo(45, 18); ctx.fillStyle = finColor; ctx.fill();
+            ctx.fillStyle = '#FF8C00'; ctx.beginPath(); ctx.arc(30, 36, 7, 0, Math.PI*2); ctx.fill();
+            if(thrusters && Math.random() > 0.3) { ctx.fillStyle = '#FF8C00'; ctx.fillRect(20, 72, 6, 12); ctx.fillRect(34, 72, 6, 12); }
             ctx.restore();
         }
 
@@ -255,6 +235,7 @@
         function endGame(success) {
             if(gameState === 'over' || gameState === 'landing') return;
             gameState = success ? 'landing' : 'over';
+            if(success) Sound.play('thruster');
             document.getElementById('controls').style.display = 'none';
             document.getElementById('timer-display').style.display = 'none';
             document.getElementById('mission-header').style.display = 'none';
@@ -269,11 +250,7 @@
             document.getElementById('end-screen').classList.add('active');
         }
 
-        window.addEventListener('keydown', e => { 
-            if(e.code === 'ArrowLeft') { keys.ArrowLeft = true; mainShip.targetX -= 40; } 
-            if(e.code === 'ArrowRight') { keys.ArrowRight = true; mainShip.targetX += 40; } 
-            if(e.code === 'Space') fire(); 
-        });
+        window.addEventListener('keydown', e => { if(e.code === 'ArrowLeft') { keys.ArrowLeft = true; mainShip.targetX -= 40; } if(e.code === 'ArrowRight') { keys.ArrowRight = true; mainShip.targetX += 40; } if(e.code === 'Space') fire(); });
         window.addEventListener('keyup', e => { if(e.code === 'ArrowLeft') keys.ArrowLeft = false; if(e.code === 'ArrowRight') keys.ArrowRight = false; });
         const bind = (id, act) => { const el = document.getElementById(id); const start = (e) => { e.preventDefault(); Sound.init(); if(act === 'L') mainShip.targetX -= 60; if(act === 'R') mainShip.targetX += 60; if(act === 'F') fire(); }; el.addEventListener('touchstart', start); el.addEventListener('mousedown', start); };
         document.getElementById('start-btn').onclick = () => { Sound.init(); init(); gameState = 'playing'; document.getElementById('intro-screen').classList.remove('active'); document.getElementById('controls').style.display = 'flex'; document.getElementById('mission-header').style.display = 'block'; gameInterval = setInterval(() => { timeLeft--; let s = timeLeft.toString().padStart(2,'0'); document.getElementById('timer-display').innerText = `00:${s}`; if(timeLeft <= 0) endGame(true); }, 1000); };
