@@ -17,7 +17,6 @@
         canvas { display: block; image-rendering: pixelated; }
 
         #ui-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
-        
         #timer-display { position: absolute; top: 20px; left: 20px; font-size: 1.8rem; color: var(--color-orange); font-weight: bold; text-shadow: 2px 2px #000; }
         
         #health-container { position: absolute; top: 20px; right: 20px; text-align: right; }
@@ -30,13 +29,10 @@
         .active { display: flex; }
         
         h1 { font-size: 1.6rem; color: var(--color-orange); margin-bottom: 15px; }
-        p { margin-bottom: 10px; font-size: 0.9rem; line-height: 1.2; }
-        
-        .difficulty-container { display: flex; gap: 10px; margin-top: 20px; }
-        .diff-btn { padding: 10px; background: rgba(0, 100, 0, 0.3); border: 2px solid var(--color-green); color: white; cursor: pointer; font-family: inherit; font-size: 0.8rem; }
-        .diff-btn.selected { background: var(--color-green); border-color: white; }
-
-        .start-btn { padding: 15px 30px; font-size: 1.2rem; background: var(--color-green); color: white; border: 3px solid white; cursor: pointer; font-weight: bold; margin-top: 20px; width: 100%; }
+        .diff-container { display: flex; gap: 10px; margin: 15px 0; }
+        .diff-btn { padding: 8px 12px; background: transparent; border: 2px solid var(--color-green); color: white; cursor: pointer; font-family: inherit; }
+        .diff-btn.selected { background: var(--color-green); color: white; }
+        .start-btn { padding: 15px 30px; font-size: 1.2rem; background: var(--color-green); color: white; border: 3px solid white; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; }
 
         #controls { position: absolute; bottom: 20px; width: 100%; display: none; justify-content: space-between; padding: 0 20px; }
         .ctrl-group { display: flex; gap: 15px; pointer-events: auto; }
@@ -50,10 +46,8 @@
         <div id="health-container">
             <div id="health-label">SHIELD INTEGRITY</div>
             <div id="health-slots">
-                <div class="health-slot filled"></div>
-                <div class="health-slot filled"></div>
-                <div class="health-slot filled"></div>
-                <div class="health-slot filled"></div>
+                <div class="health-slot filled"></div><div class="health-slot filled"></div>
+                <div class="health-slot filled"></div><div class="health-slot filled"></div>
             </div>
         </div>
 
@@ -61,13 +55,11 @@
             <h1>VESL PROTOCOL</h1>
             <p>PROTECT THE JUNIOR VESL.</p>
             <p>FIRE AT METEORS AND MAKE A SAFE PATH TO YOUR DESTINATION.</p>
-            
-            <div class="difficulty-container">
-                <button class="diff-btn" onclick="setDiff('easy', this)">EASY</button>
-                <button class="diff-btn selected" onclick="setDiff('normal', this)">NORMAL</button>
-                <button class="diff-btn" onclick="setDiff('hard', this)">CHALLENGING</button>
+            <div class="diff-container">
+                <button class="diff-btn" onclick="setDiff(1.2, 2)">EASY</button>
+                <button class="diff-btn selected" onclick="setDiff(2.2, 3)">NORMAL</button>
+                <button class="diff-btn" onclick="setDiff(3.5, 5)">CHALLENGING</button>
             </div>
-            
             <button id="start-btn" class="start-btn">ENGAGE</button>
         </div>
 
@@ -89,16 +81,16 @@
         // --- Sound Manager (Mobile Fixed) ---
         const Sound = {
             ctx: null,
+            unlocked: false,
             init() {
-                if (!this.ctx) {
-                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if (this.ctx.state === 'suspended') {
-                    this.ctx.resume();
-                }
+                if (this.unlocked && this.ctx) return;
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                this.unlocked = true;
             },
             play(type) {
-                if (!this.ctx) return;
+                this.init();
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 osc.connect(gain);
@@ -130,20 +122,12 @@
         let width, height, mainShip, smallShip, bullets, meteors, particles, stars, gameState, planet;
         let timeLeft = 30, health = 4, gameInterval, shake = 0, fadeAlpha = 1.0;
         let keys = { ArrowLeft: false, ArrowRight: false };
+        let spawnRate = 2.2, meteorSpeedBase = 2;
 
-        // Difficulty Settings
-        let difficulty = {
-            spawnRate: 2.2,
-            minSpeed: 2,
-            maxSpeed: 4
-        };
-
-        function setDiff(lvl, btn) {
+        function setDiff(rate, speed) {
+            spawnRate = rate; meteorSpeedBase = speed;
             document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            if(lvl === 'easy') { difficulty = { spawnRate: 1.5, minSpeed: 1.5, maxSpeed: 2.5 }; }
-            else if(lvl === 'normal') { difficulty = { spawnRate: 2.2, minSpeed: 2, maxSpeed: 4 }; }
-            else { difficulty = { spawnRate: 3.5, minSpeed: 3, maxSpeed: 6 }; }
+            event.target.classList.add('selected');
         }
 
         function init() {
@@ -215,7 +199,7 @@
                     bullets.forEach((b, bi) => { if(Math.hypot(m.x - b.x, m.y - b.y) < m.r + 20) { meteors.splice(mi, 1); bullets.splice(bi, 1); createParticles(m.x, m.y, 10, '#5C4033'); Sound.play('impact'); } });
                     if(m.y > height + 50) meteors.splice(mi, 1);
                 });
-                if(Math.random() * 100 < difficulty.spawnRate) meteors.push({ x: Math.random()*width, y: -50, r: 15 + Math.random()*20, sp: difficulty.minSpeed + Math.random()*(difficulty.maxSpeed - difficulty.minSpeed) });
+                if(Math.random() * 100 < spawnRate) meteors.push({ x: Math.random()*width, y: -50, r: 15 + Math.random()*20, sp: meteorSpeedBase + Math.random()*2 });
             }
             if(gameState === 'landing') {
                 mainShip.x += (width/2 - 45 - mainShip.x) * 0.06;
@@ -258,7 +242,9 @@
             document.getElementById('end-screen').classList.add('active');
         }
 
+        // --- Controls & Audio Unlock ---
         window.addEventListener('keydown', e => { 
+            Sound.init(); 
             if(e.code === 'ArrowLeft') { keys.ArrowLeft = true; mainShip.targetX -= 40; } 
             if(e.code === 'ArrowRight') { keys.ArrowRight = true; mainShip.targetX += 40; } 
             if(e.code === 'Space') fire(); 
@@ -269,7 +255,7 @@
             const el = document.getElementById(id); 
             const start = (e) => { 
                 e.preventDefault(); 
-                Sound.init(); // Resume audio on mobile touch
+                Sound.play(); // This tap unlocks audio for the whole session
                 if (act === 'L') mainShip.targetX -= 60; 
                 if (act === 'R') mainShip.targetX += 60; 
                 if (act === 'F') fire(); 
@@ -278,17 +264,11 @@
         };
 
         document.getElementById('start-btn').onclick = () => { 
-            Sound.init(); // Unlock Audio Context
-            init(); 
-            gameState = 'playing'; 
+            Sound.play(); // Immediate audio unlock
+            init(); gameState = 'playing'; 
             document.getElementById('intro-screen').classList.remove('active'); 
             document.getElementById('controls').style.display = 'flex'; 
-            gameInterval = setInterval(() => { 
-                timeLeft--; 
-                let s = timeLeft.toString().padStart(2,'0'); 
-                document.getElementById('timer-display').innerText = `00:${s}`; 
-                if(timeLeft <= 0) endGame(true); 
-            }, 1000); 
+            gameInterval = setInterval(() => { timeLeft--; let s = timeLeft.toString().padStart(2,'0'); document.getElementById('timer-display').innerText = `00:${s}`; if(timeLeft <= 0) endGame(true); }, 1000); 
         };
         
         document.getElementById('restart-btn').onclick = () => location.reload();
