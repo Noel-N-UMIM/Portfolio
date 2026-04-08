@@ -30,7 +30,13 @@
         .active { display: flex; }
         
         h1 { font-size: 1.6rem; color: var(--color-orange); margin-bottom: 15px; }
-        .start-btn { padding: 15px 30px; font-size: 1.2rem; background: var(--color-green); color: white; border: 3px solid white; cursor: pointer; font-weight: bold; margin-top: 20px; }
+        p { margin-bottom: 10px; font-size: 0.9rem; line-height: 1.2; }
+        
+        .difficulty-container { display: flex; gap: 10px; margin-top: 20px; }
+        .diff-btn { padding: 10px; background: rgba(0, 100, 0, 0.3); border: 2px solid var(--color-green); color: white; cursor: pointer; font-family: inherit; font-size: 0.8rem; }
+        .diff-btn.selected { background: var(--color-green); border-color: white; }
+
+        .start-btn { padding: 15px 30px; font-size: 1.2rem; background: var(--color-green); color: white; border: 3px solid white; cursor: pointer; font-weight: bold; margin-top: 20px; width: 100%; }
 
         #controls { position: absolute; bottom: 20px; width: 100%; display: none; justify-content: space-between; padding: 0 20px; }
         .ctrl-group { display: flex; gap: 15px; pointer-events: auto; }
@@ -55,6 +61,13 @@
             <h1>VESL PROTOCOL</h1>
             <p>PROTECT THE JUNIOR VESL.</p>
             <p>FIRE AT METEORS AND MAKE A SAFE PATH TO YOUR DESTINATION.</p>
+            
+            <div class="difficulty-container">
+                <button class="diff-btn" onclick="setDiff('easy', this)">EASY</button>
+                <button class="diff-btn selected" onclick="setDiff('normal', this)">NORMAL</button>
+                <button class="diff-btn" onclick="setDiff('hard', this)">CHALLENGING</button>
+            </div>
+            
             <button id="start-btn" class="start-btn">ENGAGE</button>
         </div>
 
@@ -73,16 +86,25 @@
     </div>
 
     <script>
-        // --- Sound Manager (Web Audio API) ---
+        // --- Sound Manager (Mobile Fixed) ---
         const Sound = {
-            ctx: new (window.AudioContext || window.webkitAudioContext)(),
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            },
             play(type) {
-                if (this.ctx.state === 'suspended') this.ctx.resume();
+                if (!this.ctx) return;
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 osc.connect(gain);
                 gain.connect(this.ctx.destination);
                 const now = this.ctx.currentTime;
+
                 if (type === 'fire') {
                     osc.type = 'square'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
                     gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
@@ -108,6 +130,21 @@
         let width, height, mainShip, smallShip, bullets, meteors, particles, stars, gameState, planet;
         let timeLeft = 30, health = 4, gameInterval, shake = 0, fadeAlpha = 1.0;
         let keys = { ArrowLeft: false, ArrowRight: false };
+
+        // Difficulty Settings
+        let difficulty = {
+            spawnRate: 2.2,
+            minSpeed: 2,
+            maxSpeed: 4
+        };
+
+        function setDiff(lvl, btn) {
+            document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            if(lvl === 'easy') { difficulty = { spawnRate: 1.5, minSpeed: 1.5, maxSpeed: 2.5 }; }
+            else if(lvl === 'normal') { difficulty = { spawnRate: 2.2, minSpeed: 2, maxSpeed: 4 }; }
+            else { difficulty = { spawnRate: 3.5, minSpeed: 3, maxSpeed: 6 }; }
+        }
 
         function init() {
             width = canvas.width = window.innerWidth;
@@ -178,8 +215,7 @@
                     bullets.forEach((b, bi) => { if(Math.hypot(m.x - b.x, m.y - b.y) < m.r + 20) { meteors.splice(mi, 1); bullets.splice(bi, 1); createParticles(m.x, m.y, 10, '#5C4033'); Sound.play('impact'); } });
                     if(m.y > height + 50) meteors.splice(mi, 1);
                 });
-                // SPACING MATCHED: Slowed down spawn rate to 2.2% chance per frame for smoother density
-                if(Math.random() * 100 < 2.2) meteors.push({ x: Math.random()*width, y: -50, r: 15 + Math.random()*20, sp: 2 + Math.random()*2 });
+                if(Math.random() * 100 < difficulty.spawnRate) meteors.push({ x: Math.random()*width, y: -50, r: 15 + Math.random()*20, sp: difficulty.minSpeed + Math.random()*(difficulty.maxSpeed - difficulty.minSpeed) });
             }
             if(gameState === 'landing') {
                 mainShip.x += (width/2 - 45 - mainShip.x) * 0.06;
@@ -228,8 +264,33 @@
             if(e.code === 'Space') fire(); 
         });
         window.addEventListener('keyup', e => { if(e.code === 'ArrowLeft') keys.ArrowLeft = false; if(e.code === 'ArrowRight') keys.ArrowRight = false; });
-        const bind = (id, act) => { const el = document.getElementById(id); const start = (e) => { e.preventDefault(); if(act === 'L') mainShip.targetX -= 60; if(act === 'R') mainShip.targetX += 60; if(act === 'F') fire(); }; el.addEventListener('touchstart', start); el.addEventListener('mousedown', start); };
-        document.getElementById('start-btn').onclick = () => { init(); gameState = 'playing'; document.getElementById('intro-screen').classList.remove('active'); document.getElementById('controls').style.display = 'flex'; gameInterval = setInterval(() => { timeLeft--; let s = timeLeft.toString().padStart(2,'0'); document.getElementById('timer-display').innerText = `00:${s}`; if(timeLeft <= 0) endGame(true); }, 1000); };
+        
+        const bind = (id, act) => { 
+            const el = document.getElementById(id); 
+            const start = (e) => { 
+                e.preventDefault(); 
+                Sound.init(); // Resume audio on mobile touch
+                if (act === 'L') mainShip.targetX -= 60; 
+                if (act === 'R') mainShip.targetX += 60; 
+                if (act === 'F') fire(); 
+            }; 
+            el.addEventListener('touchstart', start); el.addEventListener('mousedown', start); 
+        };
+
+        document.getElementById('start-btn').onclick = () => { 
+            Sound.init(); // Unlock Audio Context
+            init(); 
+            gameState = 'playing'; 
+            document.getElementById('intro-screen').classList.remove('active'); 
+            document.getElementById('controls').style.display = 'flex'; 
+            gameInterval = setInterval(() => { 
+                timeLeft--; 
+                let s = timeLeft.toString().padStart(2,'0'); 
+                document.getElementById('timer-display').innerText = `00:${s}`; 
+                if(timeLeft <= 0) endGame(true); 
+            }, 1000); 
+        };
+        
         document.getElementById('restart-btn').onclick = () => location.reload();
         bind('left-btn', 'L'); bind('right-btn', 'R'); bind('fire-btn', 'F');
         init(); draw();
