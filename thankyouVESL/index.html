@@ -18,9 +18,6 @@
 
         #ui-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
         
-        /* Mission Reminder Header */
-        #mission-header { position: absolute; top: 10px; width: 100%; text-align: center; color: var(--color-orange); font-weight: bold; font-size: 0.9rem; text-shadow: 2px 2px #000; letter-spacing: 1px; display: none; }
-
         #timer-display { position: absolute; top: 20px; left: 20px; font-size: 1.8rem; color: var(--color-orange); font-weight: bold; text-shadow: 2px 2px #000; }
         
         #health-container { position: absolute; top: 20px; right: 20px; text-align: right; }
@@ -29,13 +26,16 @@
         .health-slot { width: 25px; height: 12px; border: 2px solid var(--color-green); background: rgba(0, 100, 0, 0.2); }
         .filled { background: var(--color-orange); box-shadow: 0 0 8px var(--color-orange); }
 
+        /* Repositioned Mission Header */
+        #mission-header { position: absolute; top: 70px; width: 100%; text-align: center; color: var(--color-orange); font-weight: bold; font-size: 0.9rem; text-shadow: 2px 2px #000; letter-spacing: 1px; display: none; }
+
         .ui-screen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; flex-direction: column; align-items: center; background: rgba(8, 10, 20, 0.95); width: 85%; max-width: 400px; padding: 30px; border: 4px solid var(--color-green); text-align: center; pointer-events: auto; }
         .active { display: flex; }
         
         h1 { font-size: 1.6rem; color: var(--color-orange); margin-bottom: 15px; }
         .diff-container { display: flex; gap: 10px; margin: 15px 0; }
         .diff-btn { padding: 8px 12px; background: transparent; border: 2px solid var(--color-green); color: white; cursor: pointer; font-family: inherit; }
-        .diff-btn.selected { background: var(--color-green); color: white; }
+        .diff-btn.selected { background: var(--color-green); border-color: white; }
         .start-btn { padding: 15px 30px; font-size: 1.2rem; background: var(--color-green); color: white; border: 3px solid white; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; }
 
         #controls { position: absolute; bottom: 20px; width: 100%; display: none; justify-content: space-between; padding: 0 20px; }
@@ -46,7 +46,6 @@
 <body>
 
     <div id="ui-layer">
-        <div id="mission-header">PROTECT THE JUNIOR VESL</div>
         <div id="timer-display">00:30</div>
         <div id="health-container">
             <div id="health-label">SHIELD INTEGRITY</div>
@@ -55,6 +54,7 @@
                 <div class="health-slot filled"></div><div class="health-slot filled"></div>
             </div>
         </div>
+        <div id="mission-header">PROTECT THE JUNIOR VESL</div>
 
         <div id="intro-screen" class="ui-screen active">
             <h1>VESL PROTOCOL</h1>
@@ -143,7 +143,7 @@
 
         function triggerHit() {
             health--; shake = 15; 
-            mainShip.flash = 15; // Set red flash counter
+            mainShip.flash = 20; // Increase flash duration
             Sound.play('impact'); 
             updateHealthUI();
             if (navigator.vibrate) navigator.vibrate(80);
@@ -152,15 +152,36 @@
 
         function drawMainShip(x, y, thrusters = true) {
             ctx.save(); ctx.translate(x, y);
-            if(mainShip.flash > 0) { 
-                ctx.filter = 'brightness(0.8) sepia(1) hue-rotate(-50deg) saturate(10)'; 
-                mainShip.flash--; 
+            
+            // Reliable Red Flash Override
+            const isFlashing = mainShip.flash > 0 && Math.floor(mainShip.flash / 4) % 2 === 0;
+            const bodyColor = isFlashing ? '#FF0000' : '#FFDEAD';
+            const finColor = isFlashing ? '#AA0000' : '#006400';
+            
+            if (mainShip.flash > 0) mainShip.flash--;
+
+            // Fins
+            ctx.fillStyle = finColor; 
+            ctx.fillRect(6, 40, 9, 45); 
+            ctx.fillRect(45, 40, 9, 45);
+            
+            // Main Body
+            ctx.fillStyle = bodyColor; 
+            ctx.fillRect(15, 18, 30, 54);
+            
+            // Nose Cone
+            ctx.beginPath(); 
+            ctx.moveTo(15, 18); ctx.lineTo(30, 0); ctx.lineTo(45, 18); 
+            ctx.fillStyle = finColor;
+            ctx.fill();
+            
+            // Cockpit Window
+            ctx.fillStyle = '#FF8C00'; 
+            ctx.beginPath(); ctx.arc(30, 36, 7, 0, Math.PI*2); ctx.fill();
+            
+            if(thrusters && Math.random() > 0.3) { 
+                ctx.fillStyle = '#FF8C00'; ctx.fillRect(20, 72, 6, 12); ctx.fillRect(34, 72, 6, 12); 
             }
-            ctx.fillStyle = '#006400'; ctx.fillRect(6, 40, 9, 45); ctx.fillRect(45, 40, 9, 45);
-            ctx.fillStyle = '#FFDEAD'; ctx.fillRect(15, 18, 30, 54);
-            ctx.beginPath(); ctx.moveTo(15, 18); ctx.lineTo(30, 0); ctx.lineTo(45, 18); ctx.fill();
-            ctx.fillStyle = '#FF8C00'; ctx.beginPath(); ctx.arc(30, 36, 7, 0, Math.PI*2); ctx.fill();
-            if(thrusters && Math.random() > 0.3) { ctx.fillStyle = '#FF8C00'; ctx.fillRect(20, 72, 6, 12); ctx.fillRect(34, 72, 6, 12); }
             ctx.restore();
         }
 
