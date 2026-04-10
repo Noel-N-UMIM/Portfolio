@@ -152,60 +152,6 @@
             color: var(--accent-color);
         }
 
-        /* -----------------------------------------------------------
-           MAIN NAVIGATION (Desktop & Mobile)
-        ----------------------------------------------------------- */
-        .main-nav {
-            display: flex;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 25px;
-            margin: 0;
-            padding: 0;
-        }
-
-        .nav-links li a {
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 5px 0;
-            position: relative;
-            color: var(--text-color);
-        }
-
-        .nav-links li a:hover {
-            color: var(--accent-color);
-        }
-
-        .nav-links li a::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -2px;
-            width: 0;
-            height: 2px;
-            background-color: var(--accent-color);
-            transition: width 0.3s ease;
-        }
-
-        .nav-links li a:hover::after {
-            width: 100%;
-        }
-
-        .mobile-menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 5px;
-        }
-
         .back-btn {
             display: flex;
             align-items: center;
@@ -217,6 +163,7 @@
             padding: 8px 20px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 50px;
+            margin-left: auto; /* Ensures it stays on the far right */
         }
 
         .back-btn:hover {
@@ -276,7 +223,8 @@
             position: relative;
             z-index: 2; /* Ensures content stays above the video background */
         }
-                .hero-subtitle {
+
+        .hero-subtitle {
             font-size: 1.2rem;
             text-transform: uppercase;
             letter-spacing: 3px;
@@ -333,6 +281,12 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             margin-top: 20px;
+        }
+
+        /* Force exactly 3 items to stay in the same row */
+        .gallery-grid.three-cols,
+        .gallery-grid:has(> .gallery-item:nth-child(3):last-child) {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
         .gallery-grid.single-focus {
@@ -598,35 +552,13 @@
         /* -----------------------------------------------------------
            RESPONSIVE MEDIA QUERIES
         ----------------------------------------------------------- */
-        /* Kick in the mobile menu slightly earlier (992px) due to 7 menu items */
-        @media (max-width: 992px) {
-            .header-content {
-                flex-wrap: wrap;
-            }
-            .mobile-menu-toggle {
-                display: block;
-                order: 2; /* Positions hamburger on the right */
-            }
-            .brand {
-                order: 1; /* Positions logo on the left */
-            }
-            .main-nav {
-                display: none; /* Hidden by default on small screens */
-                width: 100%;
-                order: 3;
-                padding-top: 15px;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-                margin-top: 15px;
-            }
-            .main-nav.active {
-                display: flex;
-                justify-content: center;
-            }
-            .nav-links {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-                width: 100%;
+        @media (max-width: 900px) {
+            .hero {
+                max-height: 400px;
+                /* Removes fixed attachment on tablets to fix iOS/iPadOS zoomed-in bug */
+                background-attachment: scroll;
+                background-size: cover;
+                background-position: center;
             }
         }
 
@@ -647,6 +579,14 @@
                 width: 100%;
             }
 
+            /* Adjust height for 3-column grids on mobile so they aren't oddly tall */
+            .gallery-grid.three-cols .gallery-item img,
+            .gallery-grid.three-cols .gallery-item video,
+            .gallery-grid:has(> .gallery-item:nth-child(3):last-child) .gallery-item img,
+            .gallery-grid:has(> .gallery-item:nth-child(3):last-child) .gallery-item video {
+                height: 150px; 
+            }
+
             .lb-btn { font-size: 1.5rem; padding: 10px; }
             #lb-prev { left: 5px; }
             #lb-next { right: 5px; }
@@ -658,30 +598,13 @@
     <!-- STICKY HEADER -->
     <header class="sticky-header">
         <div class="container header-content">
-           <!-- <div class="brand">
-                NOEL NUÑEZ <span>|</span> INTERACTIVE
-            </div>-->
-                  <a href="/index.html" class="brand">
+            <a href="/index.html" class="brand">
                 NOEL NUÑEZ <span>|</span> Zoetrope
             </a>
             
-            <!-- Mobile Menu Toggle Button -->
-            <button class="mobile-menu-toggle" aria-label="Toggle Menu">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-
-            <!-- New Navigation Menu -->
-            <nav class="main-nav">
-                <ul class="nav-links">
-                   <li><a href="/index.html">Home</a></li>
-                    <li><a href="/Projects">Interaction Design</a></li>
-                    <li><a href="/storyboard.html">Storyboards</a></li>
-                    <li><a href="/animation.html">Animation</a></li>
-                    <li><a href="/art.html">Art</a></li>
-                    <li><a href="/index.html#about">About</a></li>
-                    <li><a href="https://interactivedesigndevelopment.blogspot.com/">Blog</a></li>
-                </ul>
-            </nav>
+            <a href="/Projects/" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Back to Projects
+            </a>
         </div>
     </header>
 
@@ -694,10 +617,10 @@
                  1. Uncomment the <video> and <div class="hero-overlay"> elements below.
                  2. Go to the .hero CSS class and remove or comment out the 'background' property.
             -->
-            
-           <!-- <video class="hero-video" src="img/Praxinoscope.mp4" autoplay loop muted playsinline></video>
-            <div class="hero-overlay"></div> -->
-            
+            <!-- 
+            <video class="hero-video" src="img/YOUR_VIDEO.mp4" autoplay loop muted playsinline></video>
+            <div class="hero-overlay"></div> 
+            -->
 
             <div class="hero-content">
                 <p class="hero-subtitle">Physical Computing Series</p>
@@ -897,7 +820,7 @@ From Zbrush, I moved to a program called Cura which is used to prepare the model
                 <p>
                     To make the Zoetrope rotate, I wired a  micro-controller and servo to a breadboard.  Getting the signal to work involved a learning curve, but it eventually got there!
                 </p>
-                <div class="gallery-grid">
+                <div class="gallery-grid three-cols">
                     <div class="gallery-item lightbox-trigger" data-src="img/Coding_1.jpg">
                         <img src="img/Coding_1.jpg" alt="3D Printing Process">
                     </div>
@@ -919,7 +842,7 @@ From Zbrush, I moved to a program called Cura which is used to prepare the model
                     The base needed to be wide enough for all of the 3D figures to fit, and light enough for the servo to succesfully rotate it. The base went through two iterations, with the first attempt being too flimsy and prone to pealing if an adjustment needed to be made to any of the 3D figures.</p>
                     <P>Additionally, there were too many "frames". The solution was to widen the spacing between each figure, ultimately reducing the "frames" from 20, down to 12. The second attempt utilized a thicker board and it was wrapped with painters tape to allow repositioning of the 3D figures.</P>
                 </p>
-                <div class="gallery-grid">
+                <div class="gallery-grid three-cols">
                     <div class="gallery-item lightbox-trigger" data-src="img/Corrections_1.jpg">
                         <img src="img/Corrections_1.jpg" alt="Base building">
                     </div>
@@ -1077,27 +1000,6 @@ From Zbrush, I moved to a program called Cura which is used to prepare the model
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            /* -----------------------------------------------------------
-               MOBILE MENU TOGGLE
-            ----------------------------------------------------------- */
-            const menuToggle = document.querySelector('.mobile-menu-toggle');
-            const mainNav = document.querySelector('.main-nav');
-            
-            if (menuToggle) {
-                menuToggle.addEventListener('click', () => {
-                    mainNav.classList.toggle('active');
-                    const icon = menuToggle.querySelector('i');
-                    // Swap icon between Hamburger and 'X'
-                    if (mainNav.classList.contains('active')) {
-                        icon.classList.remove('fa-bars');
-                        icon.classList.add('fa-xmark');
-                    } else {
-                        icon.classList.remove('fa-xmark');
-                        icon.classList.add('fa-bars');
-                    }
-                });
-            }
-
             /* -----------------------------------------------------------
                SCROLL ANIMATION (INTERSECTION OBSERVER)
             ----------------------------------------------------------- */
