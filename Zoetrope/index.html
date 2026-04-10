@@ -1025,4 +1025,144 @@ From Zbrush, I moved to a program called Cura which is used to prepare the model
             });
 
             /* -----------------------------------------------------------
-               ROBUST EVENT DELEG
+               ROBUST EVENT DELEGATION FOR LIGHTBOX (Handles clones too)
+            ----------------------------------------------------------- */
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const closeBtn = document.getElementById('lb-close');
+            const prevBtn = document.getElementById('lb-prev');
+            const nextBtn = document.getElementById('lb-next');
+
+            let galleryImages = [];
+            let currentIndex = 0;
+
+            // Build a unique array of image sources 
+            document.querySelectorAll('.lightbox-trigger').forEach(trigger => {
+                const src = trigger.getAttribute('data-src') || trigger.querySelector('img').src;
+                if (!galleryImages.includes(src)) {
+                    galleryImages.push(src);
+                }
+            });
+
+            // Event Delegation handles standard elements AND JS-cloned elements
+            document.addEventListener('click', (e) => {
+                const trigger = e.target.closest('.lightbox-trigger');
+                if (trigger) {
+                    const src = trigger.getAttribute('data-src') || trigger.querySelector('img').src;
+                    currentIndex = galleryImages.indexOf(src);
+                    if (currentIndex !== -1) {
+                        openLightbox();
+                    }
+                }
+            });
+
+            function openLightbox() {
+                updateImage();
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+
+            function updateImage() {
+                lightboxImg.style.opacity = '0.5';
+                setTimeout(() => {
+                    lightboxImg.src = galleryImages[currentIndex];
+                    lightboxImg.style.opacity = '1';
+                }, 200);
+            }
+
+            function nextImage() {
+                currentIndex = (currentIndex + 1) % galleryImages.length;
+                updateImage();
+            }
+
+            function prevImage() {
+                currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+                updateImage();
+            }
+
+            // Event Listeners for Lightbox Controls
+            closeBtn.addEventListener('click', closeLightbox);
+            nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); });
+            prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); });
+
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) closeLightbox();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (!lightbox.classList.contains('active')) return;
+                
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowRight') nextImage();
+                if (e.key === 'ArrowLeft') prevImage();
+            });
+
+            /* -----------------------------------------------------------
+               INFINITE CAROUSEL LOGIC (MOBILE)
+            ----------------------------------------------------------- */
+            const carousels = document.querySelectorAll('.gallery-carousel.infinite');
+            carousels.forEach(carousel => {
+                const originalItems = Array.from(carousel.children);
+                
+                if (originalItems.length > 1) {
+                    // Clone items to the end
+                    originalItems.forEach(item => {
+                        let clone = item.cloneNode(true);
+                        clone.classList.add('clone-element');
+                        carousel.appendChild(clone);
+                    });
+                    
+                    // Clone items to the beginning
+                    originalItems.forEach(item => {
+                        let clone = item.cloneNode(true);
+                        clone.classList.add('clone-element');
+                        carousel.insertBefore(clone, carousel.firstChild);
+                    });
+
+                    // Manage seamless jump offsets
+                    const handleScrollPosition = () => {
+                        if (window.innerWidth <= 768) {
+                            const itemWidth = carousel.children[0].offsetWidth + parseInt(window.getComputedStyle(carousel).gap || 20);
+                            const originalBlockWidth = originalItems.length * itemWidth;
+
+                            // If scrolling backwards past the prepended clones
+                            if (carousel.scrollLeft < originalBlockWidth - itemWidth) {
+                                carousel.style.scrollBehavior = 'auto'; // Temp disable smooth scroll snap
+                                carousel.style.scrollSnapType = 'none';
+                                carousel.scrollLeft += originalBlockWidth;
+                                setTimeout(() => { carousel.style.scrollSnapType = 'x mandatory'; }, 10);
+                            }
+                            // If scrolling forwards past original block
+                            else if (carousel.scrollLeft >= originalBlockWidth * 2) {
+                                carousel.style.scrollBehavior = 'auto'; 
+                                carousel.style.scrollSnapType = 'none';
+                                carousel.scrollLeft -= originalBlockWidth;
+                                setTimeout(() => { carousel.style.scrollSnapType = 'x mandatory'; }, 10);
+                            }
+                        }
+                    };
+
+                    // Initial jump to original content
+                    const initScroll = () => {
+                        if (window.innerWidth <= 768) {
+                            carousel.style.scrollSnapType = 'none';
+                            const itemWidth = carousel.children[0].offsetWidth + parseInt(window.getComputedStyle(carousel).gap || 20);
+                            carousel.scrollLeft = originalItems.length * itemWidth;
+                            setTimeout(() => { carousel.style.scrollSnapType = 'x mandatory'; }, 50);
+                        }
+                    };
+
+                    setTimeout(initScroll, 100);
+                    window.addEventListener('resize', initScroll);
+                    carousel.addEventListener('scroll', handleScrollPosition);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
