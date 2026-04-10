@@ -426,6 +426,14 @@
         /* -----------------------------------------------------------
            RESPONSIVE MEDIA QUERIES
         ----------------------------------------------------------- */
+        @media (max-width: 900px) {
+            .hero {
+                max-height: 400px;
+                /* Fixes background rendering issue on iOS/iPadOS WebKit browsers */
+                background-attachment: scroll;
+            }
+        }
+
         @media (max-width: 768px) {
             h1 { font-size: 2rem; }
             h2 { font-size: 1.6rem; }
