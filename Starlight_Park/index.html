@@ -426,11 +426,15 @@
         /* -----------------------------------------------------------
            RESPONSIVE MEDIA QUERIES
         ----------------------------------------------------------- */
-        @media (max-width: 900px) {
+        @media (max-width: 1024px) {
             .hero {
-                max-height: 400px;
-                /* Fixes background rendering issue on iOS/iPadOS WebKit browsers */
-                background-attachment: scroll;
+                /* Explicitly set height for iPad Pro and smaller */
+                height: 400px !important; 
+                min-height: 400px;
+                /* Aggressive fixes for iOS/iPadOS WebKit background rendering issues */
+                background-attachment: scroll !important;
+                -webkit-background-attachment: scroll !important;
+                background-position: center center !important;
             }
         }
 
@@ -443,10 +447,6 @@
                 gap: 10px;
             }
             
-            .hero {
-                background-attachment: scroll;
-            }
-
             .lb-btn { font-size: 1.5rem; padding: 10px; }
             #lb-prev { left: 5px; }
             #lb-next { right: 5px; }
@@ -513,11 +513,11 @@
                 </ul>
                 
                 <div class="gallery-grid">
-                    <div class="gallery-item lightbox-trigger" data-src="early-concept-layout.jpg">
+                    <div class="gallery-item lightbox-trigger" data-src="img/early-concept-layout.jpg">
                         <img src="img/early-concept-layout.jpg" alt="Early Concept Layout">
                         <div class="gallery-caption"><i class="fa-solid fa-map"></i> Early Concept Layout</div>
                     </div>
-                    <div class="gallery-item lightbox-trigger" data-src="concept-art-of-the-grotto.jpg">
+                    <div class="gallery-item lightbox-trigger" data-src="img/concept-art-of-the-grotto.jpg">
                         <img src="img/concept-art-of-the-grotto.jpg" alt="Concept Art of the Grotto">
                         <div class="gallery-caption"><i class="fa-solid fa-palette"></i> Concept Art: The Grotto</div>
                     </div>
@@ -533,11 +533,11 @@
                    The development process involved detailed modeling of the park's layout and the specific light patterns that would bring the "Star Field" to life. Light show pattern designs were created specifically to be viewed from the elevated seating area, creating a dynamic visual anchor for the park.
                 </p>
                 <div class="gallery-grid">
-                    <div class="gallery-item lightbox-trigger" data-src="overhead-layout-starlight-park.jpeg">
+                    <div class="gallery-item lightbox-trigger" data-src="img/overhead-layout-starlight-park.jpeg">
                         <img src="img/overhead-layout-starlight-park.jpeg" alt="Overhead Layout">
                         <div class="gallery-caption"><i class="fa-solid fa-layer-group"></i> Overhead Layout</div>
                     </div>
-                    <div class="gallery-item lightbox-trigger" data-src="light-show-patterns.jpg">
+                    <div class="gallery-item lightbox-trigger" data-src="img/light-show-patterns.jpg">
                         <img src="img/light-show-patterns.jpg" alt="Light Patterns">
                         <div class="gallery-caption"><i class="fa-regular fa-lightbulb"></i> Light Show Patterns</div>
                     </div>
@@ -557,15 +557,15 @@
                    Modifications included adding lights to the perimeter of the steps for better visibility and integrating ramps to ensure the park was accessible to all guests.
                 </p>
                 <div class="gallery-grid">
-                    <div class="gallery-item lightbox-trigger" data-src="original-view-of-seating-area.jpg">
+                    <div class="gallery-item lightbox-trigger" data-src="img/original-view-of-seating-area.jpg">
                         <img src="img/original-view-of-seating-area.jpg" alt="Original Seating Area">
                         <div class="gallery-caption">Original Seating Area</div>
                     </div>
-                    <div class="gallery-item lightbox-trigger" data-src="modified-seating-area.jpg">
+                    <div class="gallery-item lightbox-trigger" data-src="img/modified-seating-area.jpg">
                         <img src="img/modified-seating-area.jpg" alt="Modified Seating with Lights">
                         <div class="gallery-caption">Modified: Edge Lighting Added</div>
                     </div>
-                    <div class="gallery-item lightbox-trigger" data-src="ramps-for-accessibility.jpg">
+                    <div class="gallery-item lightbox-trigger" data-src="img/ramps-for-accessibility.jpg">
                         <img src="img/ramps-for-accessibility.jpg" alt="Accessibility Ramps">
                         <div class="gallery-caption">Modified: Accessibility Ramps</div>
                     </div>
@@ -581,7 +581,7 @@
                     The final prototype brings all these elements together into a cohesive virtual environment. Guests enter through the archway and are immediately immersed in the star field, guided by the light patterns towards the central Grotto.
                 </p>
                 <div class="gallery-grid single-focus">
-                    <div class="gallery-item lightbox-trigger" data-src="entrance-view.jpg">
+                    <div class="gallery-item lightbox-trigger" data-src="img/entrance-view.jpg">
                         <img src="img/entrance-view.jpg" alt="Entrance View of Starlight Park">
                         <div class="gallery-caption"><i class="fa-solid fa-star"></i> View from the Entrance</div>
                     </div>
