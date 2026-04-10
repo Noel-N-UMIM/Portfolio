@@ -297,7 +297,8 @@
         ----------------------------------------------------------- */
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            /* Updated to allow 3 items to fit on a single row more easily on tablets */
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-top: 20px;
         }
@@ -504,6 +505,18 @@
         /* -----------------------------------------------------------
            RESPONSIVE MEDIA QUERIES
         ----------------------------------------------------------- */
+        /* Specific adjustment for iPad Pro 12.9" (1024px width in portrait) */
+        @media (max-width: 1024px) {
+            .hero {
+                height: 400px !important;
+                max-height: 400px !important;
+            }
+            /* Force 3 columns on tablet width to keep images in one row */
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+        }
+
         @media (max-width: 768px) {
             h1 { font-size: 1.8rem; }
             h2 { font-size: 1.5rem; }
@@ -524,6 +537,11 @@
             .lb-btn { font-size: 1.5rem; padding: 10px; }
             #lb-prev { left: 5px; }
             #lb-next { right: 5px; }
+            
+            /* Allow wrapping on small mobile screens */
+            .gallery-grid {
+                grid-template-columns: 1fr !important;
+            }
         }
     </style>
 </head>
@@ -646,36 +664,18 @@
                         </ul>
                     </div>
                 </div>
-                
-                <!--<div class="gallery-grid" style="margin-top: 40px;">
-                     <div class="gallery-item contain-img lightbox-trigger" data-src="img/AR Features.png">
-                        <img src="img/AR Features.png" alt="AR Features Slide">
-                        <div class="gallery-caption"><i class="fa-solid fa-list"></i> Feature Overview</div>
-                    </div>
-                </div>-->
             </div>
         </section>
 
         <!-- LOGIC PATH / GALLERIES -->
         <section id="logic-path" class="fade-in-section">
             <div class="container">
-                <!--<div class="divider-icon"><i class="fa-solid fa-code-branch"></i></div>-->
                 <h2>The Experience: Logic Path</h2>
                 <p>
                     The app guides users through a structured logic path, from initial menu setup to specific activity portals.
                 </p>
 
                 <div class="gallery-grid">
-                    <!-- Step 1 -->
-                    <!--<div class="gallery-item contain-img lightbox-trigger" data-src="img/Current_Logic_path_1.png">
-                        <img src="img/Current_Logic_path_1.png" alt="Step 1: Menus">
-                        <div class="gallery-caption">
-                            <strong>Step 1: Menus</strong><br>
-                            Title, introduction, instructions, and thank you screens.
-                        </div>
-                    </div>-->
-                    
-                    <!-- Step 2 & 3 -->
                     <div class="gallery-item contain-img lightbox-trigger" data-src="img/Current_Logic_path_2.png">
                         <img src="img/Current_Logic_path_2.png" alt="Step 2 & 3: Game Board">
                         <div class="gallery-caption">
@@ -684,7 +684,6 @@
                         </div>
                     </div>
 
-                    <!-- Step 4 -->
                     <div class="gallery-item contain-img lightbox-trigger" data-src="img/Current_Logic_path_3.png">
                         <img src="img/Current_Logic_path_3.png" alt="Portal 1: Music Room">
                         <div class="gallery-caption">
@@ -693,7 +692,6 @@
                         </div>
                     </div>
                     
-                    <!-- Step 5 & 6 -->
                     <div class="gallery-item contain-img lightbox-trigger" data-src="img/Current_Logic_path_4.png">
                         <img src="img/Current_Logic_path_4.png" alt="Portal 2 & 3: Trivia and Stars">
                         <div class="gallery-caption">
@@ -708,7 +706,6 @@
         <!-- DESIGN IMPLEMENTATION -->
         <section id="design-implementation" class="fade-in-section">
             <div class="container">
-                <!--<div class="divider-icon"><i class="fa-solid fa-pen-ruler"></i></div>-->
                 <h2>Design Implementation</h2>
                 <p>
                     As hinted at the start, the project underwent significant evolution driven by technical challenges, time constraints, and iterative thinking. Initially, the game was intended to have two portals: a gameplay portal with challenges and a second portal with tools to assist the user.
@@ -735,7 +732,6 @@
                     </p>
                 </div>
                  <div class="gallery-grid">
-                    <!-- Step 1 -->
                     <div class="gallery-item contain-img lightbox-trigger" data-src="img/Current_Logic_path_1.png">
                         <img src="img/original_Storyboard_1.png" alt="Step 1: Menus">
                         <div class="gallery-caption">
@@ -744,7 +740,6 @@
                         </div>
                     </div>
                     
-                    <!-- Step 2 & 3 -->
                     <div class="gallery-item contain-img lightbox-trigger" data-src="img/Current_Logic_path_2.png">
                         <img src="img/original_Storyboard_2.png" alt="Step 2 & 3: Game Board">
                         <div class="gallery-caption">
@@ -752,6 +747,7 @@
                             Storyboard Interactions
                         </div>
                     </div>
+                </div>
             </div>
         </section>
 
@@ -900,7 +896,6 @@
 
             // Collect all gallery image sources
             triggers.forEach((trigger, index) => {
-                // Use data-src if available, fallback to img src
                 const src = trigger.getAttribute('data-src') || trigger.querySelector('img').src;
                 galleryImages.push(src);
                 
@@ -922,7 +917,6 @@
             }
 
             function updateImage() {
-                // Add fade effect
                 lightboxImg.style.opacity = '0.5';
                 setTimeout(() => {
                     lightboxImg.src = galleryImages[currentIndex];
@@ -940,17 +934,14 @@
                 updateImage();
             }
 
-            // Event Listeners
             closeBtn.addEventListener('click', closeLightbox);
             nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); });
             prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); });
 
-            // Close on background click
             lightbox.addEventListener('click', (e) => {
                 if (e.target === lightbox) closeLightbox();
             });
 
-            // Keyboard Navigation
             document.addEventListener('keydown', (e) => {
                 if (!lightbox.classList.contains('active')) return;
                 
