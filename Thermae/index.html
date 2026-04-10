@@ -631,6 +631,15 @@
             }
         }
 
+        /* Tablet / iPad adjustments */
+        @media (max-width: 900px) {
+            .hero {
+                height: 400px;
+                max-height: 400px;
+                background-attachment: scroll; /* Fixes background visibility issues on iOS/iPadOS */
+            }
+        }
+
         @media (max-width: 768px) {
             h1 { font-size: 2rem; }
             h2 { font-size: 1.6rem; }
