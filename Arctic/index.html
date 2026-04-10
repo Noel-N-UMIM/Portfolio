@@ -140,7 +140,7 @@
 
         /* Subtle Section Dividers */
         section {
-            padding: 80px 0;
+            padding: 20px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         
@@ -209,7 +209,7 @@
         .hero {
             height: 90vh;
             /* Static fallback image if video fails to load */
-            background: url('arctic_thumb_original.png');
+            background: url('img/arctic_thumb_original.png');
             background-size: cover;
             background-position: center;
             display: flex;
@@ -504,12 +504,6 @@
         /* -----------------------------------------------------------
            RESPONSIVE MEDIA QUERIES
         ----------------------------------------------------------- */
-        @media (max-width: 1200px) {
-            .hero {
-                max-height: 400px;
-            }
-        }
-
         @media (max-width: 768px) {
             h1 { font-size: 1.8rem; }
             h2 { font-size: 1.5rem; }
@@ -541,7 +535,7 @@
             <div class="brand">
                 NOEL NUÑEZ <span>|</span> INTERACTIVE
             </div>
-            <a href="#" class="back-btn">
+            <a href="index.html/" class="back-btn">
                 <i class="fa-solid fa-arrow-left"></i> Back to Projects
             </a>
         </div>
@@ -587,11 +581,13 @@
             <div class="container">
                 <div class="video-responsive">
                     <!-- REPLACE THE URL/ID BELOW WITH YOUR ACTUAL VIMEO EMBED -->
-                    <iframe src="https://player.vimeo.com/video/REPLACE_WITH_YOUR_VIDEO_ID?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" 
+                    <iframe src="https://player.vimeo.com/video/578171558?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" 
                             frameborder="0" 
                             allow="autoplay; fullscreen; picture-in-picture" 
                             title="Beary's Arctic Adventure Demo">
+                            <iframe title="vimeo-player" src="https://player.vimeo.com/video/578171558?h=88e50c3319" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>
                     </iframe>
+                    
                 </div>
             </div>
         </section>
@@ -651,19 +647,19 @@
                     </div>
                 </div>
                 
-                <div class="gallery-grid" style="margin-top: 40px;">
+                <!--<div class="gallery-grid" style="margin-top: 40px;">
                      <div class="gallery-item contain-img lightbox-trigger" data-src="img/AR Features.png">
                         <img src="img/AR Features.png" alt="AR Features Slide">
                         <div class="gallery-caption"><i class="fa-solid fa-list"></i> Feature Overview</div>
                     </div>
-                </div>
+                </div>-->
             </div>
         </section>
 
         <!-- LOGIC PATH / GALLERIES -->
         <section id="logic-path" class="fade-in-section">
             <div class="container">
-                <div class="divider-icon"><i class="fa-solid fa-code-branch"></i></div>
+                <!--<div class="divider-icon"><i class="fa-solid fa-code-branch"></i></div>-->
                 <h2>The Experience: Logic Path</h2>
                 <p>
                     The app guides users through a structured logic path, from initial menu setup to specific activity portals.
@@ -671,13 +667,13 @@
 
                 <div class="gallery-grid">
                     <!-- Step 1 -->
-                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/Current_Logic_path_1.png">
+                    <!--<div class="gallery-item contain-img lightbox-trigger" data-src="img/Current_Logic_path_1.png">
                         <img src="img/Current_Logic_path_1.png" alt="Step 1: Menus">
                         <div class="gallery-caption">
                             <strong>Step 1: Menus</strong><br>
                             Title, introduction, instructions, and thank you screens.
                         </div>
-                    </div>
+                    </div>-->
                     
                     <!-- Step 2 & 3 -->
                     <div class="gallery-item contain-img lightbox-trigger" data-src="img/Current_Logic_path_2.png">
@@ -712,7 +708,7 @@
         <!-- DESIGN IMPLEMENTATION -->
         <section id="design-implementation" class="fade-in-section">
             <div class="container">
-                <div class="divider-icon"><i class="fa-solid fa-pen-ruler"></i></div>
+                <!--<div class="divider-icon"><i class="fa-solid fa-pen-ruler"></i></div>-->
                 <h2>Design Implementation</h2>
                 <p>
                     As hinted at the start, the project underwent significant evolution driven by technical challenges, time constraints, and iterative thinking. Initially, the game was intended to have two portals: a gameplay portal with challenges and a second portal with tools to assist the user.
@@ -738,6 +734,24 @@
                         This game remained relatively the same from its inception. While simple in concept, it presented challenges, primarily with populating the stars in the correct spot each time the portal was triggered.
                     </p>
                 </div>
+                 <div class="gallery-grid">
+                    <!-- Step 1 -->
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/Current_Logic_path_1.png">
+                        <img src="img/original_Storyboard_1.png" alt="Step 1: Menus">
+                        <div class="gallery-caption">
+                            <strong>Planning</strong><br>
+                            Storyboard Interactions
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2 & 3 -->
+                    <div class="gallery-item contain-img lightbox-trigger" data-src="img/Current_Logic_path_2.png">
+                        <img src="img/original_Storyboard_2.png" alt="Step 2 & 3: Game Board">
+                        <div class="gallery-caption">
+                            <strong>Planning</strong><br>
+                            Storyboard Interactions
+                        </div>
+                    </div>
             </div>
         </section>
 
