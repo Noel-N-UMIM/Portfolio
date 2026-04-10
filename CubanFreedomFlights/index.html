@@ -588,6 +588,15 @@
             color: rgba(255,255,255,0.1);
             font-size: 1.5rem;
         }
+
+        @media (max-width: 900px) {
+            .hero {
+                max-height: 400px;
+            }
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            }
+        }
         
         @media (max-width: 768px) {
             h1 { font-size: 1.8rem; }
@@ -824,31 +833,6 @@
                      <i class="fa-solid fa-hammer" style="color: var(--accent-color);"></i> Building Assets & Spatial Experiments
                 </div>
 
-                <div class="process-video-wrapper" style="margin-bottom: 20px;">
-                    <h3>Creating the 2D Assets</h3>
-                </div>
-                </div>
-         
-
-            <!-- Desktop Full Width Gallery -->
-            <div class="desktop-full-width">
-                <div class="gallery-item contain-img lightbox-trigger" data-src="img/2D Assets/E_turnaround_01.jpg">
-                    <img src="img/2D Assets/E_turnaround_01.jpg" alt="Turnaround">
-                    <div class="gallery-caption"><strong>Character Design Turnaround</strong></div>
-                </div>
-                <div class="gallery-item contain-img lightbox-trigger" data-src="img/2D Assets/Design_Exploration.PNG">
-                    <img src="img/2D Assets/Design_Exploration.PNG" alt="Design Explorations">
-                    <div class="gallery-caption"><strong>Spatial Use: Concept</strong></div>
-                </div>
-                <div class="gallery-item contain-img lightbox-trigger" data-src="img/2D Assets/Freedom_Tower_Stairs.jpg">
-                    <img src="img/2D Assets/Freedom_Tower_Stairs.jpg" alt="Freedom Tower shot">
-                    <div class="gallery-caption"><strong>Key Interaction Shot</strong></div>
-                </div>
-                <div class="gallery-item contain-img lightbox-trigger" data-src="img/2D Assets/Abuelo_Abuela_3.JPG">
-                    <img src="img/2D Assets/Abuelo_Abuela_3.JPG" alt="Abuelo and Abuela">
-                    <div class="gallery-caption"><strong>Grandparents initial design</strong></div>
-                </div>
-            </div>
                 <!--<div class="process-video-wrapper">
                     <h3>Building the Freedom Tower</h3>
                     <div class="video-container">
@@ -938,6 +922,30 @@
                 </div>
                 </div>
 
+                <div class="process-video-wrapper" style="margin-bottom: 20px;">
+                    <h3>Creating the 2D Assets</h3>
+                </div>
+         
+
+            <!-- Desktop Full Width Gallery -->
+            <div class="desktop-full-width">
+                <div class="gallery-item contain-img lightbox-trigger" data-src="img/2D Assets/E_turnaround_01.jpg">
+                    <img src="img/2D Assets/E_turnaround_01.jpg" alt="Turnaround">
+                    <div class="gallery-caption"><strong>Character Design Turnaround</strong></div>
+                </div>
+                <div class="gallery-item contain-img lightbox-trigger" data-src="img/2D Assets/Design_Exploration.PNG">
+                    <img src="img/2D Assets/Design_Exploration.PNG" alt="Design Explorations">
+                    <div class="gallery-caption"><strong>Spatial Use: Concept</strong></div>
+                </div>
+                <div class="gallery-item contain-img lightbox-trigger" data-src="img/2D Assets/Freedom_Tower_Stairs.jpg">
+                    <img src="img/2D Assets/Freedom_Tower_Stairs.jpg" alt="Freedom Tower shot">
+                    <div class="gallery-caption"><strong>Key Interaction Shot</strong></div>
+                </div>
+                <div class="gallery-item contain-img lightbox-trigger" data-src="img/2D Assets/Abuelo_Abuela_3.JPG">
+                    <img src="img/2D Assets/Abuelo_Abuela_3.JPG" alt="Abuelo and Abuela">
+                    <div class="gallery-caption"><strong>Grandparents initial design</strong></div>
+                </div>
+            </div>
         </section>
        
         <section id="user-testing" class="fade-in-section">
