@@ -827,4 +827,16 @@ display: contents;
     justify-content: center;
     align-items: center;
     }
+  }
+  /* Prevents boxes from wrapping into a new row between 769px and 900px */
+@media screen and (max-width: 900px) and (min-width: 769px) {
+    .container .box-container {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 15px; /* Slightly reduced gap to fit 3 boxes comfortably */
+    }
+    
+    .container .box-container .box h3 {
+        font-size: 18px; /* Slightly smaller text to prevent overflow */
+    }
+}
  
