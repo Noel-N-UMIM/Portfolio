@@ -175,7 +175,7 @@
         .hero {
             height: 90vh;
             /* Using the high-res wide banner from the blog */
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('https://blogger.googleusercontent.com/img/a/AVvXsEj_0C3WA3uOk59zO0k8830zUqvEq4yWMjv8Y0zUXY_DECeeevGfbLmQB-FBFRm1V214BhKntQVgNIBFU7jzjmIybQi8-zLEJuCXVBOqOkTK9vb1zILdbTU6Mp90Wc7YH-4XzmhrNrftbdPsiC0xrpsx3Itwrtd5OJ8ZmNEQBggYkNkNhJghguUMGkcYxQ=s1500');
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('https://blogger.googleusercontent.com/img/a/AVvXsEjwgR8Mjzf9eo1ySuaZrxO3ZX1VEbDbVjfF-VF3aFxG5EB3jz4-NAD238iWMTTpMDXCCoWoFnS_nnKEeoKdQVcQV_5R0kKUAoELJWxXq2ndXR8gfWnVWqvNr1_wBzqfk-8-A43AgFfauYCWbCwlJf1dP_MJyQKuLxpLyO2P9IESoZMAHmhBb1mQaTzXXQ=s3583');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -399,6 +399,21 @@
             font-size: 1.5rem;
         }
 
+        /* Expanded to 1366px to catch iPad Pros in landscape mode */
+        @media (max-width: 1366px) {
+            .hero {
+                max-height: 400px;
+                background-attachment: scroll; /* Fixes background visibility issue on tablets */
+            }
+        }
+
+        /* Explicitly targets ALL iOS devices (iPhone/iPad) to absolutely override the parallax bug */
+        @supports (-webkit-touch-callout: none) {
+            .hero {
+                background-attachment: scroll;
+            }
+        }
+
         @media (max-width: 768px) {
             h1 { font-size: 2rem; }
             h2 { font-size: 1.6rem; }
@@ -415,7 +430,7 @@
             <div class="brand">
                 NOEL NUÑEZ <span>|</span> INTERACTIVE
             </div>
-            <a href="/Projects/" class="back-btn">
+            <a href="#" class="back-btn">
                 <i class="fa-solid fa-arrow-left"></i> Back to Projects
             </a>
         </div>
@@ -488,12 +503,12 @@
                 </p>
                 
                 <div class="gallery-grid">
-                     <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEgGNTENxtmTMMgXCzV5503Phap0iI8xm49xKYQjM4s_P6R53SLC9SxLA_ux2qLQzGb5reX_rkBU6t5Z7e8d0bjpjDvEgNpjKENDACoEnd3E45tLZVYV1jwpT6qWmBiCIlWQvNHWYtLK5IlgsAH-qBjmqoW6scZnkd4D5CFFoNDHv2UJ02QRzQLzELTn8w=s2016">
-                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEgGNTENxtmTMMgXCzV5503Phap0iI8xm49xKYQjM4s_P6R53SLC9SxLA_ux2qLQzGb5reX_rkBU6t5Z7e8d0bjpjDvEgNpjKENDACoEnd3E45tLZVYV1jwpT6qWmBiCIlWQvNHWYtLK5IlgsAH-qBjmqoW6scZnkd4D5CFFoNDHv2UJ02QRzQLzELTn8w=s2016" alt="Cricut Cutout Pieces">
+                     <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEho0sTQwDK4e_Ukwuay6mPDunlSK5laEzVnxQ1cptsfsMv7YkjJ4YyAKrkHrXiFKHeMFW0NRRk8XmueDBQXLV64ZHhF_-P3fSh7g1lVtqVmT9pzN3uyqFk6C5CEtxlzGlXo_alFC-1Euxlc0GdLAM5olXc_PAqkJCksXcU__CH1XqDjAfJoWLa1Bgko1w=s4613">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEho0sTQwDK4e_Ukwuay6mPDunlSK5laEzVnxQ1cptsfsMv7YkjJ4YyAKrkHrXiFKHeMFW0NRRk8XmueDBQXLV64ZHhF_-P3fSh7g1lVtqVmT9pzN3uyqFk6C5CEtxlzGlXo_alFC-1Euxlc0GdLAM5olXc_PAqkJCksXcU__CH1XqDjAfJoWLa1Bgko1w=s4613" alt="Cricut Cutout Pieces">
                         <div class="gallery-caption"><i class="fa-solid fa-scissors"></i> The Many Pieces</div>
                     </div>
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEh27y3P_HY5BtdjThGU_mYuH9DhSOnOwyoRzZgG8xf11LdQCy_0d9jukssJkZ5sbtrTBXWQfh4toj4bDjJ0qiBT6h7zlp4hrdM4Vz0j9aSyB7ql6WvZkP86Ren4kslNi5FRRmg8jIlVVaEpBWKVN0ShFp1c-7I_ejcKNKeg1O4ttCTTVFmiLr8GD1XRmw=s2016">
-                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEh27y3P_HY5BtdjThGU_mYuH9DhSOnOwyoRzZgG8xf11LdQCy_0d9jukssJkZ5sbtrTBXWQfh4toj4bDjJ0qiBT6h7zlp4hrdM4Vz0j9aSyB7ql6WvZkP86Ren4kslNi5FRRmg8jIlVVaEpBWKVN0ShFp1c-7I_ejcKNKeg1O4ttCTTVFmiLr8GD1XRmw=s2016" alt="The Squished Sphere">
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEi56HQ_BJTY04aP8byR-wuhR3kk9BR5Pnk3yI_a2thSnE4ZS8YSTmoxPzAStAo7_g5Xt0bJ5_V7gKjaXWIgfoQfwpeSEfYc0CpFj9FG7XglEXpcLWa3GLbRgDUMajhgghLDLugvnCGH5nov_oDuDQngjr7vafGKQwSBh9k3PGv3pwVwcAGoZYG-Qz6iAw=s442">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEi56HQ_BJTY04aP8byR-wuhR3kk9BR5Pnk3yI_a2thSnE4ZS8YSTmoxPzAStAo7_g5Xt0bJ5_V7gKjaXWIgfoQfwpeSEfYc0CpFj9FG7XglEXpcLWa3GLbRgDUMajhgghLDLugvnCGH5nov_oDuDQngjr7vafGKQwSBh9k3PGv3pwVwcAGoZYG-Qz6iAw=s442" alt="The Squished Sphere">
                         <div class="gallery-caption"><i class="fa-solid fa-triangle-exclamation"></i> The "Squished" Sphere</div>
                     </div>
                 </div>
@@ -512,14 +527,14 @@
                     I abandoned the complex sphere for a cleaner, geometric box design that still allowed light to play beautifully through internal diffusion. This allowed me to focus on the wiring and the code.
                 </p>
                 <div class="gallery-grid">
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEh3qBRmwnPCZIsbn4FFZ-tJp8Bn8o3fm0U8hMkUZA5yKD-RS4hOPgiQtA-rWgJkzWdWrtVTpv6GBDSiLzpJg4qd-Ua-YsYZ2HRJFEdjzYWc5AEMH9TYXOMPAiaiRtZrOiE4SPaIfZ6JbMNjccQJ0EgeaOnPxYLkX4ZFG7NQX0yahTgnpc4JWUK-qTqfGA=s595">
-                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEh3qBRmwnPCZIsbn4FFZ-tJp8Bn8o3fm0U8hMkUZA5yKD-RS4hOPgiQtA-rWgJkzWdWrtVTpv6GBDSiLzpJg4qd-Ua-YsYZ2HRJFEdjzYWc5AEMH9TYXOMPAiaiRtZrOiE4SPaIfZ6JbMNjccQJ0EgeaOnPxYLkX4ZFG7NQX0yahTgnpc4JWUK-qTqfGA=s595" alt="Simplified Box Design">
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEggBO5Gq7fdO_Fmh0SzyQMkvHQ7butXyGmXMjPM7CnxLx6V0UmdZaHKdGVHLR9xmI7hMgQ-FDQTMQQflacCgEvS0rqiewDD1z6LYBuh18qfD11hVssuuD4_p22vNhhSYNRlWKUSx2YNT85eXZclb_FnkN0uQ-iVWJE09M0gyLiH6nOeMluZpunK7mvKLQ=s1512">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEggBO5Gq7fdO_Fmh0SzyQMkvHQ7butXyGmXMjPM7CnxLx6V0UmdZaHKdGVHLR9xmI7hMgQ-FDQTMQQflacCgEvS0rqiewDD1z6LYBuh18qfD11hVssuuD4_p22vNhhSYNRlWKUSx2YNT85eXZclb_FnkN0uQ-iVWJE09M0gyLiH6nOeMluZpunK7mvKLQ=s1512" alt="Simplified Box Design">
                     </div>
-                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEhueQLOqoGyNxBFXoy0F5kq3yBQbFp-ICjrWA3uv7aikQPlbrbPLuCGEVR0LQioi_BgYAc_S2rt3FsImAFg-XasXSCOmV4KXfup3yEYIJessKQlYU4HHBFkoQ40x_3fEkPrGGlYivsXdZePQGp5i1lkoMuZgC4kLAZCzt7_pAn3kgH8IJEnmSpE9lFYDA=s1896" alt="Wiring Internal Components">
-                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEhueQLOqoGyNxBFXoy0F5kq3yBQbFp-ICjrWA3uv7aikQPlbrbPLuCGEVR0LQioi_BgYAc_S2rt3FsImAFg-XasXSCOmV4KXfup3yEYIJessKQlYU4HHBFkoQ40x_3fEkPrGGlYivsXdZePQGp5i1lkoMuZgC4kLAZCzt7_pAn3kgH8IJEnmSpE9lFYDA=s1896" alt="Wiring Components">
+                    <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEhoWt5EreyfvoTEkWsfcOa_5ISAYL41To7btKwQAWEzVNWketNXJ_KGrlSsdDFyz_tAQpXjitzLo395-6Qp2HZIc7ylo5gGr9fqxX9i8GuZSGepW7VJrtllelsw3th9_C8j633-vtT9YrvJiTsxw-5AWjHXKOQ7RlTnI2dKW_doQH2nDwnC8EdXR38zMg=s1512" alt="Wiring Internal Components">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEhoWt5EreyfvoTEkWsfcOa_5ISAYL41To7btKwQAWEzVNWketNXJ_KGrlSsdDFyz_tAQpXjitzLo395-6Qp2HZIc7ylo5gGr9fqxX9i8GuZSGepW7VJrtllelsw3th9_C8j633-vtT9YrvJiTsxw-5AWjHXKOQ7RlTnI2dKW_doQH2nDwnC8EdXR38zMg=s1512" alt="Wiring Components">
                     </div>
-                     <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEhxwwqQ0eXGeaVEcn3b_Cmbs-a57tItK_spO-kp-Hxr4IbVVZjXMzpXHRYUUpNW3vqna27-kpEdLbQ9cmatDdqSERteQ0D5fX7MLavA4gPN0CAWpb4W8jujPoeZ_djy7Mn7Zd4_-_y80gZVdFy3XjuFe3JCKXe7vU-v-7elbAd8bXs53ncqMu2XLy97mg=s2016">
-                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEhxwwqQ0eXGeaVEcn3b_Cmbs-a57tItK_spO-kp-Hxr4IbVVZjXMzpXHRYUUpNW3vqna27-kpEdLbQ9cmatDdqSERteQ0D5fX7MLavA4gPN0CAWpb4W8jujPoeZ_djy7Mn7Zd4_-_y80gZVdFy3XjuFe3JCKXe7vU-v-7elbAd8bXs53ncqMu2XLy97mg=s2016" alt="Close up of wiring">
+                     <div class="gallery-item lightbox-trigger" data-src="https://blogger.googleusercontent.com/img/a/AVvXsEhh1M3kz0-r_eVIt7tzWG1jE2zZkPFdS49Y9FbknoNaltWqnfRFgrCKfghn1TY7Me2pebkjFW4i-TrDt5TvYx_BQ8CfYbqaBWzsOHdB5R0opkyETFgwnkZKJTuL5Kk9vE66IWa6wtGNsN1TLHobPfULYV6pQBke3L1Pmt4slsXZu9jK9Qgw4jjiA1XsfQ=s1364">
+                        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEhh1M3kz0-r_eVIt7tzWG1jE2zZkPFdS49Y9FbknoNaltWqnfRFgrCKfghn1TY7Me2pebkjFW4i-TrDt5TvYx_BQ8CfYbqaBWzsOHdB5R0opkyETFgwnkZKJTuL5Kk9vE66IWa6wtGNsN1TLHobPfULYV6pQBke3L1Pmt4slsXZu9jK9Qgw4jjiA1XsfQ=s1364" alt="Close up of wiring">
                     </div>
                 </div>
             </div>
@@ -594,41 +609,7 @@
                 </div>
             </div>
         </section>
-<!-- RELATED PROJECTS -->
-       <!-- <section id="related" class="fade-in-section">
-            <div class="container">
-                <div class="divider-icon"><i class="fa-solid fa-layer-group"></i></div>
-                <h2>Explore More Projects</h2>
-                <div class="gallery-grid">-->
-                    <!-- Project 1 -->
-                    <!--<a href="#" class="gallery-item">
-                        <img src="https://placehold.co/600x400/333333/ff9800?text=AR+Sculpture" alt="AR Project">
-                        <div class="gallery-caption">
-                            <h4>AR Sculpture</h4>
-                            <p style="margin:0; font-size: 0.9rem;">Vuforia & Unity</p>
-                        </div>
-                    </a>-->
-                    
-                    <!-- Project 2 -->
-                  <!--  <a href="#" class="gallery-item">
-                        <img src="https://placehold.co/600x400/333333/ff9800?text=Audio+Reactive" alt="Audio Project">
-                        <div class="gallery-caption">
-                            <h4>Audio Reactive</h4>
-                            <p style="margin:0; font-size: 0.9rem;">TouchDesigner</p>
-                        </div>
-                    </a>-->
 
-                    <!-- Project 3 -->
-                    <!--<a href="#" class="gallery-item">
-                        <img src="https://placehold.co/600x400/333333/ff9800?text=Projection+Mapping" alt="Mapping Project">
-                        <div class="gallery-caption">
-                            <h4>Projection Mapping</h4>
-                            <p style="margin:0; font-size: 0.9rem;">MadMapper</p>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </section>-->
     </main>
 
     <!-- FOOTER -->
@@ -740,5 +721,4 @@
         });
     </script>
 </body>
-
 </html>
