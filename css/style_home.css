@@ -839,11 +839,23 @@ display: contents;
         font-size: 18px; /* Slightly smaller text to prevent overflow */
     }
 }
-/* Specific fix for iPad Pro and larger tablets */
-@media only screen and (max-width: 1366px) {
+/* 1. MOBILE VIEW: Stack the boxes for phones (up to 768px) */
+@media screen and (max-width: 768px) {
     .container .box-container {
-        grid-template-columns: repeat(3, 1fr) !important;
-        display: grid !important;
+        grid-template-columns: 1fr !important; /* Forces a single column stack */
         gap: 20px;
     }
+}
+
+/* 2. TABLET/IPAD VIEW: Side-by-side for iPad/Tablets (769px to 1366px) */
+@media screen and (min-width: 769px) and (max-width: 1366px) {
+    .container .box-container {
+        grid-template-columns: repeat(3, 1fr) !important; /* Keeps them in a row */
+        display: grid !important;
+        gap: 15px;
+    }
+    
+    .container .box-container .box h3 {
+        font-size: 18px; /* Prevents text overflow on smaller tablets */
+
 } 
